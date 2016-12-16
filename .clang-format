@@ -1,0 +1,40 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 8
+ContinuationIndentWidth: 8
+AccessModifierOffset: -8
+UseTab: Always
+AlignAfterOpenBracket: DontAlign
+IndentCaseLabels: false
+IncludeCategories:
+  - Regex:           '^<boost/'
+    Priority:        2
+  - Regex:           '^<Q'
+    Priority:        3
+  - Regex:           '^<pv/'
+    Priority:        4
+  - Regex:           '^<libsigrok'
+    Priority:        5
+  - Regex:           '^<.*>'
+    Priority:        6
+  - Regex:           '.*'
+    Priority:        1
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: false
+  AfterEnum:       false
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     true
+  AfterUnion:      true
+  BeforeCatch:     false
+  BeforeElse:      false
+  IndentBraces:    false
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
