@@ -20,8 +20,8 @@
 #ifndef PULSEVIEW_PV_VIEWS_TRACEVIEW_TRACETREEITEMOWNER_HPP
 #define PULSEVIEW_PV_VIEWS_TRACEVIEW_TRACETREEITEMOWNER_HPP
 
-#include "viewitemowner.hpp"
 #include "tracetreeitem.hpp"
+#include "viewitemowner.hpp"
 
 namespace pv {
 
@@ -39,24 +39,24 @@ public:
 	/**
 	 * Returns the view of the owner.
 	 */
-	virtual View* view() = 0;
+	virtual View *view() = 0;
 
 	/**
 	 * Returns the view of the owner.
 	 */
-	virtual const View* view() const = 0;
+	virtual const View *view() const = 0;
 
 	virtual int owner_visual_v_offset() const = 0;
 
 	/**
 	 * Returns the session of the owner.
 	 */
-	virtual Session& session() = 0;
+	virtual Session &session() = 0;
 
 	/**
 	 * Returns the session of the owner.
 	 */
-	virtual const Session& session() const = 0;
+	virtual const Session &session() const = 0;
 
 	/**
 	 * Returns the number of nested parents that this row item owner has.
@@ -66,12 +66,12 @@ public:
 	/**
 	 * Returns a list of row items owned by this object.
 	 */
-	virtual const item_list& child_items() const;
+	virtual const item_list &child_items() const;
 
 	/**
 	 * Returns a list of row items owned by this object.
 	 */
-	std::vector< std::shared_ptr<TraceTreeItem> >
+	std::vector<std::shared_ptr<TraceTreeItem>>
 	trace_tree_child_items() const;
 
 	/**

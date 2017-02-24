@@ -17,8 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <extdef.h>
 #include <assert.h>
+#include <extdef.h>
 
 #include <algorithm>
 
@@ -52,25 +52,25 @@ bool TraceGroup::enabled() const
 		[](const shared_ptr<ViewItem> &r) { return r->enabled(); });
 }
 
-pv::Session& TraceGroup::session()
+pv::Session &TraceGroup::session()
 {
 	assert(owner_);
 	return owner_->session();
 }
 
-const pv::Session& TraceGroup::session() const
+const pv::Session &TraceGroup::session() const
 {
 	assert(owner_);
 	return owner_->session();
 }
 
-View* TraceGroup::view()
+View *TraceGroup::view()
 {
 	assert(owner_);
 	return owner_->view();
 }
 
-const View* TraceGroup::view() const
+const View *TraceGroup::view() const
 {
 	assert(owner_);
 	return owner_->view();
@@ -83,17 +83,12 @@ pair<int, int> TraceGroup::v_extents() const
 
 void TraceGroup::paint_label(QPainter &p, const QRect &rect, bool hover)
 {
-	const QRectF r = label_rect(rect).adjusted(
-		LineThickness / 2, LineThickness / 2,
-		-LineThickness / 2, -LineThickness / 2);
+	const QRectF r = label_rect(rect).adjusted(LineThickness / 2,
+		LineThickness / 2, -LineThickness / 2, -LineThickness / 2);
 
 	// Paint the label
 	const QPointF points[] = {
-		r.topRight(),
-		r.topLeft(),
-		r.bottomLeft(),
-		r.bottomRight()
-	};
+		r.topRight(), r.topLeft(), r.bottomLeft(), r.bottomRight()};
 
 	if (selected()) {
 		const QPen pen(highlight_pen());
@@ -103,8 +98,8 @@ void TraceGroup::paint_label(QPainter &p, const QRect &rect, bool hover)
 		p.drawPolyline(points, countof(points));
 	}
 
-	p.setPen(QPen(QBrush(LineColour.darker()), LineThickness,
-		Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin));
+	p.setPen(QPen(QBrush(LineColour.darker()), LineThickness, Qt::SolidLine,
+		Qt::SquareCap, Qt::RoundJoin));
 	p.drawPolyline(points, countof(points));
 	p.setPen(QPen(QBrush(hover ? LineColour.lighter() : LineColour),
 		LineThickness - 2, Qt::SolidLine, Qt::SquareCap,
@@ -119,8 +114,8 @@ QRectF TraceGroup::label_rect(const QRectF &rect) const
 		if (r && r->enabled())
 			child_rect = child_rect.united(r->label_rect(rect));
 
-	return QRectF(child_rect.x() - Width - Padding, child_rect.y(),
-		Width, child_rect.height());
+	return QRectF(child_rect.x() - Width - Padding, child_rect.y(), Width,
+		child_rect.height());
 }
 
 bool TraceGroup::pt_in_label_rect(int left, int right, const QPoint &point)
@@ -132,7 +127,7 @@ bool TraceGroup::pt_in_label_rect(int left, int right, const QPoint &point)
 	return false;
 }
 
-QMenu* TraceGroup::create_context_menu(QWidget *parent)
+QMenu *TraceGroup::create_context_menu(QWidget *parent)
 {
 	QMenu *const menu = new QMenu(parent);
 
@@ -144,7 +139,7 @@ QMenu* TraceGroup::create_context_menu(QWidget *parent)
 	return menu;
 }
 
-pv::widgets::Popup* TraceGroup::create_popup(QWidget *parent)
+pv::widgets::Popup *TraceGroup::create_popup(QWidget *parent)
 {
 	(void)parent;
 	return nullptr;
@@ -161,13 +156,14 @@ void TraceGroup::restack_items()
 
 	// Sort by the centre line of the extents
 	stable_sort(items.begin(), items.end(),
-		[](const shared_ptr<TraceTreeItem> &a, const shared_ptr<TraceTreeItem> &b) {
+		[](const shared_ptr<TraceTreeItem> &a,
+			const shared_ptr<TraceTreeItem> &b) {
 			const auto aext = a->v_extents();
 			const auto bext = b->v_extents();
 			return a->layout_v_offset() +
-					(aext.first + aext.second) / 2 <
-				b->layout_v_offset() +
-					(bext.first + bext.second) / 2;
+				       (aext.first + aext.second) / 2 <
+			       b->layout_v_offset() +
+				       (bext.first + bext.second) / 2;
 		});
 
 	int total_offset = 0;

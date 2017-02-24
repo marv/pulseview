@@ -41,9 +41,8 @@ namespace pv {
 namespace devices {
 
 HardwareDevice::HardwareDevice(const std::shared_ptr<sigrok::Context> &context,
-	std::shared_ptr<sigrok::HardwareDevice> device) :
-	context_(context),
-	device_open_(false)
+	std::shared_ptr<sigrok::HardwareDevice> device)
+    : context_(context), device_open_(false)
 {
 	device_ = device;
 }
@@ -67,23 +66,23 @@ shared_ptr<sigrok::HardwareDevice> HardwareDevice::hardware_device() const
 	return static_pointer_cast<sigrok::HardwareDevice>(device_);
 }
 
-string HardwareDevice::display_name(
-	const DeviceManager &device_manager) const
+string HardwareDevice::display_name(const DeviceManager &device_manager) const
 {
 	const auto hw_dev = hardware_device();
 
 	// If we can find another device with the same model/vendor then
 	// we have at least two such devices and need to distinguish them.
 	const auto &devices = device_manager.devices();
-	const bool multiple_dev = hw_dev && any_of(
-		devices.begin(), devices.end(),
-		[&](shared_ptr<devices::HardwareDevice> dev) {
-			return dev->hardware_device()->vendor() ==
-					hw_dev->vendor() &&
-				dev->hardware_device()->model() ==
-					hw_dev->model() &&
-				dev->device_ != device_;
-		});
+	const bool multiple_dev =
+		hw_dev &&
+		any_of(devices.begin(), devices.end(),
+			[&](shared_ptr<devices::HardwareDevice> dev) {
+				return dev->hardware_device()->vendor() ==
+					       hw_dev->vendor() &&
+				       dev->hardware_device()->model() ==
+					       hw_dev->model() &&
+				       dev->device_ != device_;
+			});
 
 	vector<string> parts = {device_->vendor(), device_->model()};
 

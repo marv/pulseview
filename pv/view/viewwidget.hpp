@@ -46,16 +46,14 @@ protected:
 	 * if no view item is being hovered over.
 	 * @remarks the default implementation does nothing.
 	 */
-	virtual void item_hover(
-		const std::shared_ptr<ViewItem> &item);
+	virtual void item_hover(const std::shared_ptr<ViewItem> &item);
 
 	/**
 	 * Indicates the event an a view item has been clicked.
 	 * @param item the view item that has been clicked.
 	 * @remarks the default implementation does nothing.
 	 */
-	virtual void item_clicked(
-		const std::shared_ptr<ViewItem> &item);
+	virtual void item_clicked(const std::shared_ptr<ViewItem> &item);
 
 	/**
 	 * Returns true if the selection of row items allows dragging.
@@ -94,7 +92,7 @@ protected:
 	/**
 	 * Gets the items in the view widget.
 	 */
-	virtual std::vector< std::shared_ptr<ViewItem> > items() = 0;
+	virtual std::vector<std::shared_ptr<ViewItem>> items() = 0;
 
 	/**
 	 * Gets the first view item which has a hit-box that contains @c pt .

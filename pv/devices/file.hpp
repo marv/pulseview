@@ -41,7 +41,7 @@ public:
 	/**
 	 * Builds the display name. It only contains fields as required.
 	 */
-	std::string display_name(const DeviceManager&) const;
+	std::string display_name(const DeviceManager &) const;
 
 protected:
 	const std::string file_name_;

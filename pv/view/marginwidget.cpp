@@ -32,8 +32,7 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-MarginWidget::MarginWidget(View &parent) :
-	ViewWidget(parent)
+MarginWidget::MarginWidget(View &parent) : ViewWidget(parent)
 {
 	setAttribute(Qt::WA_NoSystemBackground, true);
 }

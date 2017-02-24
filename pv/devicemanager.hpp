@@ -51,14 +51,14 @@ public:
 
 	~DeviceManager() = default;
 
-	const std::shared_ptr<sigrok::Context>& context() const;
+	const std::shared_ptr<sigrok::Context> &context() const;
 
 	std::shared_ptr<sigrok::Context> context();
 
-	const std::list< std::shared_ptr<devices::HardwareDevice> >&
-		devices() const;
+	const std::list<std::shared_ptr<devices::HardwareDevice>> &
+	devices() const;
 
-	std::list< std::shared_ptr<devices::HardwareDevice> > driver_scan(
+	std::list<std::shared_ptr<devices::HardwareDevice>> driver_scan(
 		std::shared_ptr<sigrok::Driver> driver,
 		std::map<const sigrok::ConfigKey *, Glib::VariantBase> drvopts);
 
@@ -74,7 +74,7 @@ private:
 
 protected:
 	std::shared_ptr<sigrok::Context> context_;
-	std::list< std::shared_ptr<devices::HardwareDevice> > devices_;
+	std::list<std::shared_ptr<devices::HardwareDevice>> devices_;
 };
 
 } // namespace pv

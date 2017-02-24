@@ -26,41 +26,59 @@
 #include <algorithm>
 #include <sstream>
 
-#include <QTextStream>
 #include <QDebug>
+#include <QTextStream>
 
 using namespace Qt;
 
 namespace pv {
 namespace util {
 
-static QTextStream& operator<<(QTextStream& stream, SIPrefix prefix)
+static QTextStream &operator<<(QTextStream &stream, SIPrefix prefix)
 {
 	switch (prefix) {
-	case SIPrefix::yocto: return stream << 'y';
-	case SIPrefix::zepto: return stream << 'z';
-	case SIPrefix::atto:  return stream << 'a';
-	case SIPrefix::femto: return stream << 'f';
-	case SIPrefix::pico:  return stream << 'p';
-	case SIPrefix::nano:  return stream << 'n';
-	case SIPrefix::micro: return stream << QChar(0x03BC);
-	case SIPrefix::milli: return stream << 'm';
-	case SIPrefix::kilo:  return stream << 'k';
-	case SIPrefix::mega:  return stream << 'M';
-	case SIPrefix::giga:  return stream << 'G';
-	case SIPrefix::tera:  return stream << 'T';
-	case SIPrefix::peta:  return stream << 'P';
-	case SIPrefix::exa:   return stream << 'E';
-	case SIPrefix::zetta: return stream << 'Z';
-	case SIPrefix::yotta: return stream << 'Y';
+	case SIPrefix::yocto:
+		return stream << 'y';
+	case SIPrefix::zepto:
+		return stream << 'z';
+	case SIPrefix::atto:
+		return stream << 'a';
+	case SIPrefix::femto:
+		return stream << 'f';
+	case SIPrefix::pico:
+		return stream << 'p';
+	case SIPrefix::nano:
+		return stream << 'n';
+	case SIPrefix::micro:
+		return stream << QChar(0x03BC);
+	case SIPrefix::milli:
+		return stream << 'm';
+	case SIPrefix::kilo:
+		return stream << 'k';
+	case SIPrefix::mega:
+		return stream << 'M';
+	case SIPrefix::giga:
+		return stream << 'G';
+	case SIPrefix::tera:
+		return stream << 'T';
+	case SIPrefix::peta:
+		return stream << 'P';
+	case SIPrefix::exa:
+		return stream << 'E';
+	case SIPrefix::zetta:
+		return stream << 'Z';
+	case SIPrefix::yotta:
+		return stream << 'Y';
 
-	default: return stream;
+	default:
+		return stream;
 	}
 }
 
 int exponent(SIPrefix prefix)
 {
-	return 3 * (static_cast<int>(prefix) - static_cast<int>(SIPrefix::none));
+	return 3 *
+	       (static_cast<int>(prefix) - static_cast<int>(SIPrefix::none));
 }
 
 static SIPrefix successor(SIPrefix prefix)
@@ -71,15 +89,15 @@ static SIPrefix successor(SIPrefix prefix)
 
 // Insert the timestamp value into the stream in fixed-point notation
 // (and honor the precision)
-static QTextStream& operator<<(QTextStream& stream, const Timestamp& t)
+static QTextStream &operator<<(QTextStream &stream, const Timestamp &t)
 {
-	// The multiprecision types already have a function and a stream insertion
-	// operator to convert them to a string, however these functions abuse a
-	// precision value of zero to print all available decimal places instead of
-	// none, and the boost authors refuse to fix this because they don't want
-	// to break buggy code that relies on this bug.
-	// (https://svn.boost.org/trac/boost/ticket/10103)
-	// Therefore we have to work around the case where precision is zero.
+	// The multiprecision types already have a function and a stream
+	// insertion operator to convert them to a string, however these
+	// functions abuse a precision value of zero to print all available
+	// decimal places instead of none, and the boost authors refuse to fix
+	// this because they don't want to break buggy code that relies on this
+	// bug. (https://svn.boost.org/trac/boost/ticket/10103) Therefore we
+	// have to work around the case where precision is zero.
 
 	int precision = stream.realNumberPrecision();
 
@@ -103,12 +121,8 @@ static QTextStream& operator<<(QTextStream& stream, const Timestamp& t)
 	return stream << QString::fromStdString(str);
 }
 
-QString format_time_si(
-	const Timestamp& v,
-	SIPrefix prefix,
-	unsigned int precision,
-	QString unit,
-	bool sign)
+QString format_time_si(const Timestamp &v, SIPrefix prefix,
+	unsigned int precision, QString unit, bool sign)
 {
 	if (prefix == SIPrefix::unspecified) {
 		// No prefix given, calculate it
@@ -119,7 +133,7 @@ QString format_time_si(
 			int exp = exponent(SIPrefix::yotta);
 			prefix = SIPrefix::yocto;
 			while ((fabs(v) * pow(Timestamp(10), exp)) > 999 &&
-					prefix < SIPrefix::yotta) {
+				prefix < SIPrefix::yotta) {
 				prefix = successor(prefix);
 				exp -= 3;
 			}
@@ -135,34 +149,26 @@ QString format_time_si(
 	QTextStream ts(&s);
 	if (sign && !v.is_zero())
 		ts << forcesign;
-	ts
-		<< qSetRealNumberPrecision(precision)
-		<< (v * multiplier)
-		<< ' '
-		<< prefix
-		<< unit;
+	ts << qSetRealNumberPrecision(precision) << (v * multiplier) << ' '
+	   << prefix << unit;
 
 	return s;
 }
 
-QString format_time_si_adjusted(
-	const Timestamp& t,
-	SIPrefix prefix,
-	unsigned precision,
-	QString unit,
-	bool sign)
+QString format_time_si_adjusted(const Timestamp &t, SIPrefix prefix,
+	unsigned precision, QString unit, bool sign)
 {
 	// The precision is always given without taking the prefix into account
 	// so we need to deduct the number of decimals the prefix might imply
 	const int prefix_order = -exponent(prefix);
 
 	const unsigned int relative_prec =
-		(prefix >= SIPrefix::none) ? precision :
-		std::max((int)(precision - prefix_order), 0);
+		(prefix >= SIPrefix::none)
+			? precision
+			: std::max((int)(precision - prefix_order), 0);
 
 	return format_time_si(t, prefix, relative_prec, unit, sign);
 }
-
 
 // Helper for 'format_time_minutes()'.
 static QString pad_number(unsigned int number, int length)
@@ -170,12 +176,14 @@ static QString pad_number(unsigned int number, int length)
 	return QString("%1").arg(number, length, 10, QChar('0'));
 }
 
-QString format_time_minutes(const Timestamp& t, signed precision, bool sign)
+QString format_time_minutes(const Timestamp &t, signed precision, bool sign)
 {
 	const Timestamp whole_seconds = floor(abs(t));
 	const Timestamp days = floor(whole_seconds / (60 * 60 * 24));
-	const unsigned int hours = fmod(whole_seconds / (60 * 60), 24).convert_to<uint>();
-	const unsigned int minutes = fmod(whole_seconds / 60, 60).convert_to<uint>();
+	const unsigned int hours =
+		fmod(whole_seconds / (60 * 60), 24).convert_to<uint>();
+	const unsigned int minutes =
+		fmod(whole_seconds / 60, 60).convert_to<uint>();
 	const unsigned int seconds = fmod(whole_seconds, 60).convert_to<uint>();
 
 	QString s;
@@ -214,11 +222,8 @@ QString format_time_minutes(const Timestamp& t, signed precision, bool sign)
 		const Timestamp fraction = fabs(t) - whole_seconds;
 
 		std::ostringstream ss;
-		ss
-			<< std::fixed
-			<< std::setprecision(precision)
-			<< std::setfill('0')
-			<< fraction;
+		ss << std::fixed << std::setprecision(precision)
+		   << std::setfill('0') << fraction;
 		std::string fs = ss.str();
 
 		// Copy all digits, inserting spaces as unit separators

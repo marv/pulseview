@@ -38,11 +38,9 @@ using sigrok::InputFormat;
 namespace pv {
 namespace widgets {
 
-ImportMenu::ImportMenu(QWidget *parent, shared_ptr<Context> context,
-	QAction *open_action) :
-	QMenu(parent),
-	context_(context),
-	mapper_(this)
+ImportMenu::ImportMenu(
+	QWidget *parent, shared_ptr<Context> context, QAction *open_action)
+    : QMenu(parent), context_(context), mapper_(this)
 {
 	assert(context);
 
@@ -52,32 +50,35 @@ ImportMenu::ImportMenu(QWidget *parent, shared_ptr<Context> context,
 		addSeparator();
 	}
 
-	const map<string, shared_ptr<InputFormat> > formats =
+	const map<string, shared_ptr<InputFormat>> formats =
 		context->input_formats();
 
-	for (const pair<string, shared_ptr<InputFormat> > &f : formats) {
+	for (const pair<string, shared_ptr<InputFormat>> &f : formats) {
 		assert(f.second);
-		QAction *const action =	addAction(tr("Import %1...")
-			.arg(QString::fromStdString(f.second->description())));
-		action->setData(qVariantFromValue((void*)f.second.get()));
+		QAction *const action =
+			addAction(tr("Import %1...")
+					  .arg(QString::fromStdString(
+						  f.second->description())));
+		action->setData(qVariantFromValue((void *)f.second.get()));
 		mapper_.setMapping(action, action);
 		connect(action, SIGNAL(triggered()), &mapper_, SLOT(map()));
 	}
 
-	connect(&mapper_, SIGNAL(mapped(QObject*)),
-		this, SLOT(on_action(QObject*)));
+	connect(&mapper_, SIGNAL(mapped(QObject *)), this,
+		SLOT(on_action(QObject *)));
 }
 
 void ImportMenu::on_action(QObject *action)
 {
 	assert(action);
 
-	const map<string, shared_ptr<InputFormat> > formats =
+	const map<string, shared_ptr<InputFormat>> formats =
 		context_->input_formats();
 	const auto iter = find_if(formats.cbegin(), formats.cend(),
-		[&](const pair<string, shared_ptr<InputFormat> > &f) {
+		[&](const pair<string, shared_ptr<InputFormat>> &f) {
 			return f.second.get() ==
-				((QAction*)action)->data().value<void*>(); });
+			       ((QAction *)action)->data().value<void *>();
+		});
 	if (iter == formats.cend())
 		return;
 

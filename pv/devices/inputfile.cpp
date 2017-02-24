@@ -32,12 +32,12 @@ const std::streamsize InputFile::BufferSize = 16384;
 InputFile::InputFile(const std::shared_ptr<sigrok::Context> &context,
 	const std::string &file_name,
 	std::shared_ptr<sigrok::InputFormat> format,
-	const std::map<std::string, Glib::VariantBase> &options) :
-	File(file_name),
-	context_(context),
-	format_(format),
-	options_(options),
-	interrupt_(false)
+	const std::map<std::string, Glib::VariantBase> &options)
+    : File(file_name),
+      context_(context),
+      format_(format),
+      options_(options),
+      interrupt_(false)
 {
 }
 

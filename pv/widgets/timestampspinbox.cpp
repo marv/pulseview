@@ -25,12 +25,11 @@
 namespace pv {
 namespace widgets {
 
-TimestampSpinBox::TimestampSpinBox(QWidget* parent)
-	: QAbstractSpinBox(parent)
-	, precision_(9)
-	, stepsize_("1e-6")
+TimestampSpinBox::TimestampSpinBox(QWidget *parent)
+    : QAbstractSpinBox(parent), precision_(9), stepsize_("1e-6")
 {
-	connect(this, SIGNAL(editingFinished()), this, SLOT(on_editingFinished()));
+	connect(this, SIGNAL(editingFinished()), this,
+		SLOT(on_editingFinished()));
 
 	updateEdit();
 }
@@ -42,7 +41,8 @@ void TimestampSpinBox::stepBy(int steps)
 
 QAbstractSpinBox::StepEnabled TimestampSpinBox::stepEnabled() const
 {
-	return QAbstractSpinBox::StepUpEnabled | QAbstractSpinBox::StepDownEnabled;
+	return QAbstractSpinBox::StepUpEnabled |
+	       QAbstractSpinBox::StepDownEnabled;
 }
 
 unsigned TimestampSpinBox::precision() const
@@ -56,17 +56,17 @@ void TimestampSpinBox::setPrecision(unsigned precision)
 	updateEdit();
 }
 
-const pv::util::Timestamp& TimestampSpinBox::singleStep() const
+const pv::util::Timestamp &TimestampSpinBox::singleStep() const
 {
 	return stepsize_;
 }
 
-void TimestampSpinBox::setSingleStep(const pv::util::Timestamp& step)
+void TimestampSpinBox::setSingleStep(const pv::util::Timestamp &step)
 {
 	stepsize_ = step;
 }
 
-const pv::util::Timestamp& TimestampSpinBox::value() const
+const pv::util::Timestamp &TimestampSpinBox::value() const
 {
 	return value_;
 }
@@ -80,7 +80,7 @@ QSize TimestampSpinBox::minimumSizeHint() const
 	return QSize(w, h);
 }
 
-void TimestampSpinBox::setValue(const pv::util::Timestamp& val)
+void TimestampSpinBox::setValue(const pv::util::Timestamp &val)
 {
 	if (val == value_)
 		return;

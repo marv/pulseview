@@ -30,8 +30,8 @@
 #include <QSignalMapper>
 
 #include <pv/binding/decoder.hpp>
-#include <pv/data/signalbase.hpp>
 #include <pv/data/decode/row.hpp>
+#include <pv/data/signalbase.hpp>
 
 struct srd_channel;
 struct srd_decoder;
@@ -86,12 +86,12 @@ private:
 	static const QColor OutlineColours[16];
 
 public:
-	DecodeTrace(pv::Session &session, std::shared_ptr<data::SignalBase> signalbase,
-		int index);
+	DecodeTrace(pv::Session &session,
+		std::shared_ptr<data::SignalBase> signalbase, int index);
 
 	bool enabled() const;
 
-	const std::shared_ptr<pv::data::DecoderStack>& decoder() const;
+	const std::shared_ptr<pv::data::DecoderStack> &decoder() const;
 
 	std::shared_ptr<data::SignalBase> base() const;
 
@@ -124,34 +124,36 @@ public:
 
 	void populate_popup_form(QWidget *parent, QFormLayout *form);
 
-	QMenu* create_context_menu(QWidget *parent);
+	QMenu *create_context_menu(QWidget *parent);
 
 	void delete_pressed();
 
 private:
-	void draw_annotations(std::vector<pv::data::decode::Annotation> annotations,
+	void draw_annotations(
+		std::vector<pv::data::decode::Annotation> annotations,
 		QPainter &p, int h, const ViewItemPaintParams &pp, int y,
 		size_t base_colour, int row_title_width);
 
 	void draw_annotation(const pv::data::decode::Annotation &a, QPainter &p,
-		int h, const ViewItemPaintParams &pp, int y,
-		size_t base_colour, int row_title_width) const;
+		int h, const ViewItemPaintParams &pp, int y, size_t base_colour,
+		int row_title_width) const;
 
-	void draw_annotation_block(std::vector<pv::data::decode::Annotation> annotations,
+	void draw_annotation_block(
+		std::vector<pv::data::decode::Annotation> annotations,
 		QPainter &p, int h, int y, size_t base_colour) const;
 
 	void draw_instant(const pv::data::decode::Annotation &a, QPainter &p,
 		int h, double x, int y) const;
 
 	void draw_range(const pv::data::decode::Annotation &a, QPainter &p,
-		int h, double start, double end, int y, const ViewItemPaintParams &pp,
-		int row_title_width) const;
+		int h, double start, double end, int y,
+		const ViewItemPaintParams &pp, int row_title_width) const;
 
 	void draw_error(QPainter &p, const QString &message,
 		const ViewItemPaintParams &pp);
 
-	void draw_unresolved_period(QPainter &p, int h, int left,
-		int right) const;
+	void draw_unresolved_period(
+		QPainter &p, int h, int left, int right) const;
 
 	std::pair<double, double> get_pixels_offset_samples_per_pixel() const;
 
@@ -162,7 +164,8 @@ private:
 	 * @return Returns a pair containing the start sample and the end
 	 * 	sample that correspond to the start and end coordinates.
 	 */
-	std::pair<uint64_t, uint64_t> get_sample_range(int x_start, int x_end) const;
+	std::pair<uint64_t, uint64_t> get_sample_range(
+		int x_start, int x_end) const;
 
 	int get_row_at_point(const QPoint &point);
 
@@ -172,7 +175,7 @@ private:
 		std::shared_ptr<pv::data::decode::Decoder> &dec,
 		QWidget *parent, QFormLayout *form);
 
-	QComboBox* create_channel_selector(QWidget *parent,
+	QComboBox *create_channel_selector(QWidget *parent,
 		const std::shared_ptr<pv::data::decode::Decoder> &dec,
 		const srd_channel *const pdch);
 
@@ -203,11 +206,10 @@ private:
 	std::vector<data::decode::Row> visible_rows_;
 	uint64_t decode_start_, decode_end_;
 
-	std::list< std::shared_ptr<pv::binding::Decoder> >
-		bindings_;
+	std::list<std::shared_ptr<pv::binding::Decoder>> bindings_;
 
 	std::list<ChannelSelector> channel_selectors_;
-	std::vector<pv::widgets::DecoderGroupBox*> decoder_forms_;
+	std::vector<pv::widgets::DecoderGroupBox *> decoder_forms_;
 
 	std::map<data::decode::Row, int> row_title_widths_;
 	int row_height_, max_visible_rows_;

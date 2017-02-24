@@ -27,8 +27,10 @@ namespace pv {
 class AndroidLogHandler
 {
 private:
-	static int sr_callback(void *cb_data, int loglevel, const char *format, va_list args);
-	static int srd_callback(void *cb_data, int loglevel, const char *format, va_list args);
+	static int sr_callback(
+		void *cb_data, int loglevel, const char *format, va_list args);
+	static int srd_callback(
+		void *cb_data, int loglevel, const char *format, va_list args);
 
 public:
 	static void install_callbacks();

@@ -18,11 +18,11 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "analog.hpp"
-#include "logic.hpp"
 #include "signalbase.hpp"
-#include "signaldata.hpp"
+#include "analog.hpp"
 #include "decode/row.hpp"
+#include "logic.hpp"
+#include "signaldata.hpp"
 
 #include <pv/binding/decoder.hpp>
 
@@ -35,10 +35,9 @@ using sigrok::ChannelType;
 namespace pv {
 namespace data {
 
-const int SignalBase::ColourBGAlpha = 8*256/100;
+const int SignalBase::ColourBGAlpha = 8 * 256 / 100;
 
-SignalBase::SignalBase(shared_ptr<sigrok::Channel> channel) :
-	channel_(channel)
+SignalBase::SignalBase(shared_ptr<sigrok::Channel> channel) : channel_(channel)
 {
 	if (channel_)
 		internal_name_ = QString::fromStdString(channel_->name());
@@ -144,8 +143,8 @@ std::shared_ptr<pv::data::DecoderStack> SignalBase::decoder_stack() const
 	return decoder_stack_;
 }
 
-void SignalBase::set_decoder_stack(std::shared_ptr<pv::data::DecoderStack>
-	decoder_stack)
+void SignalBase::set_decoder_stack(
+	std::shared_ptr<pv::data::DecoderStack> decoder_stack)
 {
 	decoder_stack_ = decoder_stack;
 }
@@ -164,7 +163,6 @@ void SignalBase::restore_settings(QSettings &settings)
 	set_enabled(settings.value("enabled").toBool());
 	set_colour(settings.value("colour").value<QColor>());
 }
-
 
 } // namespace data
 } // namespace pv

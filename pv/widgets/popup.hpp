@@ -30,13 +30,7 @@ class Popup : public QWidget
 	Q_OBJECT
 
 public:
-	enum Position
-	{
-		Right,
-		Top,
-		Left,
-		Bottom
-	};
+	enum Position { Right, Top, Left, Bottom };
 
 private:
 	static const unsigned int ArrowLength;
@@ -46,7 +40,7 @@ private:
 public:
 	Popup(QWidget *parent);
 
-	const QPoint& point() const;
+	const QPoint &point() const;
 	Position position() const;
 
 	void set_position(const QPoint point, Position pos);
@@ -71,11 +65,11 @@ private:
 	void reposition_widget();
 
 private:
-	void closeEvent(QCloseEvent*);
+	void closeEvent(QCloseEvent *);
 
-	void paintEvent(QPaintEvent*);
+	void paintEvent(QPaintEvent *);
 
-	void resizeEvent(QResizeEvent*);
+	void resizeEvent(QResizeEvent *);
 
 	void mouseReleaseEvent(QMouseEvent *event);
 

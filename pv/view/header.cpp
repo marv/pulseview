@@ -23,8 +23,8 @@
 #include "signal.hpp"
 #include "tracegroup.hpp"
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 
 #include <boost/iterator/filter_iterator.hpp>
 
@@ -59,8 +59,7 @@ static bool item_selected(shared_ptr<TraceTreeItem> r)
 	return r->selected();
 }
 
-Header::Header(View &parent) :
-	MarginWidget(parent)
+Header::Header(View &parent) : MarginWidget(parent)
 {
 }
 
@@ -80,11 +79,11 @@ QSize Header::extended_size_hint() const
 	return sizeHint() + QSize(ViewItem::HighlightRadius, 0);
 }
 
-vector< shared_ptr<ViewItem> > Header::items()
+vector<shared_ptr<ViewItem>> Header::items()
 {
 	const vector<shared_ptr<TraceTreeItem>> items(
 		view_.list_by_type<TraceTreeItem>());
-	return vector< shared_ptr<ViewItem> >(items.begin(), items.end());
+	return vector<shared_ptr<ViewItem>>(items.begin(), items.end());
 }
 
 shared_ptr<ViewItem> Header::get_mouse_over_item(const QPoint &pt)
@@ -98,19 +97,19 @@ shared_ptr<ViewItem> Header::get_mouse_over_item(const QPoint &pt)
 	return shared_ptr<TraceTreeItem>();
 }
 
-void Header::paintEvent(QPaintEvent*)
+void Header::paintEvent(QPaintEvent *)
 {
 	// The trace labels are not drawn with the arrows exactly on the
 	// left edge of the widget, because then the selection shadow
 	// would be clipped away.
 	const QRect rect(0, 0, width() - BaselineOffset, height());
 
-	vector< shared_ptr<RowItem> > items(
-		view_.list_by_type<RowItem>());
+	vector<shared_ptr<RowItem>> items(view_.list_by_type<RowItem>());
 
 	stable_sort(items.begin(), items.end(),
 		[](const shared_ptr<RowItem> &a, const shared_ptr<RowItem> &b) {
-			return a->point(QRect()).y() < b->point(QRect()).y(); });
+			return a->point(QRect()).y() < b->point(QRect()).y();
+		});
 
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
@@ -118,7 +117,8 @@ void Header::paintEvent(QPaintEvent*)
 	for (const shared_ptr<RowItem> r : items) {
 		assert(r);
 
-		const bool highlight = !item_dragging_ &&
+		const bool highlight =
+			!item_dragging_ &&
 			r->label_rect(rect).contains(mouse_point_);
 		r->paint_label(painter, rect, highlight);
 	}
@@ -136,10 +136,9 @@ void Header::contextMenuEvent(QContextMenuEvent *event)
 	if (!menu)
 		menu = new QMenu(this);
 
-	const vector< shared_ptr<TraceTreeItem> > items(
+	const vector<shared_ptr<TraceTreeItem>> items(
 		view_.list_by_type<TraceTreeItem>());
-	if (std::count_if(items.begin(), items.end(), item_selected) > 1)
-	{
+	if (std::count_if(items.begin(), items.end(), item_selected) > 1) {
 		menu->addSeparator();
 
 		QAction *const group = new QAction(tr("Group"), this);
@@ -159,22 +158,26 @@ void Header::keyPressEvent(QKeyEvent *event)
 
 	MarginWidget::keyPressEvent(event);
 
-	if (event->key() == Qt::Key_G && event->modifiers() == Qt::ControlModifier)
+	if (event->key() == Qt::Key_G &&
+		event->modifiers() == Qt::ControlModifier)
 		on_group();
-	else if (event->key() == Qt::Key_U && event->modifiers() == Qt::ControlModifier)
+	else if (event->key() == Qt::Key_U &&
+		 event->modifiers() == Qt::ControlModifier)
 		on_ungroup();
 }
 
 void Header::on_group()
 {
-	const vector< shared_ptr<TraceTreeItem> > items(
+	const vector<shared_ptr<TraceTreeItem>> items(
 		view_.list_by_type<TraceTreeItem>());
-	vector< shared_ptr<TraceTreeItem> > selected_items(
+	vector<shared_ptr<TraceTreeItem>> selected_items(
 		make_filter_iterator(item_selected, items.begin(), items.end()),
 		make_filter_iterator(item_selected, items.end(), items.end()));
 	stable_sort(selected_items.begin(), selected_items.end(),
-		[](const shared_ptr<TraceTreeItem> &a, const shared_ptr<TraceTreeItem> &b) {
-			return a->visual_v_offset() < b->visual_v_offset(); });
+		[](const shared_ptr<TraceTreeItem> &a,
+			const shared_ptr<TraceTreeItem> &b) {
+			return a->visual_v_offset() < b->visual_v_offset();
+		});
 
 	shared_ptr<TraceGroup> group(new TraceGroup());
 	shared_ptr<TraceTreeItem> mouse_down_item(
@@ -187,8 +190,8 @@ void Header::on_group()
 	focus_item->owner()->add_child_item(group);
 
 	// Set the group v_offset here before reparenting
-	group->force_to_v_offset(focus_item->layout_v_offset() +
-		focus_item->v_extents().first);
+	group->force_to_v_offset(
+		focus_item->layout_v_offset() + focus_item->v_extents().first);
 
 	for (size_t i = 0; i < selected_items.size(); i++) {
 		const shared_ptr<TraceTreeItem> &r = selected_items[i];
@@ -207,7 +210,7 @@ void Header::on_ungroup()
 	bool restart;
 	do {
 		restart = false;
-		const vector< shared_ptr<TraceGroup> > groups(
+		const vector<shared_ptr<TraceGroup>> groups(
 			view_.list_by_type<TraceGroup>());
 		for (const shared_ptr<TraceGroup> tg : groups)
 			if (tg->selected()) {

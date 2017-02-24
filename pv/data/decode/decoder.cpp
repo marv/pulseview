@@ -35,19 +35,17 @@ namespace pv {
 namespace data {
 namespace decode {
 
-Decoder::Decoder(const srd_decoder *const dec) :
-	decoder_(dec),
-	shown_(true)
+Decoder::Decoder(const srd_decoder *const dec) : decoder_(dec), shown_(true)
 {
 }
 
 Decoder::~Decoder()
 {
-	for (auto& option : options_)
+	for (auto &option : options_)
 		g_variant_unref(option.second);
 }
 
-const srd_decoder* Decoder::decoder() const
+const srd_decoder *Decoder::decoder() const
 {
 	return decoder_;
 }
@@ -62,19 +60,20 @@ void Decoder::show(bool show)
 	shown_ = show;
 }
 
-const map<const srd_channel*, shared_ptr<data::SignalBase> >&
+const map<const srd_channel *, shared_ptr<data::SignalBase>> &
 Decoder::channels() const
 {
 	return channels_;
 }
 
-void Decoder::set_channels(std::map<const srd_channel*,
-	std::shared_ptr<data::SignalBase> > channels)
+void Decoder::set_channels(
+	std::map<const srd_channel *, std::shared_ptr<data::SignalBase>>
+		channels)
 {
 	channels_ = channels;
 }
 
-const std::map<std::string, GVariant*>& Decoder::options() const
+const std::map<std::string, GVariant *> &Decoder::options() const
 {
 	return options_;
 }
@@ -89,7 +88,7 @@ void Decoder::set_option(const char *id, GVariant *value)
 bool Decoder::have_required_channels() const
 {
 	for (GSList *l = decoder_->channels; l; l = l->next) {
-		const srd_channel *const pdch = (const srd_channel*)l->data;
+		const srd_channel *const pdch = (const srd_channel *)l->data;
 		assert(pdch);
 		if (channels_.find(pdch) == channels_.end())
 			return false;
@@ -98,10 +97,10 @@ bool Decoder::have_required_channels() const
 	return true;
 }
 
-set< shared_ptr<pv::data::Logic> > Decoder::get_data()
+set<shared_ptr<pv::data::Logic>> Decoder::get_data()
 {
-	set< shared_ptr<pv::data::Logic> > data;
-	for (const auto& channel : channels_) {
+	set<shared_ptr<pv::data::Logic>> data;
+	for (const auto &channel : channels_) {
 		shared_ptr<data::SignalBase> b(channel.second);
 		assert(b);
 		data.insert(b->logic_data());
@@ -110,20 +109,20 @@ set< shared_ptr<pv::data::Logic> > Decoder::get_data()
 	return data;
 }
 
-srd_decoder_inst* Decoder::create_decoder_inst(srd_session *session) const
+srd_decoder_inst *Decoder::create_decoder_inst(srd_session *session) const
 {
 	GHashTable *const opt_hash = g_hash_table_new_full(g_str_hash,
 		g_str_equal, g_free, (GDestroyNotify)g_variant_unref);
 
-	for (const auto& option : options_) {
+	for (const auto &option : options_) {
 		GVariant *const value = option.second;
 		g_variant_ref(value);
-		g_hash_table_replace(opt_hash, (void*)g_strdup(
-			option.first.c_str()), value);
+		g_hash_table_replace(opt_hash,
+			(void *)g_strdup(option.first.c_str()), value);
 	}
 
-	srd_decoder_inst *const decoder_inst = srd_inst_new(
-		session, decoder_->id, opt_hash);
+	srd_decoder_inst *const decoder_inst =
+		srd_inst_new(session, decoder_->id, opt_hash);
 	g_hash_table_destroy(opt_hash);
 
 	if (!decoder_inst)
@@ -133,7 +132,7 @@ srd_decoder_inst* Decoder::create_decoder_inst(srd_session *session) const
 	GHashTable *const channels = g_hash_table_new_full(g_str_hash,
 		g_str_equal, g_free, (GDestroyNotify)g_variant_unref);
 
-	for (const auto& channel : channels_) {
+	for (const auto &channel : channels_) {
 		shared_ptr<data::SignalBase> b(channel.second);
 		GVariant *const gvar = g_variant_new_int32(b->index());
 		g_variant_ref_sink(gvar);

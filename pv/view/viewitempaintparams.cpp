@@ -29,10 +29,8 @@ namespace views {
 namespace TraceView {
 
 ViewItemPaintParams::ViewItemPaintParams(
-	const QRect &rect, double scale, const pv::util::Timestamp& offset) :
-	rect_(rect),
-	scale_(scale),
-	offset_(offset)
+	const QRect &rect, double scale, const pv::util::Timestamp &offset)
+    : rect_(rect), scale_(scale), offset_(offset)
 {
 	assert(scale > 0.0);
 }

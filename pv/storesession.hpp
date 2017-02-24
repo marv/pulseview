@@ -67,7 +67,7 @@ public:
 
 	std::pair<int, int> progress() const;
 
-	const QString& error() const;
+	const QString &error() const;
 
 	bool start();
 
@@ -76,8 +76,10 @@ public:
 	void cancel();
 
 private:
-	void store_proc(std::vector< std::shared_ptr<data::SignalBase> > achannel_list,
-		std::vector< std::shared_ptr<pv::data::AnalogSegment> > asegment_list,
+	void store_proc(
+		std::vector<std::shared_ptr<data::SignalBase>> achannel_list,
+		std::vector<std::shared_ptr<pv::data::AnalogSegment>>
+			asegment_list,
 		std::shared_ptr<pv::data::LogicSegment> lsegment);
 
 Q_SIGNALS:

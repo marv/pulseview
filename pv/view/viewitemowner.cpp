@@ -19,9 +19,9 @@
 
 #include <cassert>
 
+#include "trace.hpp"
 #include "tracetreeitem.hpp"
 #include "tracetreeitemowner.hpp"
-#include "trace.hpp"
 
 using std::dynamic_pointer_cast;
 using std::max;

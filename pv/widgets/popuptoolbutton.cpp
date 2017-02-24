@@ -24,14 +24,13 @@
 namespace pv {
 namespace widgets {
 
-PopupToolButton::PopupToolButton(QWidget *parent) :
-	QToolButton(parent),
-	popup_(nullptr)
+PopupToolButton::PopupToolButton(QWidget *parent)
+    : QToolButton(parent), popup_(nullptr)
 {
 	connect(this, SIGNAL(clicked(bool)), this, SLOT(on_clicked(bool)));
 }
 
-Popup* PopupToolButton::popup() const
+Popup *PopupToolButton::popup() const
 {
 	return popup_;
 }
@@ -49,7 +48,8 @@ void PopupToolButton::on_clicked(bool)
 
 	const QRect r = rect();
 	popup_->set_position(mapToGlobal(QPoint((r.left() + r.right()) / 2,
-		((r.top() + r.bottom() * 3) / 4))), Popup::Bottom);
+				     ((r.top() + r.bottom() * 3) / 4))),
+		Popup::Bottom);
 	popup_->show();
 }
 

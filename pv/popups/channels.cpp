@@ -63,13 +63,13 @@ using sigrok::Device;
 namespace pv {
 namespace popups {
 
-Channels::Channels(Session &session, QWidget *parent) :
-	Popup(parent),
-	session_(session),
-	updating_channels_(false),
-	enable_all_channels_(tr("Enable All"), this),
-	disable_all_channels_(tr("Disable All"), this),
-	check_box_mapper_(this)
+Channels::Channels(Session &session, QWidget *parent)
+    : Popup(parent),
+      session_(session),
+      updating_channels_(false),
+      enable_all_channels_(tr("Enable All"), this),
+      disable_all_channels_(tr("Disable All"), this),
+      check_box_mapper_(this)
 {
 	// Create the layout
 	setLayout(&layout_);
@@ -78,9 +78,9 @@ Channels::Channels(Session &session, QWidget *parent) :
 	assert(device);
 
 	// Collect a set of signals
-	map<shared_ptr<Channel>, shared_ptr<SignalBase> > signal_map;
+	map<shared_ptr<Channel>, shared_ptr<SignalBase>> signal_map;
 
-	unordered_set< shared_ptr<SignalBase> > sigs;
+	unordered_set<shared_ptr<SignalBase>> sigs;
 	for (const shared_ptr<data::SignalBase> b : session_.signalbases())
 		sigs.insert(b);
 
@@ -92,7 +92,7 @@ Channels::Channels(Session &session, QWidget *parent) :
 		shared_ptr<ChannelGroup> group = entry.second;
 		// Make a set of signals, and removed this signals from the
 		// signal map.
-		vector< shared_ptr<SignalBase> > group_sigs;
+		vector<shared_ptr<SignalBase>> group_sigs;
 		for (auto channel : group->channels()) {
 			const auto iter = signal_map.find(channel);
 
@@ -107,10 +107,11 @@ Channels::Channels(Session &session, QWidget *parent) :
 	}
 
 	// Make a vector of the remaining channels
-	vector< shared_ptr<SignalBase> > global_sigs;
+	vector<shared_ptr<SignalBase>> global_sigs;
 	for (auto channel : device->channels()) {
-		const map<shared_ptr<Channel>, shared_ptr<SignalBase> >::
-			const_iterator iter = signal_map.find(channel);
+		const map<shared_ptr<Channel>,
+			shared_ptr<SignalBase>>::const_iterator iter =
+			signal_map.find(channel);
 		if (iter != signal_map.end())
 			global_sigs.push_back((*iter).second);
 	}
@@ -119,10 +120,10 @@ Channels::Channels(Session &session, QWidget *parent) :
 	populate_group(nullptr, global_sigs);
 
 	// Create the enable/disable all buttons
-	connect(&enable_all_channels_, SIGNAL(clicked()),
-		this, SLOT(enable_all_channels()));
-	connect(&disable_all_channels_, SIGNAL(clicked()),
-		this, SLOT(disable_all_channels()));
+	connect(&enable_all_channels_, SIGNAL(clicked()), this,
+		SLOT(enable_all_channels()));
+	connect(&disable_all_channels_, SIGNAL(clicked()), this,
+		SLOT(disable_all_channels()));
 
 	enable_all_channels_.setFlat(true);
 	disable_all_channels_.setFlat(true);
@@ -134,17 +135,17 @@ Channels::Channels(Session &session, QWidget *parent) :
 	layout_.addRow(&buttons_bar_);
 
 	// Connect the check-box signal mapper
-	connect(&check_box_mapper_, SIGNAL(mapped(QWidget*)),
-		this, SLOT(on_channel_checked(QWidget*)));
+	connect(&check_box_mapper_, SIGNAL(mapped(QWidget *)), this,
+		SLOT(on_channel_checked(QWidget *)));
 }
 
 void Channels::set_all_channels(bool set)
 {
 	updating_channels_ = true;
 
-	for (map<QCheckBox*, shared_ptr<SignalBase> >::const_iterator i =
+	for (map<QCheckBox *, shared_ptr<SignalBase>>::const_iterator i =
 			check_box_signal_map_.begin();
-			i != check_box_signal_map_.end(); i++) {
+		i != check_box_signal_map_.end(); i++) {
 		const shared_ptr<SignalBase> sig = (*i).second;
 		assert(sig);
 
@@ -156,7 +157,7 @@ void Channels::set_all_channels(bool set)
 }
 
 void Channels::populate_group(shared_ptr<ChannelGroup> group,
-	const vector< shared_ptr<SignalBase> > sigs)
+	const vector<shared_ptr<SignalBase>> sigs)
 {
 	using pv::binding::Device;
 
@@ -174,31 +175,29 @@ void Channels::populate_group(shared_ptr<ChannelGroup> group,
 			QString("<h3>%1</h3>").arg(group->name().c_str())));
 
 	// Create the channel group grid
-	QGridLayout *const channel_grid =
-		create_channel_group_grid(sigs);
+	QGridLayout *const channel_grid = create_channel_group_grid(sigs);
 	layout_.addRow(channel_grid);
 
 	// Create the channel group options
-	if (binding)
-	{
+	if (binding) {
 		binding->add_properties_to_form(&layout_, true);
 		group_bindings_.push_back(binding);
 	}
 }
 
-QGridLayout* Channels::create_channel_group_grid(
-	const vector< shared_ptr<SignalBase> > sigs)
+QGridLayout *Channels::create_channel_group_grid(
+	const vector<shared_ptr<SignalBase>> sigs)
 {
 	int row = 0, col = 0;
 	QGridLayout *const grid = new QGridLayout();
 
-	for (const shared_ptr<SignalBase>& sig : sigs) {
+	for (const shared_ptr<SignalBase> &sig : sigs) {
 		assert(sig);
 
 		QCheckBox *const checkbox = new QCheckBox(sig->name());
 		check_box_mapper_.setMapping(checkbox, checkbox);
-		connect(checkbox, SIGNAL(toggled(bool)),
-			&check_box_mapper_, SLOT(map()));
+		connect(checkbox, SIGNAL(toggled(bool)), &check_box_mapper_,
+			SLOT(map()));
 
 		grid->addWidget(checkbox, row, col);
 
@@ -217,9 +216,9 @@ void Channels::showEvent(QShowEvent *event)
 
 	updating_channels_ = true;
 
-	for (map<QCheckBox*, shared_ptr<SignalBase> >::const_iterator i =
+	for (map<QCheckBox *, shared_ptr<SignalBase>>::const_iterator i =
 			check_box_signal_map_.begin();
-			i != check_box_signal_map_.end(); i++) {
+		i != check_box_signal_map_.end(); i++) {
 		const shared_ptr<SignalBase> sig = (*i).second;
 		assert(sig);
 
@@ -234,12 +233,12 @@ void Channels::on_channel_checked(QWidget *widget)
 	if (updating_channels_)
 		return;
 
-	QCheckBox *const check_box = (QCheckBox*)widget;
+	QCheckBox *const check_box = (QCheckBox *)widget;
 	assert(check_box);
 
 	// Look up the signal of this check-box
-	map< QCheckBox*, shared_ptr<SignalBase> >::const_iterator iter =
-		check_box_signal_map_.find((QCheckBox*)check_box);
+	map<QCheckBox *, shared_ptr<SignalBase>>::const_iterator iter =
+		check_box_signal_map_.find((QCheckBox *)check_box);
 	assert(iter != check_box_signal_map_.end());
 
 	const shared_ptr<SignalBase> s = (*iter).second;

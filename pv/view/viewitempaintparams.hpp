@@ -32,46 +32,29 @@ namespace TraceView {
 class ViewItemPaintParams
 {
 public:
-	ViewItemPaintParams(
-		const QRect &rect, double scale, const pv::util::Timestamp& offset);
+	ViewItemPaintParams(const QRect &rect, double scale,
+		const pv::util::Timestamp &offset);
 
-	QRect rect() const {
-		return rect_;
-	}
+	QRect rect() const { return rect_; }
 
-	double scale() const {
-		return scale_;
-	}
+	double scale() const { return scale_; }
 
-	const pv::util::Timestamp& offset() const {
-		return offset_;
-	}
+	const pv::util::Timestamp &offset() const { return offset_; }
 
-	int left() const {
-		return rect_.left();
-	}
+	int left() const { return rect_.left(); }
 
-	int right() const {
-		return rect_.right();
-	}
+	int right() const { return rect_.right(); }
 
-	int top() const {
-		return rect_.top();
-	}
+	int top() const { return rect_.top(); }
 
-	int bottom() const {
-		return rect_.bottom();
-	}
+	int bottom() const { return rect_.bottom(); }
 
-	int width() const {
-		return rect_.width();
-	}
+	int width() const { return rect_.width(); }
 
-	int height() const {
-		return rect_.height();
-	}
+	int height() const { return rect_.height(); }
 
-	double pixels_offset() const {
+	double pixels_offset() const
+	{
 		return (offset_ / scale_).convert_to<double>();
 	}
 

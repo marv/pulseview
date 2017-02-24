@@ -23,12 +23,12 @@
 
 #include "timemarker.hpp"
 
-#include "view.hpp"
 #include "pv/widgets/timestampspinbox.hpp"
+#include "view.hpp"
 
 #include <QApplication>
-#include <QFormLayout>
 #include <QFontMetrics>
+#include <QFormLayout>
 #include <QPainter>
 
 #include <pv/widgets/popup.hpp>
@@ -43,22 +43,22 @@ namespace TraceView {
 const int TimeMarker::ArrowSize = 4;
 
 TimeMarker::TimeMarker(
-	View &view, const QColor &colour, const pv::util::Timestamp& time) :
-	TimeItem(view),
-	colour_(colour),
-	time_(time),
-	value_action_(nullptr),
-	value_widget_(nullptr),
-	updating_value_widget_(false)
+	View &view, const QColor &colour, const pv::util::Timestamp &time)
+    : TimeItem(view),
+      colour_(colour),
+      time_(time),
+      value_action_(nullptr),
+      value_widget_(nullptr),
+      updating_value_widget_(false)
 {
 }
 
-const pv::util::Timestamp& TimeMarker::time() const
+const pv::util::Timestamp &TimeMarker::time() const
 {
 	return time_;
 }
 
-void TimeMarker::set_time(const pv::util::Timestamp& time)
+void TimeMarker::set_time(const pv::util::Timestamp &time)
 {
 	time_ = time;
 
@@ -89,7 +89,7 @@ QRectF TimeMarker::label_rect(const QRectF &rect) const
 		m.height());
 	const QSizeF label_size(text_size + LabelPadding * 2);
 	const float top = rect.height() - label_size.height() -
-		TimeMarker::ArrowSize - 0.5f;
+			  TimeMarker::ArrowSize - 0.5f;
 	const float x = get_x();
 
 	return QRectF(QPointF(x - label_size.width() / 2, top), label_size);
@@ -107,18 +107,15 @@ void TimeMarker::paint_label(QPainter &p, const QRect &rect, bool hover)
 	if (!enabled())
 		return;
 
-	const qreal x = ((time_ - view_.offset()) / view_.scale()).convert_to<qreal>();
+	const qreal x =
+		((time_ - view_.offset()) / view_.scale()).convert_to<qreal>();
 	const QRectF r(label_rect(rect));
 
-	const QPointF points[] = {
-		r.topLeft(),
-		r.bottomLeft(),
+	const QPointF points[] = {r.topLeft(), r.bottomLeft(),
 		QPointF(max(r.left(), x - ArrowSize), r.bottom()),
 		QPointF(x, rect.bottom()),
 		QPointF(min(r.right(), x + ArrowSize), r.bottom()),
-		r.bottomRight(),
-		r.topRight()
-	};
+		r.bottomRight(), r.topRight()};
 
 	const QPointF highlight_points[] = {
 		QPointF(r.left() + 1, r.top() + 1),
@@ -163,13 +160,13 @@ void TimeMarker::paint_fore(QPainter &p, const ViewItemPaintParams &pp)
 	p.drawLine(QPointF(x, pp.top()), QPointF(x, pp.bottom()));
 }
 
-pv::widgets::Popup* TimeMarker::create_popup(QWidget *parent)
+pv::widgets::Popup *TimeMarker::create_popup(QWidget *parent)
 {
 	using pv::widgets::Popup;
 
 	Popup *const popup = new Popup(parent);
-	popup->set_position(parent->mapToGlobal(
-		point(parent->rect())), Popup::Bottom);
+	popup->set_position(
+		parent->mapToGlobal(point(parent->rect())), Popup::Bottom);
 
 	QFormLayout *const form = new QFormLayout(popup);
 	popup->setLayout(form);
@@ -177,15 +174,16 @@ pv::widgets::Popup* TimeMarker::create_popup(QWidget *parent)
 	value_widget_ = new pv::widgets::TimestampSpinBox(parent);
 	value_widget_->setValue(time_);
 
-	connect(value_widget_, SIGNAL(valueChanged(const pv::util::Timestamp&)),
-		this, SLOT(on_value_changed(const pv::util::Timestamp&)));
+	connect(value_widget_,
+		SIGNAL(valueChanged(const pv::util::Timestamp &)), this,
+		SLOT(on_value_changed(const pv::util::Timestamp &)));
 
 	form->addRow(tr("Time"), value_widget_);
 
 	return popup;
 }
 
-void TimeMarker::on_value_changed(const pv::util::Timestamp& value)
+void TimeMarker::on_value_changed(const pv::util::Timestamp &value)
 {
 	if (!updating_value_widget_)
 		set_time(value);

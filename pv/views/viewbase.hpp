@@ -43,28 +43,28 @@ class Signal;
 
 namespace views {
 
-enum ViewType {
-	ViewTypeTrace,
-	ViewTypeTabularDecode
-};
+enum ViewType { ViewTypeTrace, ViewTypeTabularDecode };
 
-class ViewBase : public QWidget {
+class ViewBase : public QWidget
+{
 	Q_OBJECT
 
 public:
 	explicit ViewBase(Session &session, QWidget *parent = 0);
 
-	Session& session();
-	const Session& session() const;
+	Session &session();
+	const Session &session() const;
 
 	virtual void clear_signals();
 
 #ifdef ENABLE_DECODE
 	virtual void clear_decode_signals();
 
-	virtual void add_decode_signal(std::shared_ptr<data::SignalBase> signalbase);
+	virtual void add_decode_signal(
+		std::shared_ptr<data::SignalBase> signalbase);
 
-	virtual void remove_decode_signal(std::shared_ptr<data::SignalBase> signalbase);
+	virtual void remove_decode_signal(
+		std::shared_ptr<data::SignalBase> signalbase);
 #endif
 
 	virtual void save_settings(QSettings &settings) const;

@@ -21,8 +21,8 @@
 #include <libsigrokdecode/libsigrokdecode.h> /* First, so we avoid a _POSIX_C_SOURCE warning. */
 #endif
 
-#include <stdint.h>
 #include <libsigrokcxx/libsigrokcxx.hpp>
+#include <stdint.h>
 
 #include <getopt.h>
 
@@ -36,9 +36,9 @@
 #include "pv/devicemanager.hpp"
 #include "pv/mainwindow.hpp"
 #ifdef ANDROID
-#include <libsigrokandroidutils/libsigrokandroidutils.h>
 #include "android/assetreader.hpp"
 #include "android/loghandler.hpp"
+#include <libsigrokandroidutils/libsigrokandroidutils.h>
 #endif
 
 #include "config.h"
@@ -60,10 +60,12 @@ void usage()
 		"\n"
 		"Application Options:\n"
 		"  -V, --version                   Show release version\n"
-		"  -l, --loglevel                  Set libsigrok/libsigrokdecode loglevel\n"
+		"  -l, --loglevel                  Set "
+		"libsigrok/libsigrokdecode loglevel\n"
 		"  -i, --input-file                Load input from file\n"
 		"  -I, --input-format              Input format\n"
-		"\n", PV_BIN_NAME, PV_DESCRIPTION);
+		"\n",
+		PV_BIN_NAME, PV_DESCRIPTION);
 }
 
 int main(int argc, char *argv[])
@@ -88,11 +90,10 @@ int main(int argc, char *argv[])
 			{"loglevel", required_argument, nullptr, 'l'},
 			{"input-file", required_argument, nullptr, 'i'},
 			{"input-format", required_argument, nullptr, 'I'},
-			{nullptr, 0, nullptr, 0}
-		};
+			{nullptr, 0, nullptr, 0}};
 
-		const int c = getopt_long(argc, argv,
-			"l:Vh?i:I:", long_options, nullptr);
+		const int c = getopt_long(
+			argc, argv, "l:Vh?i:I:", long_options, nullptr);
 		if (c == -1)
 			break;
 
@@ -107,8 +108,7 @@ int main(int argc, char *argv[])
 			fprintf(stdout, "%s %s\n", PV_TITLE, PV_VERSION_STRING);
 			return 0;
 
-		case 'l':
-		{
+		case 'l': {
 			const int loglevel = atoi(optarg);
 			context->set_log_level(sigrok::LogLevel::get(loglevel));
 
@@ -159,8 +159,8 @@ int main(int argc, char *argv[])
 			pv::DeviceManager device_manager(context);
 
 			// Initialise the main window
-			pv::MainWindow w(device_manager,
-				open_file, open_file_format);
+			pv::MainWindow w(
+				device_manager, open_file, open_file_format);
 			w.show();
 
 #ifdef ENABLE_SIGNALS
@@ -168,14 +168,14 @@ int main(int argc, char *argv[])
 				SignalHandler *const handler =
 					new SignalHandler(&w);
 				QObject::connect(handler,
-					SIGNAL(int_received()),
-					&w, SLOT(close()));
+					SIGNAL(int_received()), &w,
+					SLOT(close()));
 				QObject::connect(handler,
-					SIGNAL(term_received()),
-					&w, SLOT(close()));
+					SIGNAL(term_received()), &w,
+					SLOT(close()));
 			} else {
-				qWarning() <<
-					"Could not prepare signal handler.";
+				qWarning()
+					<< "Could not prepare signal handler.";
 			}
 #endif
 

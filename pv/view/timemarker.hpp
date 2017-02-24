@@ -33,7 +33,7 @@ class QRect;
 
 namespace pv {
 namespace widgets {
-	class TimestampSpinBox;
+class TimestampSpinBox;
 }
 
 namespace views {
@@ -55,18 +55,19 @@ protected:
 	 * @param colour A reference to the colour of this cursor.
 	 * @param time The time to set the flag to.
 	 */
-	TimeMarker(View &view, const QColor &colour, const pv::util::Timestamp& time);
+	TimeMarker(View &view, const QColor &colour,
+		const pv::util::Timestamp &time);
 
 public:
 	/**
 	 * Gets the time of the marker.
 	 */
-	const pv::util::Timestamp& time() const;
+	const pv::util::Timestamp &time() const;
 
 	/**
 	 * Sets the time of the marker.
 	 */
-	void set_time(const pv::util::Timestamp& time) override;
+	void set_time(const pv::util::Timestamp &time) override;
 
 	float get_x() const override;
 
@@ -110,10 +111,10 @@ public:
 	 */
 	void paint_fore(QPainter &p, const ViewItemPaintParams &pp) override;
 
-	virtual pv::widgets::Popup* create_popup(QWidget *parent) override;
+	virtual pv::widgets::Popup *create_popup(QWidget *parent) override;
 
 private Q_SLOTS:
-	void on_value_changed(const pv::util::Timestamp& value);
+	void on_value_changed(const pv::util::Timestamp &value);
 
 protected:
 	const QColor &colour_;

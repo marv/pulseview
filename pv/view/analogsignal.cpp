@@ -52,14 +52,14 @@ namespace views {
 namespace TraceView {
 
 const QColor AnalogSignal::SignalColours[4] = {
-	QColor(0xC4, 0xA0, 0x00),	// Yellow
-	QColor(0x87, 0x20, 0x7A),	// Magenta
-	QColor(0x20, 0x4A, 0x87),	// Blue
-	QColor(0x4E, 0x9A, 0x06)	// Green
+	QColor(0xC4, 0xA0, 0x00), // Yellow
+	QColor(0x87, 0x20, 0x7A), // Magenta
+	QColor(0x20, 0x4A, 0x87), // Blue
+	QColor(0x4E, 0x9A, 0x06)  // Green
 };
 
-const QColor AnalogSignal::GridMajorColor = QColor(0, 0, 0, 40*256/100);
-const QColor AnalogSignal::GridMinorColor = QColor(0, 0, 0, 20*256/100);
+const QColor AnalogSignal::GridMajorColor = QColor(0, 0, 0, 40 * 256 / 100);
+const QColor AnalogSignal::GridMinorColor = QColor(0, 0, 0, 20 * 256 / 100);
 
 const float AnalogSignal::EnvelopeThreshold = 256.0f;
 
@@ -71,24 +71,25 @@ const int AnalogSignal::InfoTextMarginRight = 20;
 const int AnalogSignal::InfoTextMarginBottom = 5;
 
 AnalogSignal::AnalogSignal(
-	pv::Session &session,
-	shared_ptr<data::SignalBase> base) :
-	Signal(session, base),
-	scale_index_(4), // 20 per div
-	scale_index_drag_offset_(0),
-	div_height_(3 * QFontMetrics(QApplication::font()).height()),
-	pos_vdivs_(1),
-	neg_vdivs_(1),
-	resolution_(0),
-	autoranging_(1)
+	pv::Session &session, shared_ptr<data::SignalBase> base)
+    : Signal(session, base),
+      scale_index_(4), // 20 per div
+      scale_index_drag_offset_(0),
+      div_height_(3 * QFontMetrics(QApplication::font()).height()),
+      pos_vdivs_(1),
+      neg_vdivs_(1),
+      resolution_(0),
+      autoranging_(1)
 {
-	pv::data::Analog* analog_data =
-		dynamic_cast<pv::data::Analog*>(data().get());
+	pv::data::Analog *analog_data =
+		dynamic_cast<pv::data::Analog *>(data().get());
 
-	connect(analog_data, SIGNAL(samples_added(QObject*, uint64_t, uint64_t)),
-		this, SLOT(on_samples_added()));
+	connect(analog_data,
+		SIGNAL(samples_added(QObject *, uint64_t, uint64_t)), this,
+		SLOT(on_samples_added()));
 
-	base_->set_colour(SignalColours[base_->index() % countof(SignalColours)]);
+	base_->set_colour(
+		SignalColours[base_->index() % countof(SignalColours)]);
 	update_scale();
 }
 
@@ -133,16 +134,14 @@ int AnalogSignal::scale_handle_offset() const
 {
 	const int h = (pos_vdivs_ + neg_vdivs_) * div_height_;
 
-	return ((scale_index_drag_offset_ - scale_index_) *
-		h / 4) - h / 2;
+	return ((scale_index_drag_offset_ - scale_index_) * h / 4) - h / 2;
 }
 
 void AnalogSignal::scale_handle_dragged(int offset)
 {
 	const int h = (pos_vdivs_ + neg_vdivs_) * div_height_;
 
-	scale_index_ = scale_index_drag_offset_ -
-		(offset + h / 2) / (h / 4);
+	scale_index_ = scale_index_drag_offset_ - (offset + h / 2) / (h / 4);
 
 	update_scale();
 }
@@ -173,35 +172,35 @@ void AnalogSignal::paint_mid(QPainter &p, const ViewItemPaintParams &pp)
 
 	paint_grid(p, y, pp.left(), pp.right());
 
-	const deque< shared_ptr<pv::data::AnalogSegment> > &segments =
+	const deque<shared_ptr<pv::data::AnalogSegment>> &segments =
 		base_->analog_data()->analog_segments();
 	if (segments.empty())
 		return;
 
-	const shared_ptr<pv::data::AnalogSegment> &segment =
-		segments.front();
+	const shared_ptr<pv::data::AnalogSegment> &segment = segments.front();
 
 	const double pixels_offset = pp.pixels_offset();
 	const double samplerate = max(1.0, segment->samplerate());
-	const pv::util::Timestamp& start_time = segment->start_time();
+	const pv::util::Timestamp &start_time = segment->start_time();
 	const int64_t last_sample = segment->get_sample_count() - 1;
 	const double samples_per_pixel = samplerate * pp.scale();
-	const pv::util::Timestamp start = samplerate * (pp.offset() - start_time);
+	const pv::util::Timestamp start =
+		samplerate * (pp.offset() - start_time);
 	const pv::util::Timestamp end = start + samples_per_pixel * pp.width();
 
-	const int64_t start_sample = min(max(floor(start).convert_to<int64_t>(),
-		(int64_t)0), last_sample);
-	const int64_t end_sample = min(max((ceil(end) + 1).convert_to<int64_t>(),
-		(int64_t)0), last_sample);
+	const int64_t start_sample =
+		min(max(floor(start).convert_to<int64_t>(), (int64_t)0),
+			last_sample);
+	const int64_t end_sample =
+		min(max((ceil(end) + 1).convert_to<int64_t>(), (int64_t)0),
+			last_sample);
 
 	if (samples_per_pixel < EnvelopeThreshold)
-		paint_trace(p, segment, y, pp.left(),
-			start_sample, end_sample,
+		paint_trace(p, segment, y, pp.left(), start_sample, end_sample,
 			pixels_offset, samples_per_pixel);
 	else
-		paint_envelope(p, segment, y, pp.left(),
-			start_sample, end_sample,
-			pixels_offset, samples_per_pixel);
+		paint_envelope(p, segment, y, pp.left(), start_sample,
+			end_sample, pixels_offset, samples_per_pixel);
 }
 
 void AnalogSignal::paint_fore(QPainter &p, const ViewItemPaintParams &pp)
@@ -217,10 +216,9 @@ void AnalogSignal::paint_fore(QPainter &p, const ViewItemPaintParams &pp)
 	p.setPen(base_->colour());
 	p.setFont(QApplication::font());
 
-	const QRectF bounding_rect = QRectF(pp.left(),
-			y + v_extents().first,
-			pp.width() - InfoTextMarginRight,
-			v_extents().second - v_extents().first - InfoTextMarginBottom);
+	const QRectF bounding_rect = QRectF(pp.left(), y + v_extents().first,
+		pp.width() - InfoTextMarginRight,
+		v_extents().second - v_extents().first - InfoTextMarginBottom);
 
 	p.drawText(bounding_rect, Qt::AlignRight | Qt::AlignBottom, infotext);
 }
@@ -271,23 +269,23 @@ void AnalogSignal::paint_grid(QPainter &p, int y, int left, int right)
 }
 
 void AnalogSignal::paint_trace(QPainter &p,
-	const shared_ptr<pv::data::AnalogSegment> &segment,
-	int y, int left, const int64_t start, const int64_t end,
-	const double pixels_offset, const double samples_per_pixel)
+	const shared_ptr<pv::data::AnalogSegment> &segment, int y, int left,
+	const int64_t start, const int64_t end, const double pixels_offset,
+	const double samples_per_pixel)
 {
 	p.setPen(base_->colour());
 
 	QPointF *points = new QPointF[end - start];
 	QPointF *point = points;
 
-	pv::data::SegmentAnalogDataIterator* it =
+	pv::data::SegmentAnalogDataIterator *it =
 		segment->begin_sample_iteration(start);
 
 	for (int64_t sample = start; sample != end; sample++) {
-		const float x = (sample / samples_per_pixel -
-			pixels_offset) + left;
+		const float x =
+			(sample / samples_per_pixel - pixels_offset) + left;
 
-		*point++ = QPointF(x, y - *((float*)it->value) * scale_);
+		*point++ = QPointF(x, y - *((float *)it->value) * scale_);
 		segment->continue_sample_iteration(it, 1);
 	}
 	segment->end_sample_iteration(it);
@@ -298,9 +296,9 @@ void AnalogSignal::paint_trace(QPainter &p,
 }
 
 void AnalogSignal::paint_envelope(QPainter &p,
-	const shared_ptr<pv::data::AnalogSegment> &segment,
-	int y, int left, const int64_t start, const int64_t end,
-	const double pixels_offset, const double samples_per_pixel)
+	const shared_ptr<pv::data::AnalogSegment> &segment, int y, int left,
+	const int64_t start, const int64_t end, const double pixels_offset,
+	const double samples_per_pixel)
 {
 	using pv::data::AnalogSegment;
 
@@ -316,16 +314,18 @@ void AnalogSignal::paint_envelope(QPainter &p,
 	QRectF *const rects = new QRectF[e.length];
 	QRectF *rect = rects;
 
-	for (uint64_t sample = 0; sample < e.length-1; sample++) {
-		const float x = ((e.scale * sample + e.start) /
-			samples_per_pixel - pixels_offset) + left;
+	for (uint64_t sample = 0; sample < e.length - 1; sample++) {
+		const float x =
+			((e.scale * sample + e.start) / samples_per_pixel -
+				pixels_offset) +
+			left;
 		const AnalogSegment::EnvelopeSample *const s =
 			e.samples + sample;
 
 		// We overlap this sample with the next so that vertical
 		// gaps do not appear during steep rising or falling edges
-		const float b = y - max(s->max, (s+1)->min) * scale_;
-		const float t = y - min(s->min, (s+1)->max) * scale_;
+		const float b = y - max(s->max, (s + 1)->min) * scale_;
+		const float t = y - min(s->min, (s + 1)->max) * scale_;
 
 		float h = b - t;
 		if (h >= 0.0f && h <= 1.0f)
@@ -348,8 +348,7 @@ float AnalogSignal::get_resolution(int scale_index)
 
 	const int offset = std::numeric_limits<int>::max() / (2 * countof(seq));
 	const std::div_t d = std::div(
-		(int)(scale_index + countof(seq) * offset),
-		countof(seq));
+		(int)(scale_index + countof(seq) * offset), countof(seq));
 
 	return powf(10.0f, d.quot - offset) * seq[d.rem];
 }
@@ -362,7 +361,7 @@ void AnalogSignal::update_scale()
 
 void AnalogSignal::perform_autoranging(bool force_update)
 {
-	const deque< shared_ptr<pv::data::AnalogSegment> > &segments =
+	const deque<shared_ptr<pv::data::AnalogSegment>> &segments =
 		base_->analog_data()->analog_segments();
 
 	if (segments.empty())
@@ -396,8 +395,9 @@ void AnalogSignal::perform_autoranging(bool force_update)
 	}
 
 	double min_value_per_div;
-	if ((pos_vdivs_ > 0) && (neg_vdivs_ >  0))
-		min_value_per_div = std::max(max / pos_vdivs_, -min / neg_vdivs_);
+	if ((pos_vdivs_ > 0) && (neg_vdivs_ > 0))
+		min_value_per_div =
+			std::max(max / pos_vdivs_, -min / neg_vdivs_);
 	else if (pos_vdivs_ > 0)
 		min_value_per_div = max / pos_vdivs_;
 	else
@@ -424,15 +424,15 @@ void AnalogSignal::populate_popup_form(QWidget *parent, QFormLayout *form)
 	QSpinBox *pvdiv_sb = new QSpinBox(parent);
 	pvdiv_sb->setRange(0, MaximumVDivs);
 	pvdiv_sb->setValue(pos_vdivs_);
-	connect(pvdiv_sb, SIGNAL(valueChanged(int)),
-		this, SLOT(on_pos_vdivs_changed(int)));
+	connect(pvdiv_sb, SIGNAL(valueChanged(int)), this,
+		SLOT(on_pos_vdivs_changed(int)));
 	layout->addRow(tr("Number of pos vertical divs"), pvdiv_sb);
 
 	QSpinBox *nvdiv_sb = new QSpinBox(parent);
 	nvdiv_sb->setRange(0, MaximumVDivs);
 	nvdiv_sb->setValue(neg_vdivs_);
-	connect(nvdiv_sb, SIGNAL(valueChanged(int)),
-		this, SLOT(on_neg_vdivs_changed(int)));
+	connect(nvdiv_sb, SIGNAL(valueChanged(int)), this,
+		SLOT(on_neg_vdivs_changed(int)));
 	layout->addRow(tr("Number of neg vertical divs"), nvdiv_sb);
 
 	// Add the vertical resolution
@@ -446,8 +446,8 @@ void AnalogSignal::populate_popup_form(QWidget *parent, QFormLayout *form)
 	const int cur_idx = resolution_cb_->findData(QVariant(scale_index_));
 	resolution_cb_->setCurrentIndex(cur_idx);
 
-	connect(resolution_cb_, SIGNAL(currentIndexChanged(int)),
-		this, SLOT(on_resolution_changed(int)));
+	connect(resolution_cb_, SIGNAL(currentIndexChanged(int)), this,
+		SLOT(on_resolution_changed(int)));
 
 	QGridLayout *const vdiv_layout = new QGridLayout;
 	QLabel *const vdiv_unit = new QLabel(tr("V/div"));
@@ -457,11 +457,12 @@ void AnalogSignal::populate_popup_form(QWidget *parent, QFormLayout *form)
 	layout->addRow(tr("Vertical resolution"), vdiv_layout);
 
 	// Add the autoranging checkbox
-	QCheckBox* autoranging_cb = new QCheckBox();
-	autoranging_cb->setCheckState(autoranging_ ? Qt::Checked : Qt::Unchecked);
+	QCheckBox *autoranging_cb = new QCheckBox();
+	autoranging_cb->setCheckState(
+		autoranging_ ? Qt::Checked : Qt::Unchecked);
 
-	connect(autoranging_cb, SIGNAL(stateChanged(int)),
-		this, SLOT(on_autoranging_changed(int)));
+	connect(autoranging_cb, SIGNAL(stateChanged(int)), this,
+		SLOT(on_autoranging_changed(int)));
 
 	layout->addRow(tr("Autoranging"), autoranging_cb);
 
@@ -473,7 +474,8 @@ void AnalogSignal::on_samples_added()
 	perform_autoranging();
 
 	if (owner_) {
-		// Call order is important, otherwise the lazy event handler won't work
+		// Call order is important, otherwise the lazy event handler
+		// won't work
 		owner_->extents_changed(false, true);
 		owner_->row_item_appearance_changed(false, true);
 	}
@@ -487,7 +489,8 @@ void AnalogSignal::on_pos_vdivs_changed(int vdivs)
 		perform_autoranging(true);
 
 	if (owner_) {
-		// Call order is important, otherwise the lazy event handler won't work
+		// Call order is important, otherwise the lazy event handler
+		// won't work
 		owner_->extents_changed(false, true);
 		owner_->row_item_appearance_changed(false, true);
 	}
@@ -501,7 +504,8 @@ void AnalogSignal::on_neg_vdivs_changed(int vdivs)
 		perform_autoranging(true);
 
 	if (owner_) {
-		// Call order is important, otherwise the lazy event handler won't work
+		// Call order is important, otherwise the lazy event handler
+		// won't work
 		owner_->extents_changed(false, true);
 		owner_->row_item_appearance_changed(false, true);
 	}
@@ -524,7 +528,8 @@ void AnalogSignal::on_autoranging_changed(int state)
 		perform_autoranging(true);
 
 	if (owner_) {
-		// Call order is important, otherwise the lazy event handler won't work
+		// Call order is important, otherwise the lazy event handler
+		// won't work
 		owner_->extents_changed(false, true);
 		owner_->row_item_appearance_changed(false, true);
 	}

@@ -32,27 +32,24 @@ using std::shared_ptr;
 namespace pv {
 namespace views {
 
-ViewBase::ViewBase(Session &session, QWidget *parent) :
-	session_(session)
+ViewBase::ViewBase(Session &session, QWidget *parent) : session_(session)
 {
 	(void)parent;
 
-	connect(&session_, SIGNAL(signals_changed()),
-		this, SLOT(signals_changed()));
-	connect(&session_, SIGNAL(capture_state_changed(int)),
-		this, SLOT(capture_state_updated(int)));
-	connect(&session_, SIGNAL(data_received()),
-		this, SLOT(data_updated()));
-	connect(&session_, SIGNAL(frame_ended()),
-		this, SLOT(data_updated()));
+	connect(&session_, SIGNAL(signals_changed()), this,
+		SLOT(signals_changed()));
+	connect(&session_, SIGNAL(capture_state_changed(int)), this,
+		SLOT(capture_state_updated(int)));
+	connect(&session_, SIGNAL(data_received()), this, SLOT(data_updated()));
+	connect(&session_, SIGNAL(frame_ended()), this, SLOT(data_updated()));
 }
 
-Session& ViewBase::session()
+Session &ViewBase::session()
 {
 	return session_;
 }
 
-const Session& ViewBase::session() const
+const Session &ViewBase::session() const
 {
 	return session_;
 }

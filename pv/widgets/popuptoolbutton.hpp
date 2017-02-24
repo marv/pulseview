@@ -34,7 +34,7 @@ class PopupToolButton : public QToolButton
 public:
 	PopupToolButton(QWidget *parent);
 
-	Popup* popup() const;
+	Popup *popup() const;
 
 	void set_popup(Popup *popup);
 

@@ -33,18 +33,15 @@ using sigrok::Device;
 namespace pv {
 namespace popups {
 
-DeviceOptions::DeviceOptions(shared_ptr<Device> device, QWidget *parent) :
-	Popup(parent),
-	device_(device),
-	layout_(this),
-	binding_(device)
+DeviceOptions::DeviceOptions(shared_ptr<Device> device, QWidget *parent)
+    : Popup(parent), device_(device), layout_(this), binding_(device)
 {
 	setLayout(&layout_);
 
 	layout_.addWidget(binding_.get_property_form(this, true));
 }
 
-pv::binding::Device& DeviceOptions::binding()
+pv::binding::Device &DeviceOptions::binding()
 {
 	return binding_;
 }

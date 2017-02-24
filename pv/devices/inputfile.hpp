@@ -64,4 +64,3 @@ private:
 } // namespace pv
 
 #endif // PULSEVIEW_PV_SESSIONS_INPUTFILE_HPP
-

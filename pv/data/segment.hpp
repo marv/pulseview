@@ -23,8 +23,8 @@
 
 #include "pv/util.hpp"
 
-#include <thread>
 #include <mutex>
+#include <thread>
 #include <vector>
 
 namespace SegmentTest {
@@ -42,10 +42,11 @@ struct MaxSize32MultiIterated;
 namespace pv {
 namespace data {
 
-typedef struct {
+typedef struct
+{
 	uint64_t sample_index, chunk_num, chunk_offs;
-	uint8_t* chunk;
-	uint8_t* value;
+	uint8_t *chunk;
+	uint8_t *value;
 } SegmentRawDataIterator;
 
 class Segment
@@ -60,7 +61,7 @@ public:
 
 	uint64_t get_sample_count() const;
 
-	const pv::util::Timestamp& start_time() const;
+	const pv::util::Timestamp &start_time() const;
 
 	double samplerate() const;
 	void set_samplerate(double samplerate);
@@ -72,15 +73,16 @@ public:
 protected:
 	void append_single_sample(void *data);
 	void append_samples(void *data, uint64_t samples);
-	uint8_t* get_raw_samples(uint64_t start, uint64_t count) const;
+	uint8_t *get_raw_samples(uint64_t start, uint64_t count) const;
 
-	SegmentRawDataIterator* begin_raw_sample_iteration(uint64_t start);
-	void continue_raw_sample_iteration(SegmentRawDataIterator* it, uint64_t increase);
-	void end_raw_sample_iteration(SegmentRawDataIterator* it);
+	SegmentRawDataIterator *begin_raw_sample_iteration(uint64_t start);
+	void continue_raw_sample_iteration(
+		SegmentRawDataIterator *it, uint64_t increase);
+	void end_raw_sample_iteration(SegmentRawDataIterator *it);
 
 	mutable std::recursive_mutex mutex_;
-	std::vector<uint8_t*> data_chunks_;
-	uint8_t* current_chunk_;
+	std::vector<uint8_t *> data_chunks_;
+	uint8_t *current_chunk_;
 	uint64_t used_samples_, unused_samples_;
 	uint64_t sample_count_;
 	pv::util::Timestamp start_time_;

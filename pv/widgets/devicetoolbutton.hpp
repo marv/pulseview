@@ -66,7 +66,7 @@ public:
 	 * @param selected_device the currently active device.
 	 */
 	void set_device_list(
-		const std::list< std::shared_ptr<devices::Device> > &devices,
+		const std::list<std::shared_ptr<devices::Device>> &devices,
 		std::shared_ptr<devices::Device> selected);
 
 	/**
@@ -99,7 +99,7 @@ private:
 	QSignalMapper mapper_;
 
 	std::shared_ptr<devices::Device> selected_device_;
-	std::vector< std::weak_ptr<devices::Device> > devices_;
+	std::vector<std::weak_ptr<devices::Device>> devices_;
 
 	QString device_tooltip_;
 };

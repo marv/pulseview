@@ -56,11 +56,10 @@ std::shared_ptr<sigrok::Device> Device::device() const
 	return device_;
 }
 
-template
-uint64_t Device::read_config(const sigrok::ConfigKey*,
-	const uint64_t);
+template uint64_t Device::read_config(
+	const sigrok::ConfigKey *, const uint64_t);
 
-template<typename T>
+template <typename T>
 T Device::read_config(const ConfigKey *key, const T default_value)
 {
 	assert(key);
@@ -72,7 +71,8 @@ T Device::read_config(const ConfigKey *key, const T default_value)
 		return default_value;
 
 	return VariantBase::cast_dynamic<Glib::Variant<guint64>>(
-		device_->config_get(ConfigKey::SAMPLERATE)).get();
+		device_->config_get(ConfigKey::SAMPLERATE))
+		.get();
 }
 
 void Device::start()

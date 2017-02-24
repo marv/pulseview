@@ -42,8 +42,7 @@ public:
 		const std::shared_ptr<sigrok::OutputFormat> output_format,
 		const std::map<std::string, Glib::VariantBase> &options,
 		const std::pair<uint64_t, uint64_t> sample_range,
-		const Session &session,
-		QWidget *parent = 0);
+		const Session &session, QWidget *parent = 0);
 
 	virtual ~StoreProgress();
 
@@ -52,7 +51,7 @@ public:
 private:
 	void show_error();
 
-	void closeEvent(QCloseEvent*);
+	void closeEvent(QCloseEvent *);
 
 private Q_SLOTS:
 	void on_progress_updated();

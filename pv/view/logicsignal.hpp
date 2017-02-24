@@ -61,7 +61,7 @@ private:
 
 	static QColor TriggerMarkerBackgroundColour;
 	static const int TriggerMarkerPadding;
-	static const char* TriggerMarkerIcons[8];
+	static const char *TriggerMarkerIcons[8];
 
 public:
 	LogicSignal(pv::Session &session,
@@ -107,22 +107,21 @@ public:
 
 private:
 	void paint_caps(QPainter &p, QLineF *const lines,
-		std::vector< std::pair<int64_t, bool> > &edges,
-		bool level, double samples_per_pixel, double pixels_offset,
-		float x_offset, float y_offset);
+		std::vector<std::pair<int64_t, bool>> &edges, bool level,
+		double samples_per_pixel, double pixels_offset, float x_offset,
+		float y_offset);
 
 	void init_trigger_actions(QWidget *parent);
 
 	const std::vector<int32_t> get_trigger_types() const;
-	QAction* action_from_trigger_type(
-		const sigrok::TriggerMatchType *type);
-	const sigrok::TriggerMatchType* trigger_type_from_action(
+	QAction *action_from_trigger_type(const sigrok::TriggerMatchType *type);
+	const sigrok::TriggerMatchType *trigger_type_from_action(
 		QAction *action);
 	void populate_popup_form(QWidget *parent, QFormLayout *form);
 	void modify_trigger();
 
-	static const QIcon* get_icon(const char *path);
-	static const QPixmap* get_pixmap(const char *path);
+	static const QIcon *get_icon(const char *path);
+	static const QPixmap *get_pixmap(const char *path);
 
 private Q_SLOTS:
 	void on_trigger();

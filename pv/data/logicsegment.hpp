@@ -28,7 +28,7 @@
 #include <QObject>
 
 namespace sigrok {
-	class Logic;
+class Logic;
 }
 
 namespace LogicSegmentTest {
@@ -44,10 +44,11 @@ namespace data {
 
 class Logic;
 
-typedef struct {
+typedef struct
+{
 	uint64_t sample_index, chunk_num, chunk_offs;
-	uint8_t* chunk;
-	uint8_t* value;
+	uint8_t *chunk;
+	uint8_t *value;
 } SegmentLogicDataIterator;
 
 class LogicSegment : public QObject, public Segment
@@ -73,22 +74,25 @@ public:
 	typedef std::pair<int64_t, bool> EdgePair;
 
 public:
-	LogicSegment(pv::data::Logic& owner, std::shared_ptr<sigrok::Logic> data, uint64_t samplerate);
+	LogicSegment(pv::data::Logic &owner,
+		std::shared_ptr<sigrok::Logic> data, uint64_t samplerate);
 
 	virtual ~LogicSegment();
 
 	void append_payload(std::shared_ptr<sigrok::Logic> logic);
 
-	const uint8_t* get_samples(int64_t start_sample, int64_t end_sample) const;
+	const uint8_t *get_samples(
+		int64_t start_sample, int64_t end_sample) const;
 
-	SegmentLogicDataIterator* begin_sample_iteration(uint64_t start);
-	void continue_sample_iteration(SegmentLogicDataIterator* it, uint64_t increase);
-	void end_sample_iteration(SegmentLogicDataIterator* it);
+	SegmentLogicDataIterator *begin_sample_iteration(uint64_t start);
+	void continue_sample_iteration(
+		SegmentLogicDataIterator *it, uint64_t increase);
+	void end_sample_iteration(SegmentLogicDataIterator *it);
 
 private:
 	uint64_t unpack_sample(const uint8_t *ptr) const;
 	void pack_sample(uint8_t *ptr, uint64_t value);
-	
+
 	void reallocate_mipmap_level(MipMapLevel &m);
 
 	void append_payload_to_mipmap();
@@ -106,9 +110,8 @@ public:
 	 * can be resolved at this level of detail.
 	 * @param[in] sig_index The index of the signal.
 	 */
-	void get_subsampled_edges(std::vector<EdgePair> &edges,
-		uint64_t start, uint64_t end,
-		float min_length, int sig_index);
+	void get_subsampled_edges(std::vector<EdgePair> &edges, uint64_t start,
+		uint64_t end, float min_length, int sig_index);
 
 private:
 	uint64_t get_subsample(int level, uint64_t offset) const;
@@ -116,7 +119,7 @@ private:
 	static uint64_t pow2_ceil(uint64_t x, unsigned int power);
 
 private:
-	Logic& owner_;
+	Logic &owner_;
 
 	struct MipMapLevel mip_map_[ScaleStepCount];
 	uint64_t last_append_sample_;

@@ -155,9 +155,9 @@ public:
 	static QColor select_text_colour(QColor background);
 
 public:
-	virtual QMenu* create_context_menu(QWidget *parent);
+	virtual QMenu *create_context_menu(QWidget *parent);
 
-	virtual pv::widgets::Popup* create_popup(QWidget *parent);
+	virtual pv::widgets::Popup *create_popup(QWidget *parent);
 
 	virtual void delete_pressed();
 

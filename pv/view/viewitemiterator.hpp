@@ -34,54 +34,54 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-template<class Owner, class Item> class ViewItemIterator
+template <class Owner, class Item> class ViewItemIterator
 {
 public:
 	typedef typename Owner::item_list::const_iterator child_iterator;
 	typedef std::shared_ptr<Item> value_type;
 	typedef ptrdiff_t difference_type;
 	typedef value_type pointer;
-	typedef const value_type& reference;
+	typedef const value_type &reference;
 	typedef std::forward_iterator_tag iterator_category;
 
 public:
-	ViewItemIterator(Owner *owner) :
-		owner_stack_({owner}) {}
+	ViewItemIterator(Owner *owner) : owner_stack_({owner}) {}
 
-	ViewItemIterator(Owner *owner, child_iterator iter) :
-		owner_stack_({owner}) {
+	ViewItemIterator(Owner *owner, child_iterator iter)
+	    : owner_stack_({owner})
+	{
 		assert(owner);
 		if (iter != owner->child_items().end())
 			iter_stack_.push(iter);
 	}
 
-	ViewItemIterator(const ViewItemIterator<Owner, Item> &o) :
-		owner_stack_(o.owner_stack_),
-		iter_stack_(o.iter_stack_) {}
-
-	reference operator*() const {
-		return *iter_stack_.top();
+	ViewItemIterator(const ViewItemIterator<Owner, Item> &o)
+	    : owner_stack_(o.owner_stack_), iter_stack_(o.iter_stack_)
+	{
 	}
 
-	reference operator->() const {
-		return *this;
-	}
+	reference operator*() const { return *iter_stack_.top(); }
 
-	ViewItemIterator<Owner, Item>& operator++() {
+	reference operator->() const { return *this; }
+
+	ViewItemIterator<Owner, Item> &operator++()
+	{
 		using std::dynamic_pointer_cast;
 		using std::shared_ptr;
 
 		assert(!owner_stack_.empty());
 		assert(!iter_stack_.empty());
 
-		shared_ptr<Owner> owner(dynamic_pointer_cast<Owner>(
-			*iter_stack_.top()));
+		shared_ptr<Owner> owner(
+			dynamic_pointer_cast<Owner>(*iter_stack_.top()));
 		if (owner && !owner->child_items().empty()) {
 			owner_stack_.push(owner.get());
 			iter_stack_.push(owner->child_items().begin());
 		} else {
-			while (!iter_stack_.empty() && (++iter_stack_.top()) ==
-				owner_stack_.top()->child_items().end()) {
+			while (!iter_stack_.empty() &&
+				(++iter_stack_.top()) == owner_stack_.top()
+								 ->child_items()
+								 .end()) {
 				owner_stack_.pop();
 				iter_stack_.pop();
 			}
@@ -90,35 +90,39 @@ public:
 		return *this;
 	}
 
-	ViewItemIterator<Owner, Item> operator++(int) {
+	ViewItemIterator<Owner, Item> operator++(int)
+	{
 		ViewItemIterator<Owner, Item> pre = *this;
 		++*this;
 		return pre;
 	}
 
-	bool operator==(const ViewItemIterator &o) const {
-		return (iter_stack_.empty() && o.iter_stack_.empty()) || (
-			iter_stack_.size() == o.iter_stack_.size() &&
-			owner_stack_.top() == o.owner_stack_.top() &&
-			iter_stack_.top() == o.iter_stack_.top());
+	bool operator==(const ViewItemIterator &o) const
+	{
+		return (iter_stack_.empty() && o.iter_stack_.empty()) ||
+		       (iter_stack_.size() == o.iter_stack_.size() &&
+			       owner_stack_.top() == o.owner_stack_.top() &&
+			       iter_stack_.top() == o.iter_stack_.top());
 	}
 
-	bool operator!=(const ViewItemIterator &o) const {
-		return !((const ViewItemIterator&)*this == o);
+	bool operator!=(const ViewItemIterator &o) const
+	{
+		return !((const ViewItemIterator &)*this == o);
 	}
 
-	void swap(ViewItemIterator<Owner, Item>& other) {
+	void swap(ViewItemIterator<Owner, Item> &other)
+	{
 		swap(owner_stack_, other.owner_stack_);
 		swap(iter_stack_, other.iter_stack_);
 	}
 
 private:
-	std::stack<Owner*> owner_stack_;
+	std::stack<Owner *> owner_stack_;
 	std::stack<child_iterator> iter_stack_;
 };
 
-template<class Owner, class Item>
-void swap(ViewItemIterator<Owner, Item>& a, ViewItemIterator<Owner, Item>& b)
+template <class Owner, class Item>
+void swap(ViewItemIterator<Owner, Item> &a, ViewItemIterator<Owner, Item> &b)
 {
 	a.swap(b);
 }

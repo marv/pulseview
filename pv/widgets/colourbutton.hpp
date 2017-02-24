@@ -37,9 +37,9 @@ private:
 public:
 	ColourButton(int rows, int cols, QWidget *parent);
 
-	ColourPopup& popup();
+	ColourPopup &popup();
 
-	const QColor& colour() const;
+	const QColor &colour() const;
 
 	void set_colour(QColor colour);
 

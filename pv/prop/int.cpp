@@ -17,8 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include <QSpinBox>
 
@@ -32,19 +32,16 @@ using std::pair;
 namespace pv {
 namespace prop {
 
-Int::Int(QString name,
-	QString suffix,
-	optional< pair<int64_t, int64_t> > range,
-	Getter getter,
-	Setter setter) :
-	Property(name, getter, setter),
-	suffix_(suffix),
-	range_(range),
-	spin_box_(nullptr)
+Int::Int(QString name, QString suffix, optional<pair<int64_t, int64_t>> range,
+	Getter getter, Setter setter)
+    : Property(name, getter, setter),
+      suffix_(suffix),
+      range_(range),
+      spin_box_(nullptr)
 {
 }
 
-QWidget* Int::get_widget(QWidget *parent, bool auto_commit)
+QWidget *Int::get_widget(QWidget *parent, bool auto_commit)
 {
 	int64_t int_val = 0, range_min = 0;
 	uint64_t range_max = 0;
@@ -109,8 +106,8 @@ QWidget* Int::get_widget(QWidget *parent, bool auto_commit)
 	spin_box_->setValue((int)int_val);
 
 	if (auto_commit)
-		connect(spin_box_, SIGNAL(valueChanged(int)),
-			this, SLOT(on_value_changed(int)));
+		connect(spin_box_, SIGNAL(valueChanged(int)), this,
+			SLOT(on_value_changed(int)));
 
 	return spin_box_;
 }
@@ -140,8 +137,7 @@ void Int::commit()
 		new_value = g_variant_new_int64(spin_box_->value());
 	else if (g_variant_type_equal(type, G_VARIANT_TYPE_UINT64))
 		new_value = g_variant_new_uint64(spin_box_->value());
-	else
-	{
+	else {
 		// Unexpected value type.
 		assert(0);
 	}

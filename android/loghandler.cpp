@@ -23,17 +23,18 @@
 
 #include <android/log.h>
 
-#include <stdint.h>
 #include <libsigrok/libsigrok.h>
+#include <stdint.h>
 
 #include "android/loghandler.hpp"
 
 namespace pv {
 
-int AndroidLogHandler::sr_callback(void *cb_data, int loglevel, const char *format, va_list args)
+int AndroidLogHandler::sr_callback(
+	void *cb_data, int loglevel, const char *format, va_list args)
 {
 	static const int prio[] = {
-		[SR_LOG_NONE] = ANDROID_LOG_SILENT,
+			[SR_LOG_NONE] = ANDROID_LOG_SILENT,
 		[SR_LOG_ERR] = ANDROID_LOG_ERROR,
 		[SR_LOG_WARN] = ANDROID_LOG_WARN,
 		[SR_LOG_INFO] = ANDROID_LOG_INFO,
@@ -59,11 +60,12 @@ int AndroidLogHandler::sr_callback(void *cb_data, int loglevel, const char *form
 	return ret;
 }
 
-int AndroidLogHandler::srd_callback(void *cb_data, int loglevel, const char *format, va_list args)
+int AndroidLogHandler::srd_callback(
+	void *cb_data, int loglevel, const char *format, va_list args)
 {
 #ifdef ENABLE_DECODE
 	static const int prio[] = {
-		[SRD_LOG_NONE] = ANDROID_LOG_SILENT,
+			[SRD_LOG_NONE] = ANDROID_LOG_SILENT,
 		[SRD_LOG_ERR] = ANDROID_LOG_ERROR,
 		[SRD_LOG_WARN] = ANDROID_LOG_WARN,
 		[SRD_LOG_INFO] = ANDROID_LOG_INFO,

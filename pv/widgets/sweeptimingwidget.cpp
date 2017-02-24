@@ -33,24 +33,23 @@ using std::vector;
 namespace pv {
 namespace widgets {
 
-SweepTimingWidget::SweepTimingWidget(const char *suffix,
-	QWidget *parent) :
-	QWidget(parent),
-	suffix_(suffix),
-	layout_(this),
-	value_(this),
-	list_(this),
-	value_type_(None)
+SweepTimingWidget::SweepTimingWidget(const char *suffix, QWidget *parent)
+    : QWidget(parent),
+      suffix_(suffix),
+      layout_(this),
+      value_(this),
+      list_(this),
+      value_type_(None)
 {
 	setContentsMargins(0, 0, 0, 0);
 
 	value_.setDecimals(0);
 	value_.setSuffix(QString::fromUtf8(suffix));
 
-	connect(&list_, SIGNAL(currentIndexChanged(int)),
-		this, SIGNAL(value_changed()));
-	connect(&value_, SIGNAL(editingFinished()),
-		this, SIGNAL(value_changed()));
+	connect(&list_, SIGNAL(currentIndexChanged(int)), this,
+		SIGNAL(value_changed()));
+	connect(&value_, SIGNAL(editingFinished()), this,
+		SIGNAL(value_changed()));
 
 	setLayout(&layout_);
 	layout_.setMargin(0);
@@ -67,8 +66,8 @@ void SweepTimingWidget::show_none()
 	list_.hide();
 }
 
-void SweepTimingWidget::show_min_max_step(uint64_t min, uint64_t max,
-	uint64_t step)
+void SweepTimingWidget::show_min_max_step(
+	uint64_t min, uint64_t max, uint64_t step)
 {
 	assert(max > min);
 	assert(step > 0);
@@ -89,8 +88,7 @@ void SweepTimingWidget::show_list(const uint64_t *vals, size_t count)
 	list_.clear();
 	for (size_t i = 0; i < count; i++) {
 		char *const s = sr_si_string_u64(vals[i], suffix_);
-		list_.addItem(QString::fromUtf8(s),
-			qVariantFromValue(vals[i]));
+		list_.addItem(QString::fromUtf8(s), qVariantFromValue(vals[i]));
 		g_free(s);
 	}
 
@@ -109,7 +107,8 @@ void SweepTimingWidget::show_125_list(uint64_t min, uint64_t max)
 	vector<uint64_t> values;
 
 	// Compute the starting decade
-	for (decade = 1; decade * 10 <= min; decade *= 10);
+	for (decade = 1; decade * 10 <= min; decade *= 10)
+		;
 
 	// Compute the first entry
 	for (fine = 0; fine < countof(FineScales); fine++)
@@ -140,18 +139,17 @@ void SweepTimingWidget::show_125_list(uint64_t min, uint64_t max)
 
 uint64_t SweepTimingWidget::value() const
 {
-	switch(value_type_) {
+	switch (value_type_) {
 	case None:
 		return 0;
 
 	case MinMaxStep:
 		return (uint64_t)value_.value();
 
-	case List:
-	{
+	case List: {
 		const int index = list_.currentIndex();
-		return (index >= 0) ? list_.itemData(
-			index).value<uint64_t>() : 0;
+		return (index >= 0) ? list_.itemData(index).value<uint64_t>()
+				    : 0;
 	}
 
 	default:

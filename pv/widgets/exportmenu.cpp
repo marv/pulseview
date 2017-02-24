@@ -39,10 +39,8 @@ namespace pv {
 namespace widgets {
 
 ExportMenu::ExportMenu(QWidget *parent, shared_ptr<Context> context,
-	std::vector<QAction *>open_actions) :
-	QMenu(parent),
-	context_(context),
-	mapper_(this)
+	std::vector<QAction *> open_actions)
+    : QMenu(parent), context_(context), mapper_(this)
 {
 	assert(context);
 
@@ -59,35 +57,38 @@ ExportMenu::ExportMenu(QWidget *parent, shared_ptr<Context> context,
 		addSeparator();
 	}
 
-	const map<string, shared_ptr<OutputFormat> > formats =
+	const map<string, shared_ptr<OutputFormat>> formats =
 		context->output_formats();
 
-	for (const pair<string, shared_ptr<OutputFormat> > &f : formats) {
+	for (const pair<string, shared_ptr<OutputFormat>> &f : formats) {
 		if (f.first == "srzip")
 			continue;
 
 		assert(f.second);
-		QAction *const action =	addAction(tr("Export %1...")
-			.arg(QString::fromStdString(f.second->description())));
-		action->setData(qVariantFromValue((void*)f.second.get()));
+		QAction *const action =
+			addAction(tr("Export %1...")
+					  .arg(QString::fromStdString(
+						  f.second->description())));
+		action->setData(qVariantFromValue((void *)f.second.get()));
 		mapper_.setMapping(action, action);
 		connect(action, SIGNAL(triggered()), &mapper_, SLOT(map()));
 	}
 
-	connect(&mapper_, SIGNAL(mapped(QObject*)),
-		this, SLOT(on_action(QObject*)));
+	connect(&mapper_, SIGNAL(mapped(QObject *)), this,
+		SLOT(on_action(QObject *)));
 }
 
 void ExportMenu::on_action(QObject *action)
 {
 	assert(action);
 
-	const map<string, shared_ptr<OutputFormat> > formats =
+	const map<string, shared_ptr<OutputFormat>> formats =
 		context_->output_formats();
 	const auto iter = find_if(formats.cbegin(), formats.cend(),
-		[&](const pair<string, shared_ptr<OutputFormat> > &f) {
+		[&](const pair<string, shared_ptr<OutputFormat>> &f) {
 			return f.second.get() ==
-				((QAction*)action)->data().value<void*>(); });
+			       ((QAction *)action)->data().value<void *>();
+		});
 	if (iter == formats.cend())
 		return;
 

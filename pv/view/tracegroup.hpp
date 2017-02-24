@@ -51,22 +51,22 @@ public:
 	/**
 	 * Returns the session of the onwer.
 	 */
-	pv::Session& session();
+	pv::Session &session();
 
 	/**
 	 * Returns the session of the onwer.
 	 */
-	const pv::Session& session() const;
+	const pv::Session &session() const;
 
 	/**
 	 * Returns the view of the owner.
 	 */
-	virtual View* view();
+	virtual View *view();
 
 	/**
 	 * Returns the view of the owner.
 	 */
-	virtual const View* view() const;
+	virtual const View *view() const;
 
 	/**
 	 * Computes the vertical extents of the contents of this row item.
@@ -100,9 +100,9 @@ public:
 	 */
 	bool pt_in_label_rect(int left, int right, const QPoint &point);
 
-	QMenu* create_context_menu(QWidget *parent);
+	QMenu *create_context_menu(QWidget *parent);
 
-	pv::widgets::Popup* create_popup(QWidget *parent);
+	pv::widgets::Popup *create_popup(QWidget *parent);
 
 	/**
 	 * Returns the total vertical offset of this trace and all it's owners

@@ -27,11 +27,11 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-TraceTreeItem::TraceTreeItem() :
-	owner_(nullptr),
-	layout_v_offset_(0),
-	visual_v_offset_(0),
-	v_offset_animation_(this, "visual_v_offset")
+TraceTreeItem::TraceTreeItem()
+    : owner_(nullptr),
+      layout_v_offset_(0),
+      visual_v_offset_(0),
+      v_offset_animation_(this, "visual_v_offset")
 {
 }
 
@@ -85,7 +85,8 @@ void TraceTreeItem::animate_to_layout_v_offset()
 {
 	if (visual_v_offset_ == layout_v_offset_ ||
 		(v_offset_animation_.endValue() == layout_v_offset_ &&
-		v_offset_animation_.state() == QAbstractAnimation::Running))
+			v_offset_animation_.state() ==
+				QAbstractAnimation::Running))
 		return;
 
 	v_offset_animation_.setDuration(100);
@@ -95,7 +96,7 @@ void TraceTreeItem::animate_to_layout_v_offset()
 	v_offset_animation_.start();
 }
 
-TraceTreeItemOwner* TraceTreeItem::owner() const
+TraceTreeItemOwner *TraceTreeItem::owner() const
 {
 	return owner_;
 }
@@ -129,8 +130,8 @@ int TraceTreeItem::get_visual_y() const
 void TraceTreeItem::drag_by(const QPoint &delta)
 {
 	assert(owner_);
-	force_to_v_offset(drag_point_.y() + delta.y() -
-		owner_->owner_visual_v_offset());
+	force_to_v_offset(
+		drag_point_.y() + delta.y() - owner_->owner_visual_v_offset());
 }
 
 QPoint TraceTreeItem::point(const QRect &rect) const
@@ -140,7 +141,7 @@ QPoint TraceTreeItem::point(const QRect &rect) const
 
 void TraceTreeItem::set_bgcolour_state(bool state)
 {
-       bgcolour_state_ = state;
+	bgcolour_state_ = state;
 }
 
 } // namespace TraceView

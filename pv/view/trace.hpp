@@ -81,9 +81,9 @@ public:
 	 */
 	virtual void paint_label(QPainter &p, const QRect &rect, bool hover);
 
-	virtual QMenu* create_context_menu(QWidget *parent);
+	virtual QMenu *create_context_menu(QWidget *parent);
 
-	pv::widgets::Popup* create_popup(QWidget *parent);
+	pv::widgets::Popup *create_popup(QWidget *parent);
 
 	/**
 	 * Computes the outline rectangle of a label.

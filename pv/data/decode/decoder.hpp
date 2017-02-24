@@ -47,35 +47,35 @@ public:
 
 	virtual ~Decoder();
 
-	const srd_decoder* decoder() const;
+	const srd_decoder *decoder() const;
 
 	bool shown() const;
 	void show(bool show = true);
 
-	const std::map<const srd_channel*,
-		std::shared_ptr<data::SignalBase> >& channels() const;
-	void set_channels(std::map<const srd_channel*,
-		std::shared_ptr<data::SignalBase> > channels);
+	const std::map<const srd_channel *, std::shared_ptr<data::SignalBase>> &
+	channels() const;
+	void set_channels(
+		std::map<const srd_channel *, std::shared_ptr<data::SignalBase>>
+			channels);
 
-	const std::map<std::string, GVariant*>& options() const;
+	const std::map<std::string, GVariant *> &options() const;
 
 	void set_option(const char *id, GVariant *value);
 
 	bool have_required_channels() const;
 
-	srd_decoder_inst* create_decoder_inst(
-		srd_session *session) const;
+	srd_decoder_inst *create_decoder_inst(srd_session *session) const;
 
-	std::set< std::shared_ptr<pv::data::Logic> > get_data();
+	std::set<std::shared_ptr<pv::data::Logic>> get_data();
 
 private:
 	const srd_decoder *const decoder_;
 
 	bool shown_;
 
-	std::map<const srd_channel*, std::shared_ptr<pv::data::SignalBase> >
+	std::map<const srd_channel *, std::shared_ptr<pv::data::SignalBase>>
 		channels_;
-	std::map<std::string, GVariant*> options_;
+	std::map<std::string, GVariant *> options_;
 };
 
 } // namespace decode

@@ -19,9 +19,9 @@
 
 #include <cassert>
 
+#include "trace.hpp"
 #include "tracetreeitem.hpp"
 #include "tracetreeitemowner.hpp"
-#include "trace.hpp"
 
 using std::dynamic_pointer_cast;
 using std::max;
@@ -37,15 +37,15 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-const ViewItemOwner::item_list& TraceTreeItemOwner::child_items() const
+const ViewItemOwner::item_list &TraceTreeItemOwner::child_items() const
 {
 	return items_;
 }
 
-vector< std::shared_ptr<TraceTreeItem> >
+vector<std::shared_ptr<TraceTreeItem>>
 TraceTreeItemOwner::trace_tree_child_items() const
 {
-	vector< shared_ptr<TraceTreeItem> > items;
+	vector<shared_ptr<TraceTreeItem>> items;
 	for (auto &i : items_) {
 		assert(dynamic_pointer_cast<TraceTreeItem>(i));
 		const shared_ptr<TraceTreeItem> t(
@@ -99,10 +99,10 @@ pair<int, int> TraceTreeItemOwner::v_extents() const
 
 		const int child_offset = t->layout_v_offset();
 		const pair<int, int> child_extents = t->v_extents();
-		extents.first = min(child_extents.first + child_offset,
-			extents.first);
-		extents.second = max(child_extents.second + child_offset,
-			extents.second);
+		extents.first =
+			min(child_extents.first + child_offset, extents.first);
+		extents.second = max(
+			child_extents.second + child_offset, extents.second);
 	}
 
 	if (!has_children)
@@ -113,12 +113,14 @@ pair<int, int> TraceTreeItemOwner::v_extents() const
 
 bool TraceTreeItemOwner::reassign_bgcolour_states(bool next_bgcolour_state)
 {
-	vector< shared_ptr<TraceTreeItem> > items = trace_tree_child_items();
+	vector<shared_ptr<TraceTreeItem>> items = trace_tree_child_items();
 
 	// Sort items according to vertical position
 	sort(items.begin(), items.end(),
-		[](const shared_ptr<TraceTreeItem> a, const shared_ptr<TraceTreeItem> b) {
-		return a->layout_v_offset() > b->layout_v_offset(); });
+		[](const shared_ptr<TraceTreeItem> a,
+			const shared_ptr<TraceTreeItem> b) {
+			return a->layout_v_offset() > b->layout_v_offset();
+		});
 
 	for (const shared_ptr<TraceTreeItem> item : items) {
 		item->set_bgcolour_state(next_bgcolour_state);

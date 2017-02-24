@@ -57,8 +57,7 @@ using pv::prop::String;
 namespace pv {
 namespace binding {
 
-InputOutput::InputOutput(
-	const map<string, shared_ptr<Option>> &options)
+InputOutput::InputOutput(const map<string, shared_ptr<Option>> &options)
 {
 	for (pair<string, shared_ptr<Option>> o : options) {
 		const shared_ptr<Option> &opt = o.second;
@@ -69,11 +68,12 @@ InputOutput::InputOutput(
 		const vector<VariantBase> values = opt->values();
 
 		options_[opt->id()] = def_val;
- 
+
 		const Property::Getter get = [&, opt]() {
-			return options_[opt->id()]; };
-		const Property::Setter set = [&, opt](VariantBase value) {
-			options_[opt->id()] = value; };
+			return options_[opt->id()];
+		};
+		const Property::Setter set = [&, opt](
+			VariantBase value) { options_[opt->id()] = value; };
 
 		shared_ptr<Property> prop;
 
@@ -82,16 +82,15 @@ InputOutput::InputOutput(
 		else if (def_val.is_of_type(VariantType("b")))
 			prop = shared_ptr<Property>(new Bool(name, get, set));
 		else if (def_val.is_of_type(VariantType("d")))
-			prop = shared_ptr<Property>(new Double(name, 2, "",
-				none, none, get, set));
+			prop = shared_ptr<Property>(
+				new Double(name, 2, "", none, none, get, set));
 		else if (def_val.is_of_type(VariantType("i")) ||
-			def_val.is_of_type(VariantType("t")) ||
-			def_val.is_of_type(VariantType("u")))
+			 def_val.is_of_type(VariantType("t")) ||
+			 def_val.is_of_type(VariantType("u")))
 			prop = shared_ptr<Property>(
 				new Int(name, "", none, get, set));
 		else if (def_val.is_of_type(VariantType("s")))
-			prop = shared_ptr<Property>(
-				new String(name, get, set));
+			prop = shared_ptr<Property>(new String(name, get, set));
 		else
 			continue;
 
@@ -99,16 +98,16 @@ InputOutput::InputOutput(
 	}
 }
 
-const map<string, VariantBase>& InputOutput::options() const
+const map<string, VariantBase> &InputOutput::options() const
 {
 	return options_;
 }
 
-shared_ptr<Property> InputOutput::bind_enum(
-	const QString &name, const vector<VariantBase> &values,
-	Property::Getter getter, Property::Setter setter)
+shared_ptr<Property> InputOutput::bind_enum(const QString &name,
+	const vector<VariantBase> &values, Property::Getter getter,
+	Property::Setter setter)
 {
-	vector< pair<VariantBase, QString> > enum_vals;
+	vector<pair<VariantBase, QString>> enum_vals;
 	for (VariantBase var : values)
 		enum_vals.push_back(make_pair(var, print_gvariant(var)));
 	return shared_ptr<Property>(new Enum(name, enum_vals, getter, setter));

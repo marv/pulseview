@@ -33,23 +33,23 @@ using std::vector;
 namespace pv {
 namespace data {
 
-const uint64_t Segment::MaxChunkSize = 10*1024*1024;  /* 10MiB */
+const uint64_t Segment::MaxChunkSize = 10 * 1024 * 1024; /* 10MiB */
 
-Segment::Segment(uint64_t samplerate, unsigned int unit_size) :
-	sample_count_(0),
-	start_time_(0),
-	samplerate_(samplerate),
-	unit_size_(unit_size),
-	iterator_count_(0),
-	mem_optimization_requested_(false)
+Segment::Segment(uint64_t samplerate, unsigned int unit_size)
+    : sample_count_(0),
+      start_time_(0),
+      samplerate_(samplerate),
+      unit_size_(unit_size),
+      iterator_count_(0),
+      mem_optimization_requested_(false)
 {
 	lock_guard<recursive_mutex> lock(mutex_);
 	assert(unit_size_ > 0);
 
 	// Determine the number of samples we can fit in one chunk
 	// without exceeding MaxChunkSize
-	chunk_size_ = std::min(MaxChunkSize,
-		(MaxChunkSize / unit_size_) * unit_size_);
+	chunk_size_ = std::min(
+		MaxChunkSize, (MaxChunkSize / unit_size_) * unit_size_);
 
 	// Create the initial chunk
 	current_chunk_ = new uint8_t[chunk_size_];
@@ -62,7 +62,7 @@ Segment::~Segment()
 {
 	lock_guard<recursive_mutex> lock(mutex_);
 
-	for (uint8_t* chunk : data_chunks_)
+	for (uint8_t *chunk : data_chunks_)
 		delete[] chunk;
 }
 
@@ -72,7 +72,7 @@ uint64_t Segment::get_sample_count() const
 	return sample_count_;
 }
 
-const pv::util::Timestamp& Segment::start_time() const
+const pv::util::Timestamp &Segment::start_time() const
 {
 	return start_time_;
 }
@@ -96,14 +96,15 @@ void Segment::free_unused_memory()
 {
 	lock_guard<recursive_mutex> lock(mutex_);
 
-	// Do not mess with the data chunks if we have iterators pointing at them
+	// Do not mess with the data chunks if we have iterators pointing at
+	// them
 	if (iterator_count_ > 0) {
 		mem_optimization_requested_ = true;
 		return;
 	}
 
 	// No more data will come in, so re-create the last chunk accordingly
-	uint8_t* resized_chunk = new uint8_t[used_samples_ * unit_size_];
+	uint8_t *resized_chunk = new uint8_t[used_samples_ * unit_size_];
 	memcpy(resized_chunk, current_chunk_, used_samples_ * unit_size_);
 
 	delete[] current_chunk_;
@@ -120,8 +121,7 @@ void Segment::append_single_sample(void *data)
 	// There will always be space for at least one sample in
 	// the current chunk, so we do not need to test for space
 
-	memcpy(current_chunk_ + (used_samples_ * unit_size_),
-		data, unit_size_);
+	memcpy(current_chunk_ + (used_samples_ * unit_size_), data, unit_size_);
 	used_samples_++;
 	unused_samples_--;
 
@@ -135,30 +135,32 @@ void Segment::append_single_sample(void *data)
 	sample_count_++;
 }
 
-void Segment::append_samples(void* data, uint64_t samples)
+void Segment::append_samples(void *data, uint64_t samples)
 {
 	lock_guard<recursive_mutex> lock(mutex_);
 
 	if (unused_samples_ >= samples) {
 		// All samples fit into the current chunk
-		memcpy(current_chunk_ + (used_samples_ * unit_size_),
-			data, (samples * unit_size_));
+		memcpy(current_chunk_ + (used_samples_ * unit_size_), data,
+			(samples * unit_size_));
 		used_samples_ += samples;
 		unused_samples_ -= samples;
 	} else {
 		// Only a part of the samples fit, split data up between chunks
-		memcpy(current_chunk_ + (used_samples_ * unit_size_),
-			data, (unused_samples_ * unit_size_));
+		memcpy(current_chunk_ + (used_samples_ * unit_size_), data,
+			(unused_samples_ * unit_size_));
 		const uint64_t remaining_samples = samples - unused_samples_;
 
 		// If we're out of memory, this will throw std::bad_alloc
 		current_chunk_ = new uint8_t[chunk_size_];
 		data_chunks_.push_back(current_chunk_);
-		memcpy(current_chunk_, (uint8_t*)data + (unused_samples_ * unit_size_),
+		memcpy(current_chunk_,
+			(uint8_t *)data + (unused_samples_ * unit_size_),
 			(remaining_samples * unit_size_));
 
 		used_samples_ = remaining_samples;
-		unused_samples_ = (chunk_size_ / unit_size_) - remaining_samples;
+		unused_samples_ =
+			(chunk_size_ / unit_size_) - remaining_samples;
 	}
 
 	if (unused_samples_ == 0) {
@@ -172,7 +174,7 @@ void Segment::append_samples(void* data, uint64_t samples)
 	sample_count_ += samples;
 }
 
-uint8_t* Segment::get_raw_samples(uint64_t start, uint64_t count) const
+uint8_t *Segment::get_raw_samples(uint64_t start, uint64_t count) const
 {
 	assert(start < sample_count_);
 	assert(start + count <= sample_count_);
@@ -180,17 +182,17 @@ uint8_t* Segment::get_raw_samples(uint64_t start, uint64_t count) const
 
 	lock_guard<recursive_mutex> lock(mutex_);
 
-	uint8_t* dest = new uint8_t[count * unit_size_];
-	uint8_t* dest_ptr = dest;
+	uint8_t *dest = new uint8_t[count * unit_size_];
+	uint8_t *dest_ptr = dest;
 
 	uint64_t chunk_num = (start * unit_size_) / chunk_size_;
 	uint64_t chunk_offs = (start * unit_size_) % chunk_size_;
 
 	while (count > 0) {
-		const uint8_t* chunk = data_chunks_[chunk_num];
+		const uint8_t *chunk = data_chunks_[chunk_num];
 
-		uint64_t copy_size = std::min(count * unit_size_,
-			chunk_size_ - chunk_offs);
+		uint64_t copy_size =
+			std::min(count * unit_size_, chunk_size_ - chunk_offs);
 
 		memcpy(dest_ptr, chunk + chunk_offs, copy_size);
 
@@ -204,9 +206,9 @@ uint8_t* Segment::get_raw_samples(uint64_t start, uint64_t count) const
 	return dest;
 }
 
-SegmentRawDataIterator* Segment::begin_raw_sample_iteration(uint64_t start)
+SegmentRawDataIterator *Segment::begin_raw_sample_iteration(uint64_t start)
 {
-	SegmentRawDataIterator* it = new SegmentRawDataIterator;
+	SegmentRawDataIterator *it = new SegmentRawDataIterator;
 
 	assert(start < sample_count_);
 
@@ -221,12 +223,12 @@ SegmentRawDataIterator* Segment::begin_raw_sample_iteration(uint64_t start)
 	return it;
 }
 
-void Segment::continue_raw_sample_iteration(SegmentRawDataIterator* it, uint64_t increase)
+void Segment::continue_raw_sample_iteration(
+	SegmentRawDataIterator *it, uint64_t increase)
 {
 	lock_guard<recursive_mutex> lock(mutex_);
 
-	if (it->sample_index > sample_count_)
-	{
+	if (it->sample_index > sample_count_) {
 		// Fail gracefully if we are asked to deliver data we don't have
 		return;
 	} else {
@@ -243,7 +245,7 @@ void Segment::continue_raw_sample_iteration(SegmentRawDataIterator* it, uint64_t
 	it->value = it->chunk + it->chunk_offs;
 }
 
-void Segment::end_raw_sample_iteration(SegmentRawDataIterator* it)
+void Segment::end_raw_sample_iteration(SegmentRawDataIterator *it)
 {
 	delete it;
 
@@ -254,7 +256,6 @@ void Segment::end_raw_sample_iteration(SegmentRawDataIterator* it)
 		free_unused_memory();
 	}
 }
-
 
 } // namespace data
 } // namespace pv

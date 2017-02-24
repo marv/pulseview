@@ -33,12 +33,12 @@ namespace pv {
 namespace dialogs {
 
 InputOutputOptions::InputOutputOptions(const QString &title,
-	const map<string, shared_ptr<Option>> &options, QWidget *parent) :
-	QDialog(parent),
-	layout_(this),
-	button_box_(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-		Qt::Horizontal, this),
-	binding_(options)
+	const map<string, shared_ptr<Option>> &options, QWidget *parent)
+    : QDialog(parent),
+      layout_(this),
+      button_box_(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+	      Qt::Horizontal, this),
+      binding_(options)
 {
 	setWindowTitle(title);
 
@@ -51,7 +51,7 @@ InputOutputOptions::InputOutputOptions(const QString &title,
 	layout_.addWidget(&button_box_);
 }
 
-const map<string, VariantBase>& InputOutputOptions::options() const
+const map<string, VariantBase> &InputOutputOptions::options() const
 {
 	return binding_.options();
 }

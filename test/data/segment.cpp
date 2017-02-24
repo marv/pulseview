@@ -30,17 +30,15 @@ using pv::data::Segment;
 
 BOOST_AUTO_TEST_SUITE(SegmentTest)
 
-
 /* --- For debugging only
 BOOST_AUTO_TEST_CASE(SmallSize8Single)
 {
 	Segment s(1, sizeof(uint8_t));
 	uint32_t num_samples = 10;
 
-	//----- Chunk size << pv::data::Segment::MaxChunkSize @ 8bit, added in 1 call ----//
-	uint8_t* const data = new uint8_t[num_samples];
-	for (uint32_t i = 0; i < num_samples; i++)
-		data[i] = i;
+	//----- Chunk size << pv::data::Segment::MaxChunkSize @ 8bit, added in 1
+call ----// uint8_t* const data = new uint8_t[num_samples]; for (uint32_t i = 0;
+i < num_samples; i++) data[i] = i;
 
 	s.append_samples(data, num_samples);
 	delete[] data;
@@ -60,10 +58,9 @@ BOOST_AUTO_TEST_CASE(MediumSize8Single)
 	Segment s(1, sizeof(uint8_t));
 	uint32_t num_samples = pv::data::Segment::MaxChunkSize;
 
-	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 8bit, added in 1 call ----//
-	uint8_t* const data = new uint8_t[num_samples];
-	for (uint32_t i = 0; i < num_samples; i++)
-		data[i] = i;
+	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 8bit, added in 1
+call ----// uint8_t* const data = new uint8_t[num_samples]; for (uint32_t i = 0;
+i < num_samples; i++) data[i] = i;
 
 	s.append_samples(data, num_samples);
 	delete[] data;
@@ -85,10 +82,9 @@ BOOST_AUTO_TEST_CASE(MaxSize8Single)
 	// We want to see proper behavior across chunk boundaries
 	uint32_t num_samples = 2*pv::data::Segment::MaxChunkSize;
 
-	//----- Chunk size >> pv::data::Segment::MaxChunkSize @ 8bit, added in 1 call ----//
-	uint8_t* const data = new uint8_t[num_samples];
-	for (uint32_t i = 0; i < num_samples; i++)
-		data[i] = i;
+	//----- Chunk size >> pv::data::Segment::MaxChunkSize @ 8bit, added in 1
+call ----// uint8_t* const data = new uint8_t[num_samples]; for (uint32_t i = 0;
+i < num_samples; i++) data[i] = i;
 
 	s.append_samples(data, num_samples);
 	delete[] data;
@@ -107,13 +103,13 @@ BOOST_AUTO_TEST_CASE(MediumSize24Single)
 {
 	Segment s(1, 3);
 
-	// Chunk size is num*unit_size, so with pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
-	uint32_t num_samples = pv::data::Segment::MaxChunkSize / 3;
+	// Chunk size is num*unit_size, so with
+pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size uint32_t
+num_samples = pv::data::Segment::MaxChunkSize / 3;
 
-	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 24bit, added in 1 call ----//
-	uint8_t* const data = new uint8_t[num_samples * 3];
-	for (uint32_t i = 0; i < num_samples * 3; i++)
-		data[i] = i % 256;
+	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 24bit, added in
+1 call ----// uint8_t* const data = new uint8_t[num_samples * 3]; for (uint32_t
+i = 0; i < num_samples * 3; i++) data[i] = i % 256;
 
 	s.append_samples(data, num_samples);
 	delete[] data;
@@ -134,13 +130,13 @@ BOOST_AUTO_TEST_CASE(MediumSize32Single)
 {
 	Segment s(1, sizeof(uint32_t));
 
-	// Chunk size is num*unit_size, so with pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
-	uint32_t num_samples = pv::data::Segment::MaxChunkSize / sizeof(uint32_t);
+	// Chunk size is num*unit_size, so with
+pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size uint32_t
+num_samples = pv::data::Segment::MaxChunkSize / sizeof(uint32_t);
 
-	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 32bit, added in 1 call ----//
-	uint32_t* const data = new uint32_t[num_samples];
-	for (uint32_t i = 0; i < num_samples; i++)
-		data[i] = i;
+	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 32bit, added in
+1 call ----// uint32_t* const data = new uint32_t[num_samples]; for (uint32_t i
+= 0; i < num_samples; i++) data[i] = i;
 
 	s.append_samples(data, num_samples);
 	delete[] data;
@@ -159,14 +155,15 @@ BOOST_AUTO_TEST_CASE(MaxSize32Single)
 {
 	Segment s(1, sizeof(uint32_t));
 
-	// Chunk size is num*unit_size, so with pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
+	// Chunk size is num*unit_size, so with
+pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
 	// Also, we want to see proper behavior across chunk boundaries
-	uint32_t num_samples = 2*(pv::data::Segment::MaxChunkSize / sizeof(uint32_t));
+	uint32_t num_samples = 2*(pv::data::Segment::MaxChunkSize /
+sizeof(uint32_t));
 
-	//----- Chunk size >> pv::data::Segment::MaxChunkSize @ 32bit, added in 1 call ----//
-	uint32_t* const data = new uint32_t[num_samples];
-	for (uint32_t i = 0; i < num_samples; i++)
-		data[i] = i;
+	//----- Chunk size >> pv::data::Segment::MaxChunkSize @ 32bit, added in
+1 call ----// uint32_t* const data = new uint32_t[num_samples]; for (uint32_t i
+= 0; i < num_samples; i++) data[i] = i;
 
 	s.append_samples(data, num_samples);
 	delete[] data;
@@ -185,14 +182,13 @@ BOOST_AUTO_TEST_CASE(MediumSize32Multi)
 {
 	Segment s(1, sizeof(uint32_t));
 
-	// Chunk size is num*unit_size, so with pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
-	uint32_t num_samples = pv::data::Segment::MaxChunkSize / sizeof(uint32_t);
+	// Chunk size is num*unit_size, so with
+pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size uint32_t
+num_samples = pv::data::Segment::MaxChunkSize / sizeof(uint32_t);
 
-	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 32bit, added in num_samples calls ----//
-	uint32_t data;
-	for (uint32_t i = 0; i < num_samples; i++) {
-		data = i;
-		s.append_samples(&data, 1);
+	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 32bit, added in
+num_samples calls ----// uint32_t data; for (uint32_t i = 0; i < num_samples;
+i++) { data = i; s.append_samples(&data, 1);
 	}
 
 	BOOST_CHECK(s.get_sample_count() == num_samples);
@@ -208,10 +204,13 @@ BOOST_AUTO_TEST_CASE(MaxSize32Multi)
 {
 	Segment s(1, sizeof(uint32_t));
 
-	// Chunk size is num*unit_size, so with pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
-	uint32_t num_samples = 2*(pv::data::Segment::MaxChunkSize / sizeof(uint32_t));
+	// Chunk size is num*unit_size, so with
+	// pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
+	uint32_t num_samples =
+		2 * (pv::data::Segment::MaxChunkSize / sizeof(uint32_t));
 
-	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 32bit, added in num_samples calls ----//
+	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 32bit, added in
+	//num_samples calls ----//
 	uint32_t data;
 	for (uint32_t i = 0; i < num_samples; i++) {
 		data = i;
@@ -221,14 +220,15 @@ BOOST_AUTO_TEST_CASE(MaxSize32Multi)
 	BOOST_CHECK(s.get_sample_count() == num_samples);
 
 	for (uint32_t i = 0; i < num_samples; i++) {
-		uint8_t* sample_data = s.get_raw_samples(i, 1);
-		BOOST_CHECK_EQUAL(*((uint32_t*)sample_data), i);
+		uint8_t *sample_data = s.get_raw_samples(i, 1);
+		BOOST_CHECK_EQUAL(*((uint32_t *)sample_data), i);
 		delete[] sample_data;
 	}
 
-	uint8_t* sample_data = s.get_raw_samples(0, num_samples);
+	uint8_t *sample_data = s.get_raw_samples(0, num_samples);
 	for (uint32_t i = 0; i < num_samples; i++) {
-		BOOST_CHECK_EQUAL(*((uint32_t*)(sample_data + i * sizeof(uint32_t))), i);
+		BOOST_CHECK_EQUAL(
+			*((uint32_t *)(sample_data + i * sizeof(uint32_t))), i);
 	}
 	delete[] sample_data;
 }
@@ -237,10 +237,13 @@ BOOST_AUTO_TEST_CASE(MaxSize32MultiIterated)
 {
 	Segment s(1, sizeof(uint32_t));
 
-	// Chunk size is num*unit_size, so with pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
-	uint32_t num_samples = 2*(pv::data::Segment::MaxChunkSize / sizeof(uint32_t));
+	// Chunk size is num*unit_size, so with
+	// pv::data::Segment::MaxChunkSize/unit_size, we reach the maximum size
+	uint32_t num_samples =
+		2 * (pv::data::Segment::MaxChunkSize / sizeof(uint32_t));
 
-	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 32bit, added in num_samples calls ----//
+	//----- Chunk size == pv::data::Segment::MaxChunkSize @ 32bit, added in
+	//num_samples calls ----//
 	uint32_t data;
 	for (uint32_t i = 0; i < num_samples; i++) {
 		data = i;
@@ -249,11 +252,11 @@ BOOST_AUTO_TEST_CASE(MaxSize32MultiIterated)
 
 	BOOST_CHECK(s.get_sample_count() == num_samples);
 
-	pv::data::SegmentRawDataIterator* it = s.begin_raw_sample_iteration(0);
+	pv::data::SegmentRawDataIterator *it = s.begin_raw_sample_iteration(0);
 
 	for (uint32_t i = 0; i < num_samples; i++) {
-		uint8_t* sample_data = it->value;
-		BOOST_CHECK_EQUAL(*((uint32_t*)sample_data), i);
+		uint8_t *sample_data = it->value;
+		BOOST_CHECK_EQUAL(*((uint32_t *)sample_data), i);
 		s.continue_raw_sample_iteration(it, 1);
 	}
 

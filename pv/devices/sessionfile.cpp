@@ -27,9 +27,8 @@ namespace pv {
 namespace devices {
 
 SessionFile::SessionFile(const std::shared_ptr<sigrok::Context> context,
-	const std::string &file_name) :
-	File(file_name),
-	context_(context)
+	const std::string &file_name)
+    : File(file_name), context_(context)
 {
 }
 

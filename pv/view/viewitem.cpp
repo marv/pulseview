@@ -32,10 +32,8 @@ namespace TraceView {
 const QSizeF ViewItem::LabelPadding(4, 0);
 const int ViewItem::HighlightRadius = 3;
 
-ViewItem::ViewItem() :
-	context_parent_(nullptr),
-	drag_point_(INT_MIN, INT_MIN),
-	selected_(false)
+ViewItem::ViewItem()
+    : context_parent_(nullptr), drag_point_(INT_MIN, INT_MIN), selected_(false)
 {
 }
 
@@ -82,13 +80,13 @@ QRectF ViewItem::hit_box_rect(const ViewItemPaintParams &pp) const
 	return QRectF();
 }
 
-QMenu* ViewItem::create_context_menu(QWidget *parent)
+QMenu *ViewItem::create_context_menu(QWidget *parent)
 {
 	context_parent_ = parent;
 	return new QMenu(parent);
 }
 
-widgets::Popup* ViewItem::create_popup(QWidget *parent)
+widgets::Popup *ViewItem::create_popup(QWidget *parent)
 {
 	(void)parent;
 	return nullptr;
@@ -100,9 +98,9 @@ void ViewItem::delete_pressed()
 
 QPen ViewItem::highlight_pen()
 {
-	return QPen(QApplication::palette().brush(
-		QPalette::Highlight), HighlightRadius * 2,
-		Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	return QPen(QApplication::palette().brush(QPalette::Highlight),
+		HighlightRadius * 2, Qt::SolidLine, Qt::RoundCap,
+		Qt::RoundJoin);
 }
 
 void ViewItem::paint_label(QPainter &p, const QRect &rect, bool hover)

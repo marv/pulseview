@@ -37,15 +37,14 @@ namespace TraceView {
 
 const QColor Flag::FillColour(0x73, 0xD2, 0x16);
 
-Flag::Flag(View &view, const pv::util::Timestamp& time, const QString &text) :
-	TimeMarker(view, FillColour, time),
-	text_(text)
+Flag::Flag(View &view, const pv::util::Timestamp &time, const QString &text)
+    : TimeMarker(view, FillColour, time), text_(text)
 {
 }
 
-Flag::Flag(const Flag &flag) :
-	TimeMarker(flag.view_, FillColour, flag.time_),
-	std::enable_shared_from_this<Flag>(flag)
+Flag::Flag(const Flag &flag)
+    : TimeMarker(flag.view_, FillColour, flag.time_),
+      std::enable_shared_from_this<Flag>(flag)
 {
 }
 
@@ -59,28 +58,28 @@ QString Flag::get_text() const
 	return text_;
 }
 
-pv::widgets::Popup* Flag::create_popup(QWidget *parent)
+pv::widgets::Popup *Flag::create_popup(QWidget *parent)
 {
 	using pv::widgets::Popup;
 
 	Popup *const popup = TimeMarker::create_popup(parent);
-	popup->set_position(parent->mapToGlobal(
-		point(parent->rect())), Popup::Bottom);
+	popup->set_position(
+		parent->mapToGlobal(point(parent->rect())), Popup::Bottom);
 
-	QFormLayout *const form = (QFormLayout*)popup->layout();
+	QFormLayout *const form = (QFormLayout *)popup->layout();
 
 	QLineEdit *const text_edit = new QLineEdit(popup);
 	text_edit->setText(text_);
 
-	connect(text_edit, SIGNAL(textChanged(const QString&)),
-		this, SLOT(on_text_changed(const QString&)));
+	connect(text_edit, SIGNAL(textChanged(const QString &)), this,
+		SLOT(on_text_changed(const QString &)));
 
 	form->insertRow(0, tr("Text"), text_edit);
 
 	return popup;
 }
 
-QMenu* Flag::create_context_menu(QWidget *parent)
+QMenu *Flag::create_context_menu(QWidget *parent)
 {
 	QMenu *const menu = new QMenu(parent);
 

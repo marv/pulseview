@@ -29,23 +29,19 @@ using std::pair;
 namespace pv {
 namespace prop {
 
-Double::Double(QString name,
-	int decimals,
-	QString suffix,
-	optional< pair<double, double> > range,
-	optional<double> step,
-	Getter getter,
-	Setter setter) :
-	Property(name, getter, setter),
-	decimals_(decimals),
-	suffix_(suffix),
-	range_(range),
-	step_(step),
-	spin_box_(nullptr)
+Double::Double(QString name, int decimals, QString suffix,
+	optional<pair<double, double>> range, optional<double> step,
+	Getter getter, Setter setter)
+    : Property(name, getter, setter),
+      decimals_(decimals),
+      suffix_(suffix),
+      range_(range),
+      step_(step),
+      spin_box_(nullptr)
 {
 }
 
-QWidget* Double::get_widget(QWidget *parent, bool auto_commit)
+QWidget *Double::get_widget(QWidget *parent, bool auto_commit)
 {
 	if (spin_box_)
 		return spin_box_;
@@ -57,8 +53,9 @@ QWidget* Double::get_widget(QWidget *parent, bool auto_commit)
 	if (!variant.gobj())
 		return nullptr;
 
-	double value = Glib::VariantBase::cast_dynamic<Glib::Variant<double>>(
-		variant).get();
+	double value =
+		Glib::VariantBase::cast_dynamic<Glib::Variant<double>>(variant)
+			.get();
 
 	spin_box_ = new QDoubleSpinBox(parent);
 	spin_box_->setDecimals(decimals_);
@@ -71,8 +68,8 @@ QWidget* Double::get_widget(QWidget *parent, bool auto_commit)
 	spin_box_->setValue(value);
 
 	if (auto_commit)
-		connect(spin_box_, SIGNAL(valueChanged(double)),
-			this, SLOT(on_value_changed(double)));
+		connect(spin_box_, SIGNAL(valueChanged(double)), this,
+			SLOT(on_value_changed(double)));
 
 	return spin_box_;
 }

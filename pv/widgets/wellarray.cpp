@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include <QPainter>
 #include <QPaintEvent>
+#include <QPainter>
 #include <QStyle>
 #include <QStyleOptionFrame>
 
@@ -51,101 +51,101 @@ namespace widgets {
 
 void WellArray::paintEvent(QPaintEvent *event)
 {
-    QRect r = event->rect();
-    int cx = r.x();
-    int cy = r.y();
-    int ch = r.height();
-    int cw = r.width();
-    int colfirst = columnAt(cx);
-    int collast = columnAt(cx + cw);
-    int rowfirst = rowAt(cy);
-    int rowlast = rowAt(cy + ch);
+	QRect r = event->rect();
+	int cx = r.x();
+	int cy = r.y();
+	int ch = r.height();
+	int cw = r.width();
+	int colfirst = columnAt(cx);
+	int collast = columnAt(cx + cw);
+	int rowfirst = rowAt(cy);
+	int rowlast = rowAt(cy + ch);
 
-    if (isRightToLeft()) {
-        int t = colfirst;
-        colfirst = collast;
-        collast = t;
-    }
+	if (isRightToLeft()) {
+		int t = colfirst;
+		colfirst = collast;
+		collast = t;
+	}
 
-    QPainter painter(this);
-    QPainter *p = &painter;
-    QRect rect(0, 0, cellWidth(), cellHeight());
+	QPainter painter(this);
+	QPainter *p = &painter;
+	QRect rect(0, 0, cellWidth(), cellHeight());
 
+	if (collast < 0 || collast >= ncols)
+		collast = ncols - 1;
+	if (rowlast < 0 || rowlast >= nrows)
+		rowlast = nrows - 1;
 
-    if (collast < 0 || collast >= ncols)
-        collast = ncols-1;
-    if (rowlast < 0 || rowlast >= nrows)
-        rowlast = nrows-1;
+	// Go through the rows
+	for (int r = rowfirst; r <= rowlast; ++r) {
+		// get row position and height
+		int rowp = rowY(r);
 
-    // Go through the rows
-    for (int r = rowfirst; r <= rowlast; ++r) {
-        // get row position and height
-        int rowp = rowY(r);
-
-        // Go through the columns in the row r
-        // if we know from where to where, go through [colfirst, collast],
-        // else go through all of them
-        for (int c = colfirst; c <= collast; ++c) {
-            // get position and width of column c
-            int colp = columnX(c);
-            // Translate painter and draw the cell
-            rect.translate(colp, rowp);
-            paintCell(p, r, c, rect);
-            rect.translate(-colp, -rowp);
-        }
-    }
+		// Go through the columns in the row r
+		// if we know from where to where, go through [colfirst,
+		// collast], else go through all of them
+		for (int c = colfirst; c <= collast; ++c) {
+			// get position and width of column c
+			int colp = columnX(c);
+			// Translate painter and draw the cell
+			rect.translate(colp, rowp);
+			paintCell(p, r, c, rect);
+			rect.translate(-colp, -rowp);
+		}
+	}
 }
 
-struct WellArrayData {
-    QBrush *brush;
+struct WellArrayData
+{
+	QBrush *brush;
 };
 
 WellArray::WellArray(int rows, int cols, QWidget *parent)
-    : QWidget(parent)
-        ,nrows(rows), ncols(cols)
+    : QWidget(parent), nrows(rows), ncols(cols)
 {
-    d = nullptr;
-    setFocusPolicy(Qt::StrongFocus);
-    cellw = 28;
-    cellh = 24;
-    curCol = 0;
-    curRow = 0;
-    selCol = -1;
-    selRow = -1;
+	d = nullptr;
+	setFocusPolicy(Qt::StrongFocus);
+	cellw = 28;
+	cellh = 24;
+	curCol = 0;
+	curRow = 0;
+	selCol = -1;
+	selRow = -1;
 }
 
 QSize WellArray::sizeHint() const
 {
-    ensurePolished();
-    return gridSize().boundedTo(QSize(640, 480));
+	ensurePolished();
+	return gridSize().boundedTo(QSize(640, 480));
 }
 
-
-void WellArray::paintCell(QPainter* p, int row, int col, const QRect &rect)
+void WellArray::paintCell(QPainter *p, int row, int col, const QRect &rect)
 {
-    int b = 3; //margin
+	int b = 3; // margin
 
-    const QPalette& g = palette();
-    QStyleOptionFrame opt;
-    int dfw = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
-    opt.lineWidth = dfw;
-    opt.midLineWidth = 1;
-    opt.rect = rect.adjusted(b, b, -b, -b);
-    opt.palette = g;
-    opt.state = QStyle::State_Enabled | QStyle::State_Sunken;
-    style()->drawPrimitive(QStyle::PE_Frame, &opt, p, this);
-    b += dfw;
+	const QPalette &g = palette();
+	QStyleOptionFrame opt;
+	int dfw = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
+	opt.lineWidth = dfw;
+	opt.midLineWidth = 1;
+	opt.rect = rect.adjusted(b, b, -b, -b);
+	opt.palette = g;
+	opt.state = QStyle::State_Enabled | QStyle::State_Sunken;
+	style()->drawPrimitive(QStyle::PE_Frame, &opt, p, this);
+	b += dfw;
 
-    if ((row == curRow) && (col == curCol)) {
-        if (hasFocus()) {
-            QStyleOptionFocusRect opt;
-            opt.palette = g;
-            opt.rect = rect;
-            opt.state = QStyle::State_None | QStyle::State_KeyboardFocusChange;
-            style()->drawPrimitive(QStyle::PE_FrameFocusRect, &opt, p, this);
-        }
-    }
-    paintCellContents(p, row, col, opt.rect.adjusted(dfw, dfw, -dfw, -dfw));
+	if ((row == curRow) && (col == curCol)) {
+		if (hasFocus()) {
+			QStyleOptionFocusRect opt;
+			opt.palette = g;
+			opt.rect = rect;
+			opt.state = QStyle::State_None |
+				    QStyle::State_KeyboardFocusChange;
+			style()->drawPrimitive(
+				QStyle::PE_FrameFocusRect, &opt, p, this);
+		}
+	}
+	paintCellContents(p, row, col, opt.rect.adjusted(dfw, dfw, -dfw, -dfw));
 }
 
 /*!
@@ -153,29 +153,28 @@ void WellArray::paintCell(QPainter* p, int row, int col, const QRect &rect)
  */
 void WellArray::paintCellContents(QPainter *p, int row, int col, const QRect &r)
 {
-    if (d) {
-        p->fillRect(r, d->brush[row*numCols()+col]);
-    } else {
-        p->fillRect(r, Qt::white);
-        p->setPen(Qt::black);
-        p->drawLine(r.topLeft(), r.bottomRight());
-        p->drawLine(r.topRight(), r.bottomLeft());
-    }
+	if (d) {
+		p->fillRect(r, d->brush[row * numCols() + col]);
+	} else {
+		p->fillRect(r, Qt::white);
+		p->setPen(Qt::black);
+		p->drawLine(r.topLeft(), r.bottomRight());
+		p->drawLine(r.topRight(), r.bottomLeft());
+	}
 }
 
 void WellArray::mousePressEvent(QMouseEvent *event)
 {
-    // The current cell marker is set to the cell the mouse is pressed in
-    QPoint pos = event->pos();
-    setCurrent(rowAt(pos.y()), columnAt(pos.x()));
+	// The current cell marker is set to the cell the mouse is pressed in
+	QPoint pos = event->pos();
+	setCurrent(rowAt(pos.y()), columnAt(pos.x()));
 }
 
 void WellArray::mouseReleaseEvent(QMouseEvent * /* event */)
 {
-    // The current cell marker is set to the cell the mouse is clicked in
-    setSelected(curRow, curCol);
+	// The current cell marker is set to the cell the mouse is clicked in
+	setSelected(curRow, curCol);
 }
-
 
 /*
   Sets the cell currently having the focus. This is not necessarily
@@ -184,20 +183,20 @@ void WellArray::mouseReleaseEvent(QMouseEvent * /* event */)
 
 void WellArray::setCurrent(int row, int col)
 {
-    if ((curRow == row) && (curCol == col))
-        return;
+	if ((curRow == row) && (curCol == col))
+		return;
 
-    if (row < 0 || col < 0)
-        row = col = -1;
+	if (row < 0 || col < 0)
+		row = col = -1;
 
-    int oldRow = curRow;
-    int oldCol = curCol;
+	int oldRow = curRow;
+	int oldCol = curCol;
 
-    curRow = row;
-    curCol = col;
+	curRow = row;
+	curCol = col;
 
-    updateCell(oldRow, oldCol);
-    updateCell(curRow, curCol);
+	updateCell(oldRow, oldCol);
+	updateCell(curRow, curCol);
 }
 
 /*
@@ -208,35 +207,35 @@ void WellArray::setCurrent(int row, int col)
 */
 void WellArray::setSelected(int row, int col)
 {
-    int oldRow = selRow;
-    int oldCol = selCol;
+	int oldRow = selRow;
+	int oldCol = selCol;
 
-    if (row < 0 || col < 0)
-        row = col = -1;
+	if (row < 0 || col < 0)
+		row = col = -1;
 
-    selCol = col;
-    selRow = row;
+	selCol = col;
+	selRow = row;
 
-    updateCell(oldRow, oldCol);
-    updateCell(selRow, selCol);
-    if (row >= 0)
-        Q_EMIT selected(row, col);
+	updateCell(oldRow, oldCol);
+	updateCell(selRow, selCol);
+	if (row >= 0)
+		Q_EMIT selected(row, col);
 }
 
-void WellArray::focusInEvent(QFocusEvent*)
+void WellArray::focusInEvent(QFocusEvent *)
 {
-    updateCell(curRow, curCol);
+	updateCell(curRow, curCol);
 }
 
 void WellArray::setCellBrush(int row, int col, const QBrush &b)
 {
-    if (!d) {
-        d = new WellArrayData;
-        int i = numRows()*numCols();
-        d->brush = new QBrush[i];
-    }
-    if (row >= 0 && row < numRows() && col >= 0 && col < numCols())
-        d->brush[row*numCols()+col] = b;
+	if (!d) {
+		d = new WellArrayData;
+		int i = numRows() * numCols();
+		d->brush = new QBrush[i];
+	}
+	if (row >= 0 && row < numRows() && col >= 0 && col < numCols())
+		d->brush[row * numCols() + col] = b;
 }
 
 /*
@@ -246,50 +245,48 @@ void WellArray::setCellBrush(int row, int col, const QBrush &b)
 
 QBrush WellArray::cellBrush(int row, int col)
 {
-    if (d && row >= 0 && row < numRows() && col >= 0 && col < numCols())
-        return d->brush[row*numCols()+col];
-    return Qt::NoBrush;
+	if (d && row >= 0 && row < numRows() && col >= 0 && col < numCols())
+		return d->brush[row * numCols() + col];
+	return Qt::NoBrush;
 }
 
-
-
 /*!\reimp
-*/
+ */
 
-void WellArray::focusOutEvent(QFocusEvent*)
+void WellArray::focusOutEvent(QFocusEvent *)
 {
-    updateCell(curRow, curCol);
+	updateCell(curRow, curCol);
 }
 
 /*\reimp
-*/
-void WellArray::keyPressEvent(QKeyEvent* event)
+ */
+void WellArray::keyPressEvent(QKeyEvent *event)
 {
-    switch(event->key()) {                        // Look at the key code
-    case Qt::Key_Left:                                // If 'left arrow'-key,
-        if (curCol > 0)                        // and cr't not in leftmost col
-            setCurrent(curRow, curCol - 1);        // set cr't to next left column
-        break;
-    case Qt::Key_Right:                                // Correspondingly...
-        if (curCol < numCols()-1)
-            setCurrent(curRow, curCol + 1);
-        break;
-    case Qt::Key_Up:
-        if (curRow > 0)
-            setCurrent(curRow - 1, curCol);
-        break;
-    case Qt::Key_Down:
-        if (curRow < numRows()-1)
-            setCurrent(curRow + 1, curCol);
-        break;
-    case Qt::Key_Space:
-        setSelected(curRow, curCol);
-        break;
-    default:                                // If not an interesting key,
-        event->ignore();                        // we don't accept the event
-        return;
-    }
-
+	switch (event->key()) { // Look at the key code
+	case Qt::Key_Left:      // If 'left arrow'-key,
+		if (curCol > 0) // and cr't not in leftmost col
+			setCurrent(curRow,
+				curCol - 1); // set cr't to next left column
+		break;
+	case Qt::Key_Right: // Correspondingly...
+		if (curCol < numCols() - 1)
+			setCurrent(curRow, curCol + 1);
+		break;
+	case Qt::Key_Up:
+		if (curRow > 0)
+			setCurrent(curRow - 1, curCol);
+		break;
+	case Qt::Key_Down:
+		if (curRow < numRows() - 1)
+			setCurrent(curRow + 1, curCol);
+		break;
+	case Qt::Key_Space:
+		setSelected(curRow, curCol);
+		break;
+	default:		 // If not an interesting key,
+		event->ignore(); // we don't accept the event
+		return;
+	}
 }
 
 } // namespace wellarray

@@ -38,7 +38,7 @@ class View;
 class ViewItemOwner
 {
 public:
-	typedef std::vector< std::shared_ptr<ViewItem> > item_list;
+	typedef std::vector<std::shared_ptr<ViewItem>> item_list;
 	typedef ViewItemIterator<ViewItemOwner, ViewItem> iterator;
 	typedef ViewItemIterator<const ViewItemOwner, ViewItem> const_iterator;
 
@@ -46,7 +46,7 @@ public:
 	/**
 	 * Returns a list of row items owned by this object.
 	 */
-	virtual const item_list& child_items() const = 0;
+	virtual const item_list &child_items() const = 0;
 
 	/**
 	 * Returns a depth-first iterator at the beginning of the child ViewItem
@@ -74,9 +74,9 @@ public:
 	/**
 	 * Creates a list of descendant signals filtered by type.
 	 */
-	template<class T>
-	std::vector< std::shared_ptr<T> > list_by_type() {
-		std::vector< std::shared_ptr<T> > items;
+	template <class T> std::vector<std::shared_ptr<T>> list_by_type()
+	{
+		std::vector<std::shared_ptr<T>> items;
 		for (const auto &r : *this) {
 			std::shared_ptr<T> p = std::dynamic_pointer_cast<T>(r);
 			if (p)

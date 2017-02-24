@@ -38,22 +38,22 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-const QPen Trace::AxisPen(QColor(0, 0, 0, 30*256/100));
+const QPen Trace::AxisPen(QColor(0, 0, 0, 30 * 256 / 100));
 const int Trace::LabelHitPadding = 2;
 
-const QColor Trace::BrightGrayBGColour = QColor(0, 0, 0, 10*255/100);
-const QColor Trace::DarkGrayBGColour = QColor(0, 0, 0, 15*255/100);
+const QColor Trace::BrightGrayBGColour = QColor(0, 0, 0, 10 * 255 / 100);
+const QColor Trace::DarkGrayBGColour = QColor(0, 0, 0, 15 * 255 / 100);
 
-Trace::Trace(std::shared_ptr<data::SignalBase> channel) :
-	base_(channel),
-	coloured_bg_(true), // Default setting is set in MainWindow::setup_ui()
-	popup_(nullptr),
-	popup_form_(nullptr)
+Trace::Trace(std::shared_ptr<data::SignalBase> channel)
+    : base_(channel),
+      coloured_bg_(true), // Default setting is set in MainWindow::setup_ui()
+      popup_(nullptr),
+      popup_form_(nullptr)
 {
-	connect(channel.get(), SIGNAL(name_changed(const QString&)),
-		this, SLOT(on_name_changed(const QString&)));
-	connect(channel.get(), SIGNAL(colour_changed(const QColor&)),
-		this, SLOT(on_colour_changed(const QColor&)));
+	connect(channel.get(), SIGNAL(name_changed(const QString &)), this,
+		SLOT(on_name_changed(const QString &)));
+	connect(channel.get(), SIGNAL(colour_changed(const QColor &)), this,
+		SLOT(on_colour_changed(const QColor &)));
 }
 
 void Trace::set_coloured_bg(bool state)
@@ -74,20 +74,16 @@ void Trace::paint_label(QPainter &p, const QRect &rect, bool hover)
 
 	// Paint the label
 	const float label_arrow_length = r.height() / 2;
-	const QPointF points[] = {
-		r.topLeft(),
+	const QPointF points[] = {r.topLeft(),
 		QPointF(r.right() - label_arrow_length, r.top()),
 		QPointF(r.right(), y),
 		QPointF(r.right() - label_arrow_length, r.bottom()),
-		r.bottomLeft()
-	};
-	const QPointF highlight_points[] = {
-		QPointF(r.left() + 1, r.top() + 1),
+		r.bottomLeft()};
+	const QPointF highlight_points[] = {QPointF(r.left() + 1, r.top() + 1),
 		QPointF(r.right() - label_arrow_length, r.top() + 1),
 		QPointF(r.right() - 1, y),
 		QPointF(r.right() - label_arrow_length, r.bottom() - 1),
-		QPointF(r.left() + 1, r.bottom() - 1)
-	};
+		QPointF(r.left() + 1, r.bottom() - 1)};
 
 	if (selected()) {
 		p.setPen(highlight_pen());
@@ -110,30 +106,29 @@ void Trace::paint_label(QPainter &p, const QRect &rect, bool hover)
 	// Paint the text
 	p.setPen(select_text_colour(base_->colour()));
 	p.setFont(QApplication::font());
-	p.drawText(QRectF(r.x(), r.y(),
-		r.width() - label_arrow_length, r.height()),
+	p.drawText(QRectF(r.x(), r.y(), r.width() - label_arrow_length,
+			   r.height()),
 		Qt::AlignCenter | Qt::AlignVCenter, base_->name());
 }
 
-QMenu* Trace::create_context_menu(QWidget *parent)
+QMenu *Trace::create_context_menu(QWidget *parent)
 {
 	QMenu *const menu = ViewItem::create_context_menu(parent);
 
 	return menu;
 }
 
-pv::widgets::Popup* Trace::create_popup(QWidget *parent)
+pv::widgets::Popup *Trace::create_popup(QWidget *parent)
 {
 	using pv::widgets::Popup;
 
 	popup_ = new Popup(parent);
-	popup_->set_position(parent->mapToGlobal(
-		point(parent->rect())), Popup::Right);
+	popup_->set_position(
+		parent->mapToGlobal(point(parent->rect())), Popup::Right);
 
 	create_popup_form();
 
-	connect(popup_, SIGNAL(closed()),
-		this, SLOT(on_popup_closed()));
+	connect(popup_, SIGNAL(closed()), this, SLOT(on_popup_closed()));
 
 	return popup_;
 }
@@ -143,15 +138,13 @@ QRectF Trace::label_rect(const QRectF &rect) const
 	QFontMetrics m(QApplication::font());
 	const QSize text_size(
 		m.boundingRect(QRect(), 0, base_->name()).width(), m.height());
-	const QSizeF label_size(
-		text_size.width() + LabelPadding.width() * 2,
-		ceilf((text_size.height() + LabelPadding.height() * 2) / 2) * 2);
+	const QSizeF label_size(text_size.width() + LabelPadding.width() * 2,
+		ceilf((text_size.height() + LabelPadding.height() * 2) / 2) *
+			2);
 	const float half_height = label_size.height() / 2;
-	return QRectF(
-		rect.right() - half_height - label_size.width() - 0.5,
+	return QRectF(rect.right() - half_height - label_size.width() - 0.5,
 		get_visual_y() + 0.5f - half_height,
-		label_size.width() + half_height,
-		label_size.height());
+		label_size.width() + half_height, label_size.height());
 }
 
 void Trace::paint_back(QPainter &p, const ViewItemPaintParams &pp)
@@ -159,7 +152,8 @@ void Trace::paint_back(QPainter &p, const ViewItemPaintParams &pp)
 	if (coloured_bg_)
 		p.setBrush(base_->bgcolour());
 	else
-		p.setBrush(bgcolour_state_ ? BrightGrayBGColour : DarkGrayBGColour);
+		p.setBrush(bgcolour_state_ ? BrightGrayBGColour
+					   : DarkGrayBGColour);
 
 	p.setPen(QPen(Qt::NoPen));
 
@@ -191,8 +185,8 @@ void Trace::add_colour_option(QWidget *parent, QFormLayout *form)
 		TracePalette::Rows, TracePalette::Cols, parent);
 	colour_button->set_palette(TracePalette::Colours);
 	colour_button->set_colour(base_->colour());
-	connect(colour_button, SIGNAL(selected(const QColor&)),
-		this, SLOT(on_colouredit_changed(const QColor&)));
+	connect(colour_button, SIGNAL(selected(const QColor &)), this,
+		SLOT(on_colouredit_changed(const QColor &)));
 
 	form->addRow(tr("Colour"), colour_button);
 }
@@ -221,8 +215,8 @@ void Trace::populate_popup_form(QWidget *parent, QFormLayout *form)
 {
 	QLineEdit *const name_edit = new QLineEdit(parent);
 	name_edit->setText(base_->name());
-	connect(name_edit, SIGNAL(textChanged(const QString&)),
-		this, SLOT(on_nameedit_changed(const QString&)));
+	connect(name_edit, SIGNAL(textChanged(const QString &)), this,
+		SLOT(on_nameedit_changed(const QString &)));
 	form->addRow(tr("Name"), name_edit);
 
 	add_colour_option(parent, form);
@@ -240,7 +234,8 @@ void Trace::set_colour(QColor colour)
 
 void Trace::on_name_changed(const QString &text)
 {
-	/* This event handler is called by SignalBase when the name was changed there */
+	/* This event handler is called by SignalBase when the name was changed
+	 * there */
 	(void)text;
 
 	if (owner_) {
@@ -251,7 +246,8 @@ void Trace::on_name_changed(const QString &text)
 
 void Trace::on_colour_changed(const QColor &colour)
 {
-	/* This event handler is called by SignalBase when the colour was changed there */
+	/* This event handler is called by SignalBase when the colour was
+	 * changed there */
 	(void)colour;
 
 	if (owner_)

@@ -26,13 +26,12 @@
 namespace pv {
 namespace prop {
 
-Bool::Bool(QString name, Getter getter, Setter setter) :
-	Property(name, getter, setter),
-	check_box_(nullptr)
+Bool::Bool(QString name, Getter getter, Setter setter)
+    : Property(name, getter, setter), check_box_(nullptr)
 {
 }
 
-QWidget* Bool::get_widget(QWidget *parent, bool auto_commit)
+QWidget *Bool::get_widget(QWidget *parent, bool auto_commit)
 {
 	if (check_box_)
 		return check_box_;
@@ -44,15 +43,16 @@ QWidget* Bool::get_widget(QWidget *parent, bool auto_commit)
 	if (!variant.gobj())
 		return nullptr;
 
-	bool value = Glib::VariantBase::cast_dynamic<Glib::Variant<bool>>(
-		variant).get();
+	bool value =
+		Glib::VariantBase::cast_dynamic<Glib::Variant<bool>>(variant)
+			.get();
 
 	check_box_ = new QCheckBox(name(), parent);
 	check_box_->setCheckState(value ? Qt::Checked : Qt::Unchecked);
 
 	if (auto_commit)
-		connect(check_box_, SIGNAL(stateChanged(int)),
-			this, SLOT(on_state_changed(int)));
+		connect(check_box_, SIGNAL(stateChanged(int)), this,
+			SLOT(on_state_changed(int)));
 
 	return check_box_;
 }

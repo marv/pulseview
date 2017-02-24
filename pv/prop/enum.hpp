@@ -39,12 +39,13 @@ class Enum : public Property
 	Q_OBJECT;
 
 public:
-	Enum(QString name, std::vector<std::pair<Glib::VariantBase, QString> > values,
+	Enum(QString name,
+		std::vector<std::pair<Glib::VariantBase, QString>> values,
 		Getter getter, Setter setter);
 
 	virtual ~Enum() = default;
 
-	QWidget* get_widget(QWidget *parent, bool auto_commit);
+	QWidget *get_widget(QWidget *parent, bool auto_commit);
 
 	void commit();
 
@@ -52,7 +53,7 @@ private Q_SLOTS:
 	void on_current_item_changed(int);
 
 private:
-	const std::vector< std::pair<Glib::VariantBase, QString> > values_;
+	const std::vector<std::pair<Glib::VariantBase, QString>> values_;
 
 	QComboBox *selector_;
 };

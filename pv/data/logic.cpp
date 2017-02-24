@@ -30,9 +30,8 @@ using std::vector;
 namespace pv {
 namespace data {
 
-Logic::Logic(unsigned int num_channels) :
-	SignalData(),
-	num_channels_(num_channels)
+Logic::Logic(unsigned int num_channels)
+    : SignalData(), num_channels_(num_channels)
 {
 	assert(num_channels_ > 0);
 }
@@ -42,21 +41,19 @@ unsigned int Logic::num_channels() const
 	return num_channels_;
 }
 
-void Logic::push_segment(
-	shared_ptr<LogicSegment> &segment)
+void Logic::push_segment(shared_ptr<LogicSegment> &segment)
 {
 	segments_.push_front(segment);
 }
 
-const deque< shared_ptr<LogicSegment> >& Logic::logic_segments() const
+const deque<shared_ptr<LogicSegment>> &Logic::logic_segments() const
 {
 	return segments_;
 }
 
-vector< shared_ptr<Segment> > Logic::segments() const
+vector<shared_ptr<Segment>> Logic::segments() const
 {
-	return vector< shared_ptr<Segment> >(
-		segments_.begin(), segments_.end());
+	return vector<shared_ptr<Segment>>(segments_.begin(), segments_.end());
 }
 
 void Logic::clear()
@@ -76,8 +73,8 @@ uint64_t Logic::max_sample_count() const
 	return l;
 }
 
-void Logic::notify_samples_added(QObject* segment, uint64_t start_sample,
-	uint64_t end_sample)
+void Logic::notify_samples_added(
+	QObject *segment, uint64_t start_sample, uint64_t end_sample)
 {
 	samples_added(segment, start_sample, end_sample);
 }

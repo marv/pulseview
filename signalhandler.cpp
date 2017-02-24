@@ -51,11 +51,11 @@ bool SignalHandler::prepare_signals()
 	return true;
 }
 
-SignalHandler::SignalHandler(QObject* parent) : QObject(parent),
-	socket_notifier_(nullptr)
+SignalHandler::SignalHandler(QObject *parent)
+    : QObject(parent), socket_notifier_(nullptr)
 {
-	socket_notifier_ = new QSocketNotifier(sockets_[1],
-		QSocketNotifier::Read, this);
+	socket_notifier_ =
+		new QSocketNotifier(sockets_[1], QSocketNotifier::Read, this);
 	connect(socket_notifier_, SIGNAL(activated(int)),
 		SLOT(on_socket_notifier_activated()));
 }
@@ -70,8 +70,7 @@ void SignalHandler::on_socket_notifier_activated()
 		abort();
 	}
 
-	switch(sig_number)
-	{
+	switch (sig_number) {
 	case SIGINT:
 		Q_EMIT int_received();
 		break;

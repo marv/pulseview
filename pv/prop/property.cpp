@@ -22,14 +22,12 @@
 namespace pv {
 namespace prop {
 
-Property::Property(QString name, Getter getter, Setter setter) :
-	getter_(getter),
-	setter_(setter),
-	name_(name)
+Property::Property(QString name, Getter getter, Setter setter)
+    : getter_(getter), setter_(setter), name_(name)
 {
 }
 
-const QString& Property::name() const
+const QString &Property::name() const
 {
 	return name_;
 }

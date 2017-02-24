@@ -39,7 +39,7 @@ public:
 	 * @param view A reference to the view that owns this marker.
 	 * @param time The time to set the marker to.
 	 */
-	TriggerMarker(View &view, const pv::util::Timestamp& time);
+	TriggerMarker(View &view, const pv::util::Timestamp &time);
 
 	/**
 	 * Copy constructor.
@@ -59,7 +59,7 @@ public:
 	/**
 	 * Sets the time of the marker.
 	 */
-	void set_time(const pv::util::Timestamp& time) override;
+	void set_time(const pv::util::Timestamp &time) override;
 
 	float get_x() const override;
 

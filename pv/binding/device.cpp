@@ -52,8 +52,8 @@ using pv::prop::Property;
 namespace pv {
 namespace binding {
 
-Device::Device(shared_ptr<sigrok::Configurable> configurable) :
-	configurable_(configurable)
+Device::Device(shared_ptr<sigrok::Configurable> configurable)
+    : configurable_(configurable)
 {
 
 	auto keys = configurable->config_keys();
@@ -76,7 +76,8 @@ Device::Device(shared_ptr<sigrok::Configurable> configurable) :
 		const QString name = QString::fromStdString(name_str);
 
 		const Property::Getter get = [&, key]() {
-			return configurable_->config_get(key); };
+			return configurable_->config_get(key);
+		};
 		const Property::Setter set = [&, key](Glib::VariantBase value) {
 			configurable_->config_set(key, value);
 			config_changed();
@@ -84,13 +85,13 @@ Device::Device(shared_ptr<sigrok::Configurable> configurable) :
 
 		switch (key->id()) {
 		case SR_CONF_SAMPLERATE:
-			// Sample rate values are not bound because they are shown
-			// in the MainBar
+			// Sample rate values are not bound because they are
+			// shown in the MainBar
 			break;
 
 		case SR_CONF_CAPTURE_RATIO:
-			bind_int(name, "%", pair<int64_t, int64_t>(0, 100),
-				get, set);
+			bind_int(name, "%", pair<int64_t, int64_t>(0, 100), get,
+				set);
 			break;
 
 		case SR_CONF_PATTERN_MODE:
@@ -110,22 +111,28 @@ Device::Device(shared_ptr<sigrok::Configurable> configurable) :
 			break;
 
 		case SR_CONF_TIMEBASE:
-			bind_enum(name, key, capabilities, get, set, print_timebase);
+			bind_enum(name, key, capabilities, get, set,
+				print_timebase);
 			break;
 
 		case SR_CONF_VDIV:
-			bind_enum(name, key, capabilities, get, set, print_vdiv);
+			bind_enum(
+				name, key, capabilities, get, set, print_vdiv);
 			break;
 
 		case SR_CONF_VOLTAGE_THRESHOLD:
-			bind_enum(name, key, capabilities, get, set, print_voltage_threshold);
+			bind_enum(name, key, capabilities, get, set,
+				print_voltage_threshold);
 			break;
 
 		case SR_CONF_PROBE_FACTOR:
 			if (capabilities.count(Capability::LIST))
-				bind_enum(name, key, capabilities, get, set, print_probe_factor);
+				bind_enum(name, key, capabilities, get, set,
+					print_probe_factor);
 			else
-				bind_int(name, "", pair<int64_t, int64_t>(1, 500), get, set);
+				bind_int(name, "",
+					pair<int64_t, int64_t>(1, 500), get,
+					set);
 			break;
 
 		default:
@@ -134,21 +141,20 @@ Device::Device(shared_ptr<sigrok::Configurable> configurable) :
 	}
 }
 
-void Device::bind_bool(const QString &name,
-	Property::Getter getter, Property::Setter setter)
+void Device::bind_bool(
+	const QString &name, Property::Getter getter, Property::Setter setter)
 {
 	assert(configurable_);
-	properties_.push_back(shared_ptr<Property>(new Bool(
-		name, getter, setter)));
+	properties_.push_back(
+		shared_ptr<Property>(new Bool(name, getter, setter)));
 }
 
-void Device::bind_enum(const QString &name,
-	const ConfigKey *key, std::set<const Capability *> capabilities,
-	Property::Getter getter,
-	Property::Setter setter, function<QString (Glib::VariantBase)> printer)
+void Device::bind_enum(const QString &name, const ConfigKey *key,
+	std::set<const Capability *> capabilities, Property::Getter getter,
+	Property::Setter setter, function<QString(Glib::VariantBase)> printer)
 {
 	Glib::VariantBase gvar;
-	vector< pair<Glib::VariantBase, QString> > values;
+	vector<pair<Glib::VariantBase, QString>> values;
 
 	assert(configurable_);
 
@@ -159,18 +165,18 @@ void Device::bind_enum(const QString &name,
 	while ((iter.next_value(gvar)))
 		values.push_back(make_pair(gvar, printer(gvar)));
 
-	properties_.push_back(shared_ptr<Property>(new Enum(name, values,
-		getter, setter)));
+	properties_.push_back(
+		shared_ptr<Property>(new Enum(name, values, getter, setter)));
 }
 
 void Device::bind_int(const QString &name, QString suffix,
-	optional< std::pair<int64_t, int64_t> > range,
-	Property::Getter getter, Property::Setter setter)
+	optional<std::pair<int64_t, int64_t>> range, Property::Getter getter,
+	Property::Setter setter)
 {
 	assert(configurable_);
 
-	properties_.push_back(shared_ptr<Property>(new Int(name, suffix, range,
-		getter, setter)));
+	properties_.push_back(shared_ptr<Property>(
+		new Int(name, suffix, range, getter, setter)));
 }
 
 QString Device::print_timebase(Glib::VariantBase gvar)

@@ -63,7 +63,7 @@ private:
 	/**
 	 * Gets the row items.
 	 */
-	std::vector< std::shared_ptr<ViewItem> > items();
+	std::vector<std::shared_ptr<ViewItem>> items();
 
 	/**
 	 * Gets the first view item which has a label that contains @c pt .

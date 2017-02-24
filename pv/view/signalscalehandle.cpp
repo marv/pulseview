@@ -32,8 +32,7 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-SignalScaleHandle::SignalScaleHandle(Signal &owner) :
-	owner_(owner)
+SignalScaleHandle::SignalScaleHandle(Signal &owner) : owner_(owner)
 {
 }
 

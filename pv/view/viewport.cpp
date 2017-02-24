@@ -17,9 +17,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <algorithm>
 #include <limits>
 
 #include "signal.hpp"
@@ -49,9 +49,7 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-Viewport::Viewport(View &parent) :
-	ViewWidget(parent),
-	pinch_zoom_active_(false)
+Viewport::Viewport(View &parent) : ViewWidget(parent), pinch_zoom_active_(false)
 {
 	setAutoFillBackground(true);
 	setBackgroundRole(QPalette::Base);
@@ -60,10 +58,9 @@ Viewport::Viewport(View &parent) :
 shared_ptr<ViewItem> Viewport::get_mouse_over_item(const QPoint &pt)
 {
 	const ViewItemPaintParams pp(rect(), view_.scale(), view_.offset());
-	const vector< shared_ptr<ViewItem> > items(this->items());
+	const vector<shared_ptr<ViewItem>> items(this->items());
 	for (auto i = items.rbegin(); i != items.rend(); i++)
-		if ((*i)->enabled() &&
-			(*i)->hit_box_rect(pp).contains(pt))
+		if ((*i)->enabled() && (*i)->hit_box_rect(pp).contains(pt))
 			return *i;
 	return nullptr;
 }
@@ -71,8 +68,9 @@ shared_ptr<ViewItem> Viewport::get_mouse_over_item(const QPoint &pt)
 void Viewport::item_hover(const shared_ptr<ViewItem> &item)
 {
 	if (item && item->is_draggable())
-		setCursor(dynamic_pointer_cast<RowItem>(item) ?
-			Qt::SizeVerCursor : Qt::SizeHorCursor);
+		setCursor(dynamic_pointer_cast<RowItem>(item)
+				  ? Qt::SizeVerCursor
+				  : Qt::SizeHorCursor);
 	else
 		unsetCursor();
 }
@@ -88,8 +86,8 @@ void Viewport::drag_by(const QPoint &delta)
 	if (drag_offset_ == boost::none)
 		return;
 
-	view_.set_scale_offset(view_.scale(),
-		(*drag_offset_ - delta.x() * view_.scale()));
+	view_.set_scale_offset(
+		view_.scale(), (*drag_offset_ - delta.x() * view_.scale()));
 
 	view_.set_v_offset(-drag_v_offset_ - delta.y());
 }
@@ -99,13 +97,13 @@ void Viewport::drag_release()
 	drag_offset_ = boost::none;
 }
 
-vector< shared_ptr<ViewItem> > Viewport::items()
+vector<shared_ptr<ViewItem>> Viewport::items()
 {
-	vector< shared_ptr<ViewItem> > items;
-	const std::vector< shared_ptr<ViewItem> > view_items(
+	vector<shared_ptr<ViewItem>> items;
+	const std::vector<shared_ptr<ViewItem>> view_items(
 		view_.list_by_type<ViewItem>());
 	copy(view_items.begin(), view_items.end(), back_inserter(items));
-	const vector< shared_ptr<TimeItem> > time_items(view_.time_items());
+	const vector<shared_ptr<TimeItem>> time_items(view_.time_items());
 	copy(time_items.begin(), time_items.end(), back_inserter(items));
 	return items;
 }
@@ -123,9 +121,13 @@ bool Viewport::touch_event(QTouchEvent *event)
 	const QTouchEvent::TouchPoint &touchPoint1 = touchPoints.last();
 
 	if (!pinch_zoom_active_ ||
-	    (event->touchPointStates() & Qt::TouchPointPressed)) {
-		pinch_offset0_ = (view_.offset() + view_.scale() * touchPoint0.pos().x()).convert_to<double>();
-		pinch_offset1_ = (view_.offset() + view_.scale() * touchPoint1.pos().x()).convert_to<double>();
+		(event->touchPointStates() & Qt::TouchPointPressed)) {
+		pinch_offset0_ =
+			(view_.offset() + view_.scale() * touchPoint0.pos().x())
+				.convert_to<double>();
+		pinch_offset1_ =
+			(view_.offset() + view_.scale() * touchPoint1.pos().x())
+				.convert_to<double>();
 		pinch_zoom_active_ = true;
 	}
 
@@ -155,17 +157,18 @@ bool Viewport::touch_event(QTouchEvent *event)
 	return true;
 }
 
-void Viewport::paintEvent(QPaintEvent*)
+void Viewport::paintEvent(QPaintEvent *)
 {
-	vector< shared_ptr<RowItem> > row_items(view_.list_by_type<RowItem>());
+	vector<shared_ptr<RowItem>> row_items(view_.list_by_type<RowItem>());
 	assert(none_of(row_items.begin(), row_items.end(),
 		[](const shared_ptr<RowItem> &r) { return !r; }));
 
 	stable_sort(row_items.begin(), row_items.end(),
 		[](const shared_ptr<RowItem> &a, const shared_ptr<RowItem> &b) {
-			return a->point(QRect()).y() < b->point(QRect()).y(); });
+			return a->point(QRect()).y() < b->point(QRect()).y();
+		});
 
-	const vector< shared_ptr<TimeItem> > time_items(view_.time_items());
+	const vector<shared_ptr<TimeItem>> time_items(view_.time_items());
 	assert(none_of(time_items.begin(), time_items.end(),
 		[](const shared_ptr<TimeItem> &t) { return !t; }));
 
@@ -212,7 +215,8 @@ void Viewport::wheelEvent(QWheelEvent *event)
 		if (event->modifiers() & Qt::ControlModifier) {
 			// Vertical scrolling with the control key pressed
 			// is intrepretted as vertical scrolling
-			view_.set_v_offset(-view_.owner_visual_v_offset() -
+			view_.set_v_offset(
+				-view_.owner_visual_v_offset() -
 				(event->delta() * height()) / (8 * 120));
 		} else {
 			// Vertical scrolling is interpreted as zooming in/out

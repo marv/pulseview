@@ -22,8 +22,7 @@
 
 #include <iostream>
 
-Application::Application(int &argc, char* argv[]) :
-	QApplication(argc, argv)
+Application::Application(int &argc, char *argv[]) : QApplication(argc, argv)
 {
 	setApplicationVersion(PV_VERSION_STRING);
 	setApplicationName("PulseView");
@@ -35,7 +34,7 @@ bool Application::notify(QObject *receiver, QEvent *event)
 {
 	try {
 		return QApplication::notify(receiver, event);
-	} catch (std::exception& e) {
+	} catch (std::exception &e) {
 		std::cerr << "Caught exception: " << e.what() << std::endl;
 		exit(1);
 		return false;

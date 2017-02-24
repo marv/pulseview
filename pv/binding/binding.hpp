@@ -26,8 +26,8 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 #include <glibmm.h>
 G_GNUC_END_IGNORE_DEPRECATIONS
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include <QString>
 
@@ -45,20 +45,20 @@ namespace binding {
 class Binding
 {
 public:
-	const std::vector< std::shared_ptr<prop::Property> >& properties();
+	const std::vector<std::shared_ptr<prop::Property>> &properties();
 
 	void commit();
 
-	void add_properties_to_form(QFormLayout *layout,
-		bool auto_commit = false) const;
+	void add_properties_to_form(
+		QFormLayout *layout, bool auto_commit = false) const;
 
-	QWidget* get_property_form(QWidget *parent,
-		bool auto_commit = false) const;
+	QWidget *get_property_form(
+		QWidget *parent, bool auto_commit = false) const;
 
 	static QString print_gvariant(Glib::VariantBase gvar);
 
 protected:
-	std::vector< std::shared_ptr<prop::Property> > properties_;
+	std::vector<std::shared_ptr<prop::Property>> properties_;
 };
 
 } // binding

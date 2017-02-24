@@ -45,15 +45,14 @@ public:
 	 * Constructs a new @c InputOutput binding.
 	 * @param options the map of options to use as a template.
 	 */
-	InputOutput(
-		const std::map<std::string, std::shared_ptr<sigrok::Option>>
+	InputOutput(const std::map<std::string, std::shared_ptr<sigrok::Option>>
 			&options);
 
 	/**
 	 * Gets the map of selected options.
 	 * @return the options.
 	 */
-	const std::map<std::string, Glib::VariantBase>& options() const;
+	const std::map<std::string, Glib::VariantBase> &options() const;
 
 private:
 	/**

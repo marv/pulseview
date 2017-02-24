@@ -80,7 +80,7 @@ private:
 	/**
 	 * Gets the items in the view widget.
 	 */
-	std::vector< std::shared_ptr<ViewItem> > items();
+	std::vector<std::shared_ptr<ViewItem>> items();
 
 	/**
 	 * Handles touch begin update and end events.

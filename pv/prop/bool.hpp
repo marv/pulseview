@@ -36,7 +36,7 @@ public:
 
 	virtual ~Bool() = default;
 
-	QWidget* get_widget(QWidget *parent, bool auto_commit);
+	QWidget *get_widget(QWidget *parent, bool auto_commit);
 	bool labeled_widget() const;
 
 	void commit();

@@ -47,16 +47,16 @@ class StandardBar : public QToolBar
 	Q_OBJECT
 
 public:
-	StandardBar(Session &session, QWidget *parent,
-		TraceView::View *view, bool add_default_widgets=true);
+	StandardBar(Session &session, QWidget *parent, TraceView::View *view,
+		bool add_default_widgets = true);
 
 	Session &session(void) const;
 
-	QAction* action_view_zoom_in() const;
-	QAction* action_view_zoom_out() const;
-	QAction* action_view_zoom_fit() const;
-	QAction* action_view_zoom_one_to_one() const;
-	QAction* action_view_show_cursors() const;
+	QAction *action_view_zoom_in() const;
+	QAction *action_view_zoom_out() const;
+	QAction *action_view_zoom_fit() const;
+	QAction *action_view_zoom_one_to_one() const;
+	QAction *action_view_show_cursors() const;
 
 protected:
 	virtual void add_toolbar_widgets();

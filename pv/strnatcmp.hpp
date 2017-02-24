@@ -27,8 +27,8 @@
 #ifndef PULSEVIEW_PV_STRNATCMP_HPP
 #define PULSEVIEW_PV_STRNATCMP_HPP
 
-#include <stddef.h>	/* size_t */
 #include <ctype.h>
+#include <stddef.h> /* size_t */
 #include <string>
 
 using std::string;
@@ -67,7 +67,7 @@ static int compare_left(char const *a, char const *b)
 	// Compare two left-aligned numbers: the first to have a
 	// different value wins.
 	for (;; a++, b++) {
-		if (!isdigit(*a)  &&  !isdigit(*b))
+		if (!isdigit(*a) && !isdigit(*b))
 			return 0;
 		if (!isdigit(*a))
 			return -1;
@@ -105,10 +105,12 @@ static int strnatcmp0(char const *a, char const *b, int fold_case)
 			fractional = (ca == '0' || cb == '0');
 
 			if (fractional) {
-				if ((result = compare_left(a + ai, b + bi)) != 0)
+				if ((result = compare_left(a + ai, b + bi)) !=
+					0)
 					return result;
 			} else {
-				if ((result = compare_right(a + ai, b + bi)) != 0)
+				if ((result = compare_right(a + ai, b + bi)) !=
+					0)
 					return result;
 			}
 		}

@@ -36,12 +36,7 @@ class SweepTimingWidget : public QWidget
 	Q_OBJECT
 
 private:
-	enum ValueType
-	{
-		None,
-		MinMaxStep,
-		List
-	};
+	enum ValueType { None, MinMaxStep, List };
 
 public:
 	SweepTimingWidget(const char *suffix, QWidget *parent = nullptr);

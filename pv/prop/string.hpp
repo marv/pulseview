@@ -34,12 +34,12 @@ class String : public Property
 public:
 	String(QString name, Getter getter, Setter setter);
 
-	QWidget* get_widget(QWidget *parent, bool auto_commit);
+	QWidget *get_widget(QWidget *parent, bool auto_commit);
 
 	void commit();
 
 private Q_SLOTS:
-	void on_text_edited(const QString&);
+	void on_text_edited(const QString &);
 
 private:
 	QLineEdit *line_edit_;

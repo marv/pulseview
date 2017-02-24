@@ -51,8 +51,7 @@ protected:
 	 * Indicates the event an a view item has been clicked.
 	 * @param item the view item that has been clicked.
 	 */
-	virtual void item_clicked(
-		const std::shared_ptr<ViewItem> &item);
+	virtual void item_clicked(const std::shared_ptr<ViewItem> &item);
 
 	/**
 	 * Shows the popup of a the specified @c ViewItem .

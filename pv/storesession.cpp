@@ -29,14 +29,14 @@
 
 #include "storesession.hpp"
 
-#include <pv/devicemanager.hpp>
-#include <pv/session.hpp>
 #include <pv/data/analog.hpp>
 #include <pv/data/analogsegment.hpp>
 #include <pv/data/logic.hpp>
 #include <pv/data/logicsegment.hpp>
 #include <pv/data/signalbase.hpp>
+#include <pv/devicemanager.hpp>
 #include <pv/devices/device.hpp>
+#include <pv/session.hpp>
 
 #include <libsigrokcxx/libsigrokcxx.hpp>
 
@@ -75,15 +75,15 @@ StoreSession::StoreSession(const std::string &file_name,
 	const shared_ptr<OutputFormat> &output_format,
 	const map<string, VariantBase> &options,
 	const std::pair<uint64_t, uint64_t> sample_range,
-	const Session &session) :
-	file_name_(file_name),
-	output_format_(output_format),
-	options_(options),
-	sample_range_(sample_range),
-	session_(session),
-	interrupt_(false),
-	units_stored_(0),
-	unit_count_(0)
+	const Session &session)
+    : file_name_(file_name),
+      output_format_(output_format),
+      options_(options),
+      sample_range_(sample_range),
+      session_(session),
+      interrupt_(false),
+      units_stored_(0),
+      unit_count_(0)
 {
 }
 
@@ -97,7 +97,7 @@ pair<int, int> StoreSession::progress() const
 	return make_pair(units_stored_.load(), unit_count_.load());
 }
 
-const QString& StoreSession::error() const
+const QString &StoreSession::error() const
 {
 	lock_guard<mutex> lock(mutex_);
 	return error_;
@@ -105,12 +105,13 @@ const QString& StoreSession::error() const
 
 bool StoreSession::start()
 {
-	const unordered_set< shared_ptr<data::SignalBase> > sigs(session_.signalbases());
+	const unordered_set<shared_ptr<data::SignalBase>> sigs(
+		session_.signalbases());
 
 	shared_ptr<data::Segment> any_segment;
 	shared_ptr<data::LogicSegment> lsegment;
-	vector< shared_ptr<data::SignalBase> > achannel_list;
-	vector< shared_ptr<data::AnalogSegment> > asegment_list;
+	vector<shared_ptr<data::SignalBase>> achannel_list;
+	vector<shared_ptr<data::AnalogSegment>> asegment_list;
 
 	for (shared_ptr<data::SignalBase> signal : sigs) {
 		if (!signal->enabled())
@@ -120,11 +121,12 @@ bool StoreSession::start()
 			// All logic channels share the same data segments
 			shared_ptr<data::Logic> ldata = signal->logic_data();
 
-			const deque< shared_ptr<data::LogicSegment> > &lsegments =
+			const deque<shared_ptr<data::LogicSegment>> &lsegments =
 				ldata->logic_segments();
 
 			if (lsegments.empty()) {
-				error_ = tr("Can't save logic channel without data.");
+				error_ = tr("Can't save logic channel without "
+					    "data.");
 				return false;
 			}
 
@@ -136,11 +138,12 @@ bool StoreSession::start()
 			// Each analog channel has its own segments
 			shared_ptr<data::Analog> adata = signal->analog_data();
 
-			const deque< shared_ptr<data::AnalogSegment> > &asegments =
-				adata->analog_segments();
+			const deque<shared_ptr<data::AnalogSegment>>
+				&asegments = adata->analog_segments();
 
 			if (asegments.empty()) {
-				error_ = tr("Can't save analog channel without data.");
+				error_ = tr("Can't save analog channel without "
+					    "data.");
 				return false;
 			}
 
@@ -161,15 +164,17 @@ bool StoreSession::start()
 
 	if (sample_range_.first == sample_range_.second) {
 		start_sample_ = 0;
-		sample_count_ =	any_segment->get_sample_count();
+		sample_count_ = any_segment->get_sample_count();
 	} else {
 		if (sample_range_.first > sample_range_.second) {
 			start_sample_ = sample_range_.second;
-			end_sample = min(sample_range_.first, any_segment->get_sample_count());
+			end_sample = min(sample_range_.first,
+				any_segment->get_sample_count());
 			sample_count_ = end_sample - start_sample_;
 		} else {
 			start_sample_ = sample_range_.first;
-			end_sample = min(sample_range_.second, any_segment->get_sample_count());
+			end_sample = min(sample_range_.second,
+				any_segment->get_sample_count());
 			sample_count_ = end_sample - start_sample_;
 		}
 	}
@@ -181,13 +186,16 @@ bool StoreSession::start()
 
 		map<string, Glib::VariantBase> options = options_;
 
-		if (!output_format_->test_flag(OutputFlag::INTERNAL_IO_HANDLING))
-			output_stream_.open(file_name_, ios_base::binary |
-					ios_base::trunc | ios_base::out);
+		if (!output_format_->test_flag(
+			    OutputFlag::INTERNAL_IO_HANDLING))
+			output_stream_.open(
+				file_name_, ios_base::binary | ios_base::trunc |
+						    ios_base::out);
 
-		output_ = output_format_->create_output(file_name_, device, options);
-		auto meta = context->create_meta_packet(
-			{{ConfigKey::SAMPLERATE, Glib::Variant<guint64>::create(
+		output_ = output_format_->create_output(
+			file_name_, device, options);
+		auto meta = context->create_meta_packet({{ConfigKey::SAMPLERATE,
+			Glib::Variant<guint64>::create(
 				any_segment->samplerate())}});
 		output_->receive(meta);
 	} catch (Error error) {
@@ -195,8 +203,8 @@ bool StoreSession::start()
 		return false;
 	}
 
-	thread_ = std::thread(&StoreSession::store_proc, this,
-		achannel_list, asegment_list, lsegment);
+	thread_ = std::thread(&StoreSession::store_proc, this, achannel_list,
+		asegment_list, lsegment);
 	return true;
 }
 
@@ -211,8 +219,9 @@ void StoreSession::cancel()
 	interrupt_ = true;
 }
 
-void StoreSession::store_proc(vector< shared_ptr<data::SignalBase> > achannel_list,
-	vector< shared_ptr<data::AnalogSegment> > asegment_list,
+void StoreSession::store_proc(
+	vector<shared_ptr<data::SignalBase>> achannel_list,
+	vector<shared_ptr<data::AnalogSegment>> asegment_list,
 	shared_ptr<data::LogicSegment> lsegment)
 {
 	unsigned progress_scale = 0;
@@ -235,7 +244,7 @@ void StoreSession::store_proc(vector< shared_ptr<data::SignalBase> > achannel_li
 	// Qt needs the progress values to fit inside an int. If they would
 	// not, scale the current and max values down until they do.
 	while ((sample_count_ >> progress_scale) > INT_MAX)
-		progress_scale ++;
+		progress_scale++;
 
 	unit_count_ = sample_count_ >> progress_scale;
 
@@ -249,21 +258,29 @@ void StoreSession::store_proc(vector< shared_ptr<data::SignalBase> > achannel_li
 			std::min((uint64_t)samples_per_block, sample_count_);
 
 		try {
-			const auto context = session_.device_manager().context();
+			const auto context =
+				session_.device_manager().context();
 
-			for (unsigned int i = 0; i < achannel_list.size(); i++) {
-				shared_ptr<sigrok::Channel> achannel = (achannel_list.at(i))->channel();
-				shared_ptr<data::AnalogSegment> asegment = asegment_list.at(i);
+			for (unsigned int i = 0; i < achannel_list.size();
+				i++) {
+				shared_ptr<sigrok::Channel> achannel =
+					(achannel_list.at(i))->channel();
+				shared_ptr<data::AnalogSegment> asegment =
+					asegment_list.at(i);
 
 				const float *adata =
-					asegment->get_samples(start_sample_, start_sample_ + packet_len);
+					asegment->get_samples(start_sample_,
+						start_sample_ + packet_len);
 
 				auto analog = context->create_analog_packet(
-					vector<shared_ptr<sigrok::Channel> >{achannel},
+					vector<shared_ptr<sigrok::Channel>>{
+						achannel},
 					(float *)adata, packet_len,
-					sigrok::Quantity::VOLTAGE, sigrok::Unit::VOLT,
+					sigrok::Quantity::VOLTAGE,
+					sigrok::Unit::VOLT,
 					vector<const sigrok::QuantityFlag *>());
-				const string adata_str = output_->receive(analog);
+				const string adata_str =
+					output_->receive(analog);
 
 				if (output_stream_.is_open())
 					output_stream_ << adata_str;
@@ -272,12 +289,15 @@ void StoreSession::store_proc(vector< shared_ptr<data::SignalBase> > achannel_li
 			}
 
 			if (lsegment) {
-				const uint8_t* ldata =
-					lsegment->get_samples(start_sample_, start_sample_ + packet_len);
+				const uint8_t *ldata =
+					lsegment->get_samples(start_sample_,
+						start_sample_ + packet_len);
 
 				const size_t length = packet_len * lunit_size;
-				auto logic = context->create_logic_packet((void*)ldata, length, lunit_size);
-				const string ldata_str = output_->receive(logic);
+				auto logic = context->create_logic_packet(
+					(void *)ldata, length, lunit_size);
+				const string ldata_str =
+					output_->receive(logic);
 
 				if (output_stream_.is_open())
 					output_stream_ << ldata_str;

@@ -39,29 +39,28 @@ class Analog : public QObject, public SignalData
 public:
 	Analog();
 
-	void push_segment(
-		std::shared_ptr<AnalogSegment> &segment);
+	void push_segment(std::shared_ptr<AnalogSegment> &segment);
 
-	const std::deque< std::shared_ptr<AnalogSegment> >&
-		analog_segments() const;
+	const std::deque<std::shared_ptr<AnalogSegment>> &
+	analog_segments() const;
 
-	std::vector< std::shared_ptr<Segment> > segments() const;
+	std::vector<std::shared_ptr<Segment>> segments() const;
 
 	void clear();
 
 	uint64_t max_sample_count() const;
 
-	void notify_samples_added(QObject* segment, uint64_t start_sample,
-		uint64_t end_sample);
+	void notify_samples_added(
+		QObject *segment, uint64_t start_sample, uint64_t end_sample);
 
 Q_SIGNALS:
 	void samples_cleared();
 
-	void samples_added(QObject* segment, uint64_t start_sample,
-		uint64_t end_sample);
+	void samples_added(
+		QObject *segment, uint64_t start_sample, uint64_t end_sample);
 
 private:
-	std::deque< std::shared_ptr<AnalogSegment> > segments_;
+	std::deque<std::shared_ptr<AnalogSegment>> segments_;
 };
 
 } // namespace data

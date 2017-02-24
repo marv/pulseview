@@ -32,29 +32,36 @@
 namespace pv {
 namespace util {
 
-enum class TimeUnit {
-	Time = 1,
-	Samples = 2
-};
+enum class TimeUnit { Time = 1, Samples = 2 };
 
 enum class SIPrefix {
 	unspecified = -1,
-	yocto, zepto,
-	atto, femto, pico,
-	nano, micro, milli,
+	yocto,
+	zepto,
+	atto,
+	femto,
+	pico,
+	nano,
+	micro,
+	milli,
 	none,
-	kilo, mega, giga,
-	tera, peta, exa,
-	zetta, yotta
+	kilo,
+	mega,
+	giga,
+	tera,
+	peta,
+	exa,
+	zetta,
+	yotta
 };
 
 /// Returns the exponent that corresponds to a given prefix.
 int exponent(SIPrefix prefix);
 
 /// Timestamp type providing yoctosecond resolution.
-typedef boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<24>,
-	boost::multiprecision::et_off> Timestamp;
+typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<24>,
+	boost::multiprecision::et_off>
+	Timestamp;
 
 /**
  * Formats a given timestamp with the specified SI prefix.
@@ -74,12 +81,9 @@ typedef boost::multiprecision::number<
  *
  * @return The formatted value.
  */
-QString format_time_si(
-	const Timestamp& v,
-	SIPrefix prefix = SIPrefix::unspecified,
-	unsigned precision = 0,
-	QString unit = "s",
-	bool sign = true);
+QString format_time_si(const Timestamp &v,
+	SIPrefix prefix = SIPrefix::unspecified, unsigned precision = 0,
+	QString unit = "s", bool sign = true);
 
 /**
  * Wrapper around 'format_time_si()' that interprets the given 'precision'
@@ -96,15 +100,12 @@ QString format_time_si(
  *
  * @return The formatted value.
  */
-QString format_time_si_adjusted(
-	const Timestamp& t,
-	SIPrefix prefix,
-	unsigned precision = 0,
-	QString unit = "s",
-	bool sign = true);
+QString format_time_si_adjusted(const Timestamp &t, SIPrefix prefix,
+	unsigned precision = 0, QString unit = "s", bool sign = true);
 
 /**
- * Formats the given timestamp using "[+-]DD:HH:MM:SS.mmm uuu nnn ppp..." format.
+ * Formats the given timestamp using "[+-]DD:HH:MM:SS.mmm uuu nnn ppp..."
+ * format.
  *
  * "DD" and "HH" are left out if they would be "00" (but if "DD" is generated,
  * "HH" is also always generated. The "MM:SS" part is always produced, the
@@ -117,9 +118,7 @@ QString format_time_si_adjusted(
  * @return The formatted value.
  */
 QString format_time_minutes(
-	const Timestamp& t,
-	signed precision = 0,
-	bool sign = true);
+	const Timestamp &t, signed precision = 0, bool sign = true);
 
 } // namespace util
 } // namespace pv

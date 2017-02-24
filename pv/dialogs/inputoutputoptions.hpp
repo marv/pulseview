@@ -43,7 +43,7 @@ public:
 	 * @param title the title of the dialog.
 	 * @param options the map of options to use as a template.
 	 * @param parent the parent widget of the dialog.
-	 */ 
+	 */
 	InputOutputOptions(const QString &title,
 		const std::map<std::string, std::shared_ptr<sigrok::Option>>
 			&options,
@@ -53,7 +53,7 @@ public:
 	 * Gets the map of selected options.
 	 * @return the options.
 	 */
-	const std::map<std::string, Glib::VariantBase>& options() const;
+	const std::map<std::string, Glib::VariantBase> &options() const;
 
 protected:
 	void accept();

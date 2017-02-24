@@ -24,14 +24,14 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-TimeItem::TimeItem(View &view) :
-	view_(view) {
+TimeItem::TimeItem(View &view) : view_(view)
+{
 }
 
 void TimeItem::drag_by(const QPoint &delta)
 {
-	set_time(view_.offset() + (drag_point_.x() + delta.x() - 0.5) *
-		view_.scale());
+	set_time(view_.offset() +
+		 (drag_point_.x() + delta.x() - 0.5) * view_.scale());
 }
 
 } // namespace TraceView

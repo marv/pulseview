@@ -26,15 +26,13 @@ namespace TraceView {
 
 const QColor TriggerMarker::Colour(0x00, 0x00, 0xB0);
 
-TriggerMarker::TriggerMarker(View &view, const pv::util::Timestamp& time) :
-	TimeItem(view),
-	time_(time)
+TriggerMarker::TriggerMarker(View &view, const pv::util::Timestamp &time)
+    : TimeItem(view), time_(time)
 {
 }
 
-TriggerMarker::TriggerMarker(const TriggerMarker &marker) :
-	TimeItem(marker.view_),
-	time_(marker.time_)
+TriggerMarker::TriggerMarker(const TriggerMarker &marker)
+    : TimeItem(marker.view_), time_(marker.time_)
 {
 }
 
@@ -48,7 +46,7 @@ bool TriggerMarker::is_draggable() const
 	return false;
 }
 
-void TriggerMarker::set_time(const pv::util::Timestamp& time)
+void TriggerMarker::set_time(const pv::util::Timestamp &time)
 {
 	time_ = time;
 

@@ -88,20 +88,16 @@ class Session : public QObject
 	Q_OBJECT
 
 public:
-	enum capture_state {
-		Stopped,
-		AwaitingTrigger,
-		Running
-	};
+	enum capture_state { Stopped, AwaitingTrigger, Running };
 
 public:
 	Session(DeviceManager &device_manager, QString name);
 
 	~Session();
 
-	DeviceManager& device_manager();
+	DeviceManager &device_manager();
 
-	const DeviceManager& device_manager() const;
+	const DeviceManager &device_manager() const;
 
 	std::shared_ptr<sigrok::Session> session() const;
 
@@ -111,7 +107,7 @@ public:
 
 	void set_name(QString name);
 
-	const std::list< std::shared_ptr<views::ViewBase> > views() const;
+	const std::list<std::shared_ptr<views::ViewBase>> views() const;
 
 	std::shared_ptr<views::ViewBase> main_view() const;
 
@@ -140,8 +136,8 @@ public:
 
 	void set_default_device();
 
-	void load_init_file(const std::string &file_name,
-		const std::string &format);
+	void load_init_file(
+		const std::string &file_name, const std::string &format);
 
 	void load_file(QString file_name,
 		std::shared_ptr<sigrok::InputFormat> format = nullptr,
@@ -150,7 +146,7 @@ public:
 
 	capture_state get_capture_state() const;
 
-	void start_capture(std::function<void (const QString)> error_handler);
+	void start_capture(std::function<void(const QString)> error_handler);
 
 	void stop_capture();
 
@@ -162,8 +158,8 @@ public:
 
 	bool has_view(std::shared_ptr<views::ViewBase> view);
 
-	const std::unordered_set< std::shared_ptr<data::SignalBase> >
-		signalbases() const;
+	const std::unordered_set<std::shared_ptr<data::SignalBase>>
+	signalbases() const;
 
 #ifdef ENABLE_DECODE
 	bool add_decoder(srd_decoder *const dec);
@@ -180,7 +176,8 @@ private:
 		std::shared_ptr<sigrok::Channel> channel) const;
 
 private:
-	void sample_thread_proc(std::function<void (const QString)> error_handler);
+	void sample_thread_proc(
+		std::function<void(const QString)> error_handler);
 
 	void free_unused_memory();
 
@@ -204,22 +201,24 @@ private:
 	std::shared_ptr<devices::Device> device_;
 	QString default_name_, name_;
 
-	std::list< std::shared_ptr<views::ViewBase> > views_;
+	std::list<std::shared_ptr<views::ViewBase>> views_;
 	std::shared_ptr<pv::views::ViewBase> main_view_;
 
 	std::shared_ptr<pv::toolbars::MainBar> main_bar_;
 
-	mutable std::mutex sampling_mutex_; //!< Protects access to capture_state_.
+	mutable std::mutex
+		sampling_mutex_; //!< Protects access to capture_state_.
 	capture_state capture_state_;
 
-	std::unordered_set< std::shared_ptr<data::SignalBase> > signalbases_;
-	std::unordered_set< std::shared_ptr<data::SignalData> > all_signal_data_;
+	std::unordered_set<std::shared_ptr<data::SignalBase>> signalbases_;
+	std::unordered_set<std::shared_ptr<data::SignalData>> all_signal_data_;
 
 	mutable std::recursive_mutex data_mutex_;
 	std::shared_ptr<data::Logic> logic_data_;
 	uint64_t cur_samplerate_;
 	std::shared_ptr<data::LogicSegment> cur_logic_segment_;
-	std::map< std::shared_ptr<sigrok::Channel>, std::shared_ptr<data::AnalogSegment> >
+	std::map<std::shared_ptr<sigrok::Channel>,
+		std::shared_ptr<data::AnalogSegment>>
 		cur_analog_segments_;
 
 	std::thread sampling_thread_;
@@ -243,8 +242,8 @@ Q_SIGNALS:
 
 	void frame_ended();
 
-	void add_view(const QString &title, views::ViewType type,
-		Session *session);
+	void add_view(
+		const QString &title, views::ViewType type, Session *session);
 
 public Q_SLOTS:
 	void on_data_saved();

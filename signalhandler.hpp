@@ -32,7 +32,7 @@ public:
 	static bool prepare_signals();
 
 public:
-	explicit SignalHandler(QObject* parent = nullptr);
+	explicit SignalHandler(QObject *parent = nullptr);
 
 Q_SIGNALS:
 	void int_received();
@@ -45,7 +45,7 @@ private:
 	static void handle_signals(int sig_number);
 
 private:
-	QSocketNotifier* socket_notifier_;
+	QSocketNotifier *socket_notifier_;
 
 private:
 	static int sockets_[2];

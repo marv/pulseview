@@ -34,9 +34,8 @@ using sigrok::Context;
 namespace pv {
 namespace dialogs {
 
-About::About(shared_ptr<Context> context, QWidget *parent) :
-	QDialog(parent),
-	ui(new Ui::About)
+About::About(shared_ptr<Context> context, QWidget *parent)
+    : QDialog(parent), ui(new Ui::About)
 {
 #ifdef ENABLE_DECODE
 	struct srd_decoder *dec;
@@ -47,52 +46,55 @@ About::About(shared_ptr<Context> context, QWidget *parent) :
 	ui->setupUi(this);
 
 	/* Setup the version field */
-	ui->versionInfo->setText(tr("%1 %2<br />%3<br /><a href=\"%4\">%4</a>")
-				 .arg(QApplication::applicationName(),
-				      QApplication::applicationVersion(),
-				      tr("GNU GPL, version 3 or later"),
-				      QApplication::organizationDomain()));
+	ui->versionInfo->setText(
+		tr("%1 %2<br />%3<br /><a href=\"%4\">%4</a>")
+			.arg(QApplication::applicationName(),
+				QApplication::applicationVersion(),
+				tr("GNU GPL, version 3 or later"),
+				QApplication::organizationDomain()));
 	ui->versionInfo->setOpenExternalLinks(true);
 
 	s.append("<table>");
 
 	/* Set up the supported field */
 	s.append("<tr><td colspan=\"2\"><b>" +
-		tr("Supported hardware drivers:") +
-		"</b></td></tr>");
+		 tr("Supported hardware drivers:") + "</b></td></tr>");
 	for (auto entry : context->drivers()) {
 		s.append(QString("<tr><td><i>%1</i></td><td>%2</td></tr>")
-			 .arg(QString::fromUtf8(entry.first.c_str()),
-			      QString::fromUtf8(entry.second->long_name().c_str())));
+				 .arg(QString::fromUtf8(entry.first.c_str()),
+					 QString::fromUtf8(
+						 entry.second->long_name()
+							 .c_str())));
 	}
 
-	s.append("<tr><td colspan=\"2\"><b>" +
-		tr("Supported input formats:") +
-		"</b></td></tr>");
+	s.append("<tr><td colspan=\"2\"><b>" + tr("Supported input formats:") +
+		 "</b></td></tr>");
 	for (auto entry : context->input_formats()) {
 		s.append(QString("<tr><td><i>%1</i></td><td>%2</td></tr>")
-			 .arg(QString::fromUtf8(entry.first.c_str()),
-			      QString::fromUtf8(entry.second->description().c_str())));
+				 .arg(QString::fromUtf8(entry.first.c_str()),
+					 QString::fromUtf8(
+						 entry.second->description()
+							 .c_str())));
 	}
 
-	s.append("<tr><td colspan=\"2\"><b>" +
-		tr("Supported output formats:") +
-		"</b></td></tr>");
+	s.append("<tr><td colspan=\"2\"><b>" + tr("Supported output formats:") +
+		 "</b></td></tr>");
 	for (auto entry : context->output_formats()) {
 		s.append(QString("<tr><td><i>%1</i></td><td>%2</td></tr>")
-			 .arg(QString::fromUtf8(entry.first.c_str()),
-			      QString::fromUtf8(entry.second->description().c_str())));
+				 .arg(QString::fromUtf8(entry.first.c_str()),
+					 QString::fromUtf8(
+						 entry.second->description()
+							 .c_str())));
 	}
 
 #ifdef ENABLE_DECODE
 	s.append("<tr><td colspan=\"2\"><b>" +
-		tr("Supported protocol decoders:") +
-		"</b></td></tr>");
+		 tr("Supported protocol decoders:") + "</b></td></tr>");
 	for (const GSList *l = srd_decoder_list(); l; l = l->next) {
 		dec = (struct srd_decoder *)l->data;
 		s.append(QString("<tr><td><i>%1</i></td><td>%2</td></tr>")
-			 .arg(QString::fromUtf8(dec->id),
-			      QString::fromUtf8(dec->longname)));
+				 .arg(QString::fromUtf8(dec->id),
+					 QString::fromUtf8(dec->longname)));
 	}
 #endif
 

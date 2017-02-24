@@ -33,7 +33,8 @@ public:
 private:
 	void open(struct sr_resource *res, std::string name) override;
 	void close(struct sr_resource *res) override;
-	size_t read(const struct sr_resource *res, void *buf, size_t count) override;
+	size_t read(const struct sr_resource *res, void *buf,
+		size_t count) override;
 };
 
 } // namespace pv

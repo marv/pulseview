@@ -28,7 +28,6 @@
 
 #include <libsigrokcxx/libsigrokcxx.hpp>
 
-
 namespace sigrok {
 class Channel;
 class ChannelType;
@@ -130,8 +129,8 @@ public:
 
 	std::shared_ptr<pv::data::DecoderStack> decoder_stack() const;
 
-	void set_decoder_stack(std::shared_ptr<pv::data::DecoderStack>
-		decoder_stack);
+	void set_decoder_stack(
+		std::shared_ptr<pv::data::DecoderStack> decoder_stack);
 #endif
 
 	void save_settings(QSettings &settings) const;

@@ -33,12 +33,11 @@ namespace TraceView {
 class TraceTreeItemOwner;
 
 class TraceTreeItem : public RowItem,
-	public std::enable_shared_from_this<TraceTreeItem>
+		      public std::enable_shared_from_this<TraceTreeItem>
 {
 	Q_OBJECT
-	Q_PROPERTY(int visual_v_offset
-		READ visual_v_offset
-		WRITE set_visual_v_offset)
+	Q_PROPERTY(int visual_v_offset READ visual_v_offset WRITE
+			set_visual_v_offset)
 
 public:
 	/**
@@ -49,7 +48,7 @@ public:
 	/**
 	 * Gets the owner of this item in the view item hierachy.
 	 */
-	TraceTreeItemOwner* owner() const;
+	TraceTreeItemOwner *owner() const;
 
 	/**
 	 * Selects or deselects the signal.

@@ -30,8 +30,7 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-class Flag : public TimeMarker,
-	public std::enable_shared_from_this<Flag>
+class Flag : public TimeMarker, public std::enable_shared_from_this<Flag>
 {
 	Q_OBJECT
 
@@ -45,7 +44,7 @@ public:
 	 * @param time The time to set the flag to.
 	 * @param text The text of the marker.
 	 */
-	Flag(View &view, const pv::util::Timestamp& time, const QString &text);
+	Flag(View &view, const pv::util::Timestamp &time, const QString &text);
 
 	/**
 	 * Copy constructor.
@@ -62,9 +61,9 @@ public:
 	 */
 	QString get_text() const;
 
-	pv::widgets::Popup* create_popup(QWidget *parent);
+	pv::widgets::Popup *create_popup(QWidget *parent);
 
-	QMenu* create_context_menu(QWidget *parent);
+	QMenu *create_context_menu(QWidget *parent);
 
 	void delete_pressed();
 

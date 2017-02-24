@@ -38,7 +38,7 @@ public:
 	uint64_t start_sample() const;
 	uint64_t end_sample() const;
 	int format() const;
-	const std::vector<QString>& annotations() const;
+	const std::vector<QString> &annotations() const;
 
 private:
 	uint64_t start_sample_;

@@ -48,7 +48,6 @@ public:
 private:
 	std::vector<Annotation> annotations_;
 };
-
 }
 } // data
 } // pv

@@ -31,15 +31,12 @@ using Glib::ustring;
 namespace pv {
 namespace prop {
 
-String::String(QString name,
-	Getter getter,
-	Setter setter) :
-	Property(name, getter, setter),
-	line_edit_(nullptr)
+String::String(QString name, Getter getter, Setter setter)
+    : Property(name, getter, setter), line_edit_(nullptr)
 {
 }
 
-QWidget* String::get_widget(QWidget *parent, bool auto_commit)
+QWidget *String::get_widget(QWidget *parent, bool auto_commit)
 {
 	if (line_edit_)
 		return line_edit_;
@@ -51,15 +48,16 @@ QWidget* String::get_widget(QWidget *parent, bool auto_commit)
 	if (!variant.gobj())
 		return nullptr;
 
-	string value = Glib::VariantBase::cast_dynamic<Glib::Variant<ustring>>(
-		variant).get();
+	string value =
+		Glib::VariantBase::cast_dynamic<Glib::Variant<ustring>>(variant)
+			.get();
 
 	line_edit_ = new QLineEdit(parent);
 	line_edit_->setText(QString::fromStdString(value));
 
 	if (auto_commit)
-		connect(line_edit_, SIGNAL(textEdited(const QString&)),
-			this, SLOT(on_text_edited(const QString&)));
+		connect(line_edit_, SIGNAL(textEdited(const QString &)), this,
+			SLOT(on_text_edited(const QString &)));
 
 	return line_edit_;
 }
@@ -75,7 +73,7 @@ void String::commit()
 	setter_(Glib::Variant<ustring>::create(ba.data()));
 }
 
-void String::on_text_edited(const QString&)
+void String::on_text_edited(const QString &)
 {
 	commit();
 }

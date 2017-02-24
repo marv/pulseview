@@ -26,9 +26,9 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 #include <glibmm.h>
 G_GNUC_END_IGNORE_DEPRECATIONS
 
-#include <functional>
 #include <QString>
 #include <QWidget>
+#include <functional>
 
 class QWidget;
 
@@ -40,17 +40,17 @@ class Property : public QObject
 	Q_OBJECT;
 
 public:
-	typedef std::function<Glib::VariantBase ()> Getter;
-	typedef std::function<void (Glib::VariantBase)> Setter;
+	typedef std::function<Glib::VariantBase()> Getter;
+	typedef std::function<void(Glib::VariantBase)> Setter;
 
 protected:
 	Property(QString name, Getter getter, Setter setter);
 
 public:
-	const QString& name() const;
+	const QString &name() const;
 
-	virtual QWidget* get_widget(QWidget *parent,
-		bool auto_commit = false) = 0;
+	virtual QWidget *get_widget(
+		QWidget *parent, bool auto_commit = false) = 0;
 	virtual bool labeled_widget() const;
 
 	virtual void commit() = 0;

@@ -42,35 +42,20 @@ namespace pv {
 namespace views {
 namespace TraceView {
 
-const char *const ChannelNames[] = {
-	"CLK",
-	"DATA",
-	"IN",
-	"OUT",
-	"RST",
-	"TX",
-	"RX",
-	"EN",
-	"SCLK",
-	"MOSI",
-	"MISO",
-	"/SS",
-	"SDA",
-	"SCL"
-};
+const char *const ChannelNames[] = {"CLK", "DATA", "IN", "OUT", "RST", "TX",
+	"RX", "EN", "SCLK", "MOSI", "MISO", "/SS", "SDA", "SCL"};
 
-Signal::Signal(pv::Session &session,
-	std::shared_ptr<data::SignalBase> channel) :
-	Trace(channel),
-	session_(session),
-	scale_handle_(make_shared<SignalScaleHandle>(*this)),
-	items_({scale_handle_}),
-	name_widget_(nullptr)
+Signal::Signal(pv::Session &session, std::shared_ptr<data::SignalBase> channel)
+    : Trace(channel),
+      session_(session),
+      scale_handle_(make_shared<SignalScaleHandle>(*this)),
+      items_({scale_handle_}),
+      name_widget_(nullptr)
 {
 	assert(base_);
 
-	connect(base_.get(), SIGNAL(enabled_changed(bool)),
-		this, SLOT(on_enabled_changed(bool)));
+	connect(base_.get(), SIGNAL(enabled_changed(bool)), this,
+		SLOT(on_enabled_changed(bool)));
 }
 
 void Signal::set_name(QString name)
@@ -101,7 +86,7 @@ void Signal::restore_settings(QSettings &settings)
 	(void)settings;
 }
 
-const ViewItemOwner::item_list& Signal::child_items() const
+const ViewItemOwner::item_list &Signal::child_items() const
 {
 	return items_;
 }
@@ -121,7 +106,8 @@ void Signal::populate_popup_form(QWidget *parent, QFormLayout *form)
 	for (unsigned int i = 0; i < countof(ChannelNames); i++)
 		name_widget_->insertItem(i, ChannelNames[i]);
 
-	const int index = name_widget_->findText(base_->name(), Qt::MatchExactly);
+	const int index =
+		name_widget_->findText(base_->name(), Qt::MatchExactly);
 
 	if (index == -1) {
 		name_widget_->insertItem(0, base_->name());
@@ -130,15 +116,15 @@ void Signal::populate_popup_form(QWidget *parent, QFormLayout *form)
 		name_widget_->setCurrentIndex(index);
 	}
 
-	connect(name_widget_, SIGNAL(editTextChanged(const QString&)),
-		this, SLOT(on_nameedit_changed(const QString&)));
+	connect(name_widget_, SIGNAL(editTextChanged(const QString &)), this,
+		SLOT(on_nameedit_changed(const QString &)));
 
 	form->addRow(tr("Name"), name_widget_);
 
 	add_colour_option(parent, form);
 }
 
-QMenu* Signal::create_context_menu(QWidget *parent)
+QMenu *Signal::create_context_menu(QWidget *parent)
 {
 	QMenu *const menu = Trace::create_context_menu(parent);
 

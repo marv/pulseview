@@ -18,26 +18,29 @@
  */
 
 #include "assetreader.hpp"
-#include <libsigrok/libsigrok.h>
-#include <memory>
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QStandardPaths>
+#include <libsigrok/libsigrok.h>
+#include <memory>
 
 using namespace pv;
 
 AndroidAssetReader::~AndroidAssetReader()
-{}
+{
+}
 
 void AndroidAssetReader::open(struct sr_resource *res, std::string name)
 {
 	if (res->type == SR_RESOURCE_FIRMWARE) {
-		auto path = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
-						   QString::fromStdString("sigrok-firmware/" + name));
+		auto path = QStandardPaths::locate(
+			QStandardPaths::GenericDataLocation,
+			QString::fromStdString("sigrok-firmware/" + name));
 		if (path.isEmpty())
-			path = QString::fromStdString("assets:/sigrok-firmware/" + name);
+			path = QString::fromStdString(
+				"assets:/sigrok-firmware/" + name);
 
-		std::unique_ptr<QFile> file {new QFile{path}};
+		std::unique_ptr<QFile> file{new QFile{path}};
 
 		if (!file->open(QIODevice::ReadOnly))
 			throw sigrok::Error{SR_ERR};
@@ -49,7 +52,8 @@ void AndroidAssetReader::open(struct sr_resource *res, std::string name)
 		res->size = size;
 		res->handle = file.release();
 	} else {
-		qWarning() << "AndroidAssetReader: Unknown resource type" << res->type;
+		qWarning() << "AndroidAssetReader: Unknown resource type"
+			   << res->type;
 		throw sigrok::Error{SR_ERR};
 	}
 }
@@ -60,21 +64,22 @@ void AndroidAssetReader::close(struct sr_resource *res)
 		qCritical("AndroidAssetReader: Invalid handle");
 		throw sigrok::Error{SR_ERR_ARG};
 	}
-	const std::unique_ptr<QFile> file {static_cast<QFile*>(res->handle)};
+	const std::unique_ptr<QFile> file{static_cast<QFile *>(res->handle)};
 	res->handle = nullptr;
 
 	file->close();
 }
 
-size_t AndroidAssetReader::read(const struct sr_resource *res, void *buf, size_t count)
+size_t AndroidAssetReader::read(
+	const struct sr_resource *res, void *buf, size_t count)
 {
 	if (!res->handle) {
 		qCritical("AndroidAssetReader: Invalid handle");
 		throw sigrok::Error{SR_ERR_ARG};
 	}
-	auto *const file = static_cast<QFile*>(res->handle);
+	auto *const file = static_cast<QFile *>(res->handle);
 
-	const auto n_read = file->read(static_cast<char*>(buf), count);
+	const auto n_read = file->read(static_cast<char *>(buf), count);
 	if (n_read < 0)
 		throw sigrok::Error{SR_ERR};
 

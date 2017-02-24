@@ -26,8 +26,8 @@
 
 #include <QMainWindow>
 #include <QSignalMapper>
-#include <QToolButton>
 #include <QTabWidget>
+#include <QToolButton>
 
 #include "session.hpp"
 #include "views/viewbase.hpp"
@@ -70,14 +70,14 @@ public:
 
 	~MainWindow();
 
-	QAction* action_view_sticky_scrolling() const;
-	QAction* action_view_coloured_bg() const;
-	QAction* action_about() const;
+	QAction *action_view_sticky_scrolling() const;
+	QAction *action_view_coloured_bg() const;
+	QAction *action_about() const;
 
 	std::shared_ptr<views::ViewBase> get_active_view() const;
 
-	std::shared_ptr<views::ViewBase> add_view(const QString &title,
-		views::ViewType type, Session &session);
+	std::shared_ptr<views::ViewBase> add_view(
+		const QString &title, views::ViewType type, Session &session);
 
 	void remove_view(std::shared_ptr<views::ViewBase> view);
 
@@ -96,7 +96,7 @@ private:
 
 	void closeEvent(QCloseEvent *event);
 
-	virtual QMenu* createPopupMenu();
+	virtual QMenu *createPopupMenu();
 
 	virtual bool restoreState(const QByteArray &state, int version = 0);
 
@@ -105,8 +105,8 @@ private:
 private Q_SLOTS:
 	void show_session_error(const QString text, const QString info_text);
 
-	void on_add_view(const QString &title, views::ViewType type,
-		Session *session);
+	void on_add_view(
+		const QString &title, views::ViewType type, Session *session);
 
 	void on_focus_changed();
 	void on_focused_session_changed(std::shared_ptr<Session> session);
@@ -132,12 +132,12 @@ private Q_SLOTS:
 private:
 	DeviceManager &device_manager_;
 
-	std::list< std::shared_ptr<Session> > sessions_;
+	std::list<std::shared_ptr<Session>> sessions_;
 	std::shared_ptr<Session> last_focused_session_;
 
-	std::map< QDockWidget*,	std::shared_ptr<views::ViewBase> > view_docks_;
+	std::map<QDockWidget *, std::shared_ptr<views::ViewBase>> view_docks_;
 
-	std::map< std::shared_ptr<Session>, QMainWindow*> session_windows_;
+	std::map<std::shared_ptr<Session>, QMainWindow *> session_windows_;
 
 	QWidget *static_tab_widget_;
 	QToolButton *new_session_button_, *run_stop_button_, *settings_button_;

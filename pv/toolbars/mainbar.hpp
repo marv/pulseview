@@ -93,11 +93,11 @@ public:
 
 	void reset_device_selector();
 
-	QAction* action_new_view() const;
-	QAction* action_open() const;
-	QAction* action_save_as() const;
-	QAction* action_save_selection_as() const;
-	QAction* action_connect() const;
+	QAction *action_new_view() const;
+	QAction *action_open() const;
+	QAction *action_save_as() const;
+	QAction *action_save_selection_as() const;
+	QAction *action_connect() const;
 
 	void session_error(const QString text, const QString info_text);
 

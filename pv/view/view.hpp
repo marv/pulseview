@@ -33,8 +33,8 @@
 #include <QTimer>
 
 #include <pv/data/signaldata.hpp>
-#include <pv/views/viewbase.hpp>
 #include <pv/util.hpp>
+#include <pv/views/viewbase.hpp>
 
 #include "cursorpair.hpp"
 #include "flag.hpp"
@@ -61,7 +61,8 @@ class Trace;
 class Viewport;
 class TriggerMarker;
 
-class CustomAbstractScrollArea : public QAbstractScrollArea {
+class CustomAbstractScrollArea : public QAbstractScrollArea
+{
 	Q_OBJECT
 
 public:
@@ -70,7 +71,8 @@ public:
 	bool viewportEvent(QEvent *event);
 };
 
-class View : public ViewBase, public TraceTreeItemOwner {
+class View : public ViewBase, public TraceTreeItemOwner
+{
 	Q_OBJECT
 
 private:
@@ -91,13 +93,13 @@ private:
 public:
 	explicit View(Session &session, QWidget *parent = 0);
 
-	Session& session();
-	const Session& session() const;
+	Session &session();
+	const Session &session() const;
 
 	/**
 	 * Returns the signals contained in this view.
 	 */
-	std::unordered_set< std::shared_ptr<Signal> > signals() const;
+	std::unordered_set<std::shared_ptr<Signal>> signals() const;
 
 	virtual void clear_signals();
 
@@ -106,24 +108,26 @@ public:
 #ifdef ENABLE_DECODE
 	virtual void clear_decode_signals();
 
-	virtual void add_decode_signal(std::shared_ptr<data::SignalBase> signalbase);
+	virtual void add_decode_signal(
+		std::shared_ptr<data::SignalBase> signalbase);
 
-	virtual void remove_decode_signal(std::shared_ptr<data::SignalBase> signalbase);
+	virtual void remove_decode_signal(
+		std::shared_ptr<data::SignalBase> signalbase);
 #endif
 
 	/**
 	 * Returns the view of the owner.
 	 */
-	virtual View* view();
+	virtual View *view();
 
 	/**
 	 * Returns the view of the owner.
 	 */
-	virtual const View* view() const;
+	virtual const View *view() const;
 
-	Viewport* viewport();
+	Viewport *viewport();
 
-	const Viewport* viewport() const;
+	const Viewport *viewport() const;
 
 	virtual void save_settings(QSettings &settings) const;
 
@@ -132,7 +136,7 @@ public:
 	/**
 	 * Gets a list of time markers.
 	 */
-	std::vector< std::shared_ptr<TimeItem> > time_items() const;
+	std::vector<std::shared_ptr<TimeItem>> time_items() const;
 
 	/**
 	 * Returns the view time scale in seconds per pixel.
@@ -143,7 +147,7 @@ public:
 	 * Returns the time offset of the left edge of the view in
 	 * seconds.
 	 */
-	const pv::util::Timestamp& offset() const;
+	const pv::util::Timestamp &offset() const;
 
 	/**
 	 * Returns the vertical scroll offset.
@@ -168,7 +172,7 @@ public:
 	/**
 	 * Returns period of the graticule time markings.
 	 */
-	const pv::util::Timestamp& tick_period() const;
+	const pv::util::Timestamp &tick_period() const;
 
 	/**
 	 * Returns the unit of time currently used.
@@ -192,12 +196,13 @@ public:
 	 * @param scale The new view scale in seconds per pixel.
 	 * @param offset The view time offset in seconds.
 	 */
-	void set_scale_offset(double scale, const pv::util::Timestamp& offset);
+	void set_scale_offset(double scale, const pv::util::Timestamp &offset);
 
-	std::set< std::shared_ptr<pv::data::SignalData> >
-		get_visible_data() const;
+	std::set<std::shared_ptr<pv::data::SignalData>>
+	get_visible_data() const;
 
-	std::pair<pv::util::Timestamp, pv::util::Timestamp> get_time_extents() const;
+	std::pair<pv::util::Timestamp, pv::util::Timestamp>
+	get_time_extents() const;
 
 	/**
 	 * Enables or disables sticky scrolling, i.e. the view always shows
@@ -234,7 +239,7 @@ public:
 	/**
 	 * Adds a new flag at a specified time.
 	 */
-	void add_flag(const pv::util::Timestamp& time);
+	void add_flag(const pv::util::Timestamp &time);
 
 	/**
 	 * Removes a flag from the list.
@@ -244,9 +249,9 @@ public:
 	/**
 	 * Gets the list of flags.
 	 */
-	std::vector< std::shared_ptr<Flag> > flags() const;
+	std::vector<std::shared_ptr<Flag>> flags() const;
 
-	const QPoint& hover_point() const;
+	const QPoint &hover_point() const;
 
 	void restack_all_trace_tree_items();
 
@@ -281,7 +286,8 @@ public Q_SLOTS:
 	void trigger_event(util::Timestamp location);
 
 private:
-	void get_scroll_layout(double &length, pv::util::Timestamp &offset) const;
+	void get_scroll_layout(
+		double &length, pv::util::Timestamp &offset) const;
 
 	/**
 	 * Simultaneously sets the zoom and offset.
@@ -305,17 +311,17 @@ private:
 
 	void update_layout();
 
-	TraceTreeItemOwner* find_prevalent_trace_group(
+	TraceTreeItemOwner *find_prevalent_trace_group(
 		const std::shared_ptr<sigrok::ChannelGroup> &group,
 		const std::unordered_map<std::shared_ptr<data::SignalBase>,
-			std::shared_ptr<Signal> > &signal_map);
+			std::shared_ptr<Signal>> &signal_map);
 
-	static std::vector< std::shared_ptr<Trace> >
-		extract_new_traces_for_channels(
-		const std::vector< std::shared_ptr<sigrok::Channel> > &channels,
+	static std::vector<std::shared_ptr<Trace>>
+	extract_new_traces_for_channels(
+		const std::vector<std::shared_ptr<sigrok::Channel>> &channels,
 		const std::unordered_map<std::shared_ptr<data::SignalBase>,
-			std::shared_ptr<Signal> > &signal_map,
-		std::set< std::shared_ptr<Trace> > &add_list);
+			std::shared_ptr<Signal>> &signal_map,
+		std::set<std::shared_ptr<Trace>> &add_list);
 
 	void determine_time_unit();
 
@@ -348,7 +354,7 @@ private Q_SLOTS:
 	 * Sets the 'offset_' member and emits the 'offset_changed'
 	 * signal if needed.
 	 */
-	void set_offset(const pv::util::Timestamp& offset);
+	void set_offset(const pv::util::Timestamp &offset);
 
 	/**
 	 * Sets the 'scale_' member and emits the 'scale_changed'
@@ -363,8 +369,8 @@ private Q_SLOTS:
 	void set_tick_prefix(pv::util::SIPrefix tick_prefix);
 
 	/**
-	 * Sets the 'tick_precision_' member and emits the 'tick_precision_changed'
-	 * signal if needed.
+	 * Sets the 'tick_precision_' member and emits the
+	 * 'tick_precision_changed' signal if needed.
 	 */
 	void set_tick_precision(unsigned tick_precision);
 
@@ -372,7 +378,7 @@ private Q_SLOTS:
 	 * Sets the 'tick_period_' member and emits the 'tick_period_changed'
 	 * signal if needed.
 	 */
-	void set_tick_period(const pv::util::Timestamp& tick_period);
+	void set_tick_period(const pv::util::Timestamp &tick_period);
 
 	/**
 	 * Sets the 'time_unit' member and emits the 'time_unit_changed'
@@ -385,10 +391,10 @@ private:
 	Ruler *ruler_;
 	Header *header_;
 
-	std::unordered_set< std::shared_ptr<Signal> > signals_;
+	std::unordered_set<std::shared_ptr<Signal>> signals_;
 
 #ifdef ENABLE_DECODE
-	std::vector< std::shared_ptr<DecodeTrace> > decode_traces_;
+	std::vector<std::shared_ptr<DecodeTrace>> decode_traces_;
 #endif
 
 	CustomAbstractScrollArea scrollarea_;
@@ -412,20 +418,22 @@ private:
 	bool show_cursors_;
 	std::shared_ptr<CursorPair> cursors_;
 
-	std::list< std::shared_ptr<Flag> > flags_;
+	std::list<std::shared_ptr<Flag>> flags_;
 	char next_flag_text_;
 
-	std::vector< std::shared_ptr<TriggerMarker> > trigger_markers_;
+	std::vector<std::shared_ptr<TriggerMarker>> trigger_markers_;
 
 	QPoint hover_point_;
 
 	unsigned int sticky_events_;
 	QTimer lazy_event_handler_;
 
-	// This is true when the defaults couldn't be set due to insufficient info
+	// This is true when the defaults couldn't be set due to insufficient
+	// info
 	bool scroll_needs_defaults_;
 
-	// A nonzero value indicates the v offset to restore. See View::resizeEvent()
+	// A nonzero value indicates the v offset to restore. See
+	// View::resizeEvent()
 	int saved_v_offset_;
 
 	bool size_finalized_;

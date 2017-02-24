@@ -22,21 +22,19 @@
 namespace pv {
 namespace widgets {
 
-ColourPopup::ColourPopup(int rows, int cols, QWidget *parent) :
-	Popup(parent),
-	well_array_(rows, cols, this),
-	layout_(this)
+ColourPopup::ColourPopup(int rows, int cols, QWidget *parent)
+    : Popup(parent), well_array_(rows, cols, this), layout_(this)
 {
 	layout_.addWidget(&well_array_);
 	setLayout(&layout_);
 
-	connect(&well_array_, SIGNAL(selected(int, int)),
-		this, SIGNAL(selected(int, int)));
-	connect(&well_array_, SIGNAL(selected(int, int)),
-		this, SLOT(colour_selected(int, int)));
+	connect(&well_array_, SIGNAL(selected(int, int)), this,
+		SIGNAL(selected(int, int)));
+	connect(&well_array_, SIGNAL(selected(int, int)), this,
+		SLOT(colour_selected(int, int)));
 }
 
-WellArray& ColourPopup::well_array()
+WellArray &ColourPopup::well_array()
 {
 	return well_array_;
 }

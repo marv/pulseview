@@ -37,15 +37,15 @@ StoreProgress::StoreProgress(const QString &file_name,
 	const std::shared_ptr<sigrok::OutputFormat> output_format,
 	const map<string, VariantBase> &options,
 	const std::pair<uint64_t, uint64_t> sample_range,
-	const Session &session, QWidget *parent) :
-	QProgressDialog(tr("Saving..."), tr("Cancel"), 0, 0, parent),
-	session_(file_name.toStdString(), output_format, options, sample_range,
-		session)
+	const Session &session, QWidget *parent)
+    : QProgressDialog(tr("Saving..."), tr("Cancel"), 0, 0, parent),
+      session_(file_name.toStdString(), output_format, options, sample_range,
+	      session)
 {
-	connect(&session_, SIGNAL(progress_updated()),
-		this, SLOT(on_progress_updated()));
-	connect(&session_, SIGNAL(store_successful()),
-		&session, SLOT(on_data_saved()));
+	connect(&session_, SIGNAL(progress_updated()), this,
+		SLOT(on_progress_updated()));
+	connect(&session_, SIGNAL(store_successful()), &session,
+		SLOT(on_data_saved()));
 }
 
 StoreProgress::~StoreProgress()
@@ -71,7 +71,7 @@ void StoreProgress::show_error()
 	msg.exec();
 }
 
-void StoreProgress::closeEvent(QCloseEvent*)
+void StoreProgress::closeEvent(QCloseEvent *)
 {
 	session_.cancel();
 }

@@ -30,7 +30,7 @@ using std::shared_ptr;
 namespace pv {
 namespace binding {
 
-const std::vector< std::shared_ptr<prop::Property> >& Binding::properties()
+const std::vector<std::shared_ptr<prop::Property>> &Binding::properties()
 {
 	return properties_;
 }
@@ -43,16 +43,16 @@ void Binding::commit()
 	}
 }
 
-void Binding::add_properties_to_form(QFormLayout *layout,
-	bool auto_commit) const
+void Binding::add_properties_to_form(
+	QFormLayout *layout, bool auto_commit) const
 {
 	assert(layout);
 
 	for (shared_ptr<pv::prop::Property> p : properties_) {
 		assert(p);
 
-		QWidget *const widget = p->get_widget(layout->parentWidget(),
-			auto_commit);
+		QWidget *const widget =
+			p->get_widget(layout->parentWidget(), auto_commit);
 		if (p->labeled_widget())
 			layout->addRow(widget);
 		else
@@ -60,8 +60,7 @@ void Binding::add_properties_to_form(QFormLayout *layout,
 	}
 }
 
-QWidget* Binding::get_property_form(QWidget *parent,
-	bool auto_commit) const
+QWidget *Binding::get_property_form(QWidget *parent, bool auto_commit) const
 {
 	QWidget *const form = new QWidget(parent);
 	QFormLayout *const layout = new QFormLayout(form);
@@ -77,9 +76,9 @@ QString Binding::print_gvariant(Glib::VariantBase gvar)
 	if (!gvar.gobj())
 		s = QString::fromStdString("(null)");
 	else if (gvar.is_of_type(Glib::VariantType("s")))
-		s = QString::fromStdString(
-			Glib::VariantBase::cast_dynamic<Glib::Variant<std::string>>(
-				gvar).get());
+		s = QString::fromStdString(Glib::VariantBase::cast_dynamic<
+					   Glib::Variant<std::string>>(gvar)
+						   .get());
 	else
 		s = QString::fromStdString(gvar.print());
 

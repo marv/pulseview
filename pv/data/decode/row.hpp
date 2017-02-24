@@ -39,8 +39,8 @@ public:
 	Row(const srd_decoder *decoder,
 		const srd_decoder_annotation_row *row = nullptr);
 
-	const srd_decoder* decoder() const;
-	const srd_decoder_annotation_row* row() const;
+	const srd_decoder *decoder() const;
+	const srd_decoder_annotation_row *row() const;
 
 	const QString title() const;
 

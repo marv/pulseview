@@ -23,8 +23,8 @@
 
 #include <boost/none_t.hpp>
 
-#include <pv/data/decoderstack.hpp>
 #include <pv/data/decode/decoder.hpp>
+#include <pv/data/decoderstack.hpp>
 #include <pv/prop/double.hpp>
 #include <pv/prop/enum.hpp>
 #include <pv/prop/int.hpp>
@@ -47,11 +47,9 @@ using pv::prop::String;
 namespace pv {
 namespace binding {
 
-Decoder::Decoder(
-	shared_ptr<pv::data::DecoderStack> decoder_stack,
-	shared_ptr<data::decode::Decoder> decoder) :
-	decoder_stack_(decoder_stack),
-	decoder_(decoder)
+Decoder::Decoder(shared_ptr<pv::data::DecoderStack> decoder_stack,
+	shared_ptr<data::decode::Decoder> decoder)
+    : decoder_stack_(decoder_stack), decoder_(decoder)
 {
 	assert(decoder_);
 
@@ -60,28 +58,28 @@ Decoder::Decoder(
 
 	for (GSList *l = dec->options; l; l = l->next) {
 		const srd_decoder_option *const opt =
-			(srd_decoder_option*)l->data;
+			(srd_decoder_option *)l->data;
 
 		const QString name = QString::fromUtf8(opt->desc);
 
 		const Property::Getter get = [&, opt]() {
-			return getter(opt->id); };
-		const Property::Setter set = [&, opt](Glib::VariantBase value) {
-			setter(opt->id, value); };
+			return getter(opt->id);
+		};
+		const Property::Setter set = [&, opt](
+			Glib::VariantBase value) { setter(opt->id, value); };
 
 		shared_ptr<Property> prop;
 
 		if (opt->values)
 			prop = bind_enum(name, opt, get, set);
 		else if (g_variant_is_of_type(opt->def, G_VARIANT_TYPE("d")))
-			prop = shared_ptr<Property>(new Double(name, 2, "",
-				none, none, get, set));
+			prop = shared_ptr<Property>(
+				new Double(name, 2, "", none, none, get, set));
 		else if (g_variant_is_of_type(opt->def, G_VARIANT_TYPE("x")))
 			prop = shared_ptr<Property>(
 				new Int(name, "", none, get, set));
 		else if (g_variant_is_of_type(opt->def, G_VARIANT_TYPE("s")))
-			prop = shared_ptr<Property>(
-				new String(name, get, set));
+			prop = shared_ptr<Property>(new String(name, get, set));
 		else
 			continue;
 
@@ -89,13 +87,14 @@ Decoder::Decoder(
 	}
 }
 
-shared_ptr<Property> Decoder::bind_enum(
-	const QString &name, const srd_decoder_option *option,
-	Property::Getter getter, Property::Setter setter)
+shared_ptr<Property> Decoder::bind_enum(const QString &name,
+	const srd_decoder_option *option, Property::Getter getter,
+	Property::Setter setter)
 {
-	vector< pair<Glib::VariantBase, QString> > values;
+	vector<pair<Glib::VariantBase, QString>> values;
 	for (GSList *l = option->values; l; l = l->next) {
-		Glib::VariantBase var = Glib::VariantBase((GVariant*)l->data, true);
+		Glib::VariantBase var =
+			Glib::VariantBase((GVariant *)l->data, true);
 		values.push_back(make_pair(var, print_gvariant(var)));
 	}
 
@@ -109,7 +108,7 @@ Glib::VariantBase Decoder::getter(const char *id)
 	assert(decoder_);
 
 	// Get the value from the hash table if it is already present
-	const map<string, GVariant*>& options = decoder_->options();
+	const map<string, GVariant *> &options = decoder_->options();
 	const auto iter = options.find(id);
 
 	if (iter != options.end())
@@ -120,7 +119,7 @@ Glib::VariantBase Decoder::getter(const char *id)
 		// Get the default value if not
 		for (GSList *l = decoder_->decoder()->options; l; l = l->next) {
 			const srd_decoder_option *const opt =
-				(srd_decoder_option*)l->data;
+				(srd_decoder_option *)l->data;
 			if (strcmp(opt->id, id) == 0) {
 				val = opt->def;
 				break;

@@ -38,9 +38,9 @@
 #include <boost/thread/locks.hpp>
 
 #include <QApplication>
-#include <QHBoxLayout>
 #include <QEvent>
 #include <QFontMetrics>
+#include <QHBoxLayout>
 #include <QMouseEvent>
 #include <QScrollBar>
 
@@ -56,10 +56,10 @@
 #include "view.hpp"
 #include "viewport.hpp"
 
-#include "pv/session.hpp"
-#include "pv/devices/device.hpp"
 #include "pv/data/logic.hpp"
 #include "pv/data/logicsegment.hpp"
+#include "pv/devices/device.hpp"
+#include "pv/session.hpp"
 #include "pv/util.hpp"
 
 #ifdef ENABLE_DECODE
@@ -102,17 +102,18 @@ const Timestamp View::MaxScale("1e9");
 const Timestamp View::MinScale("1e-12");
 
 const int View::MaxScrollValue = INT_MAX / 2;
-const int View::MaxViewAutoUpdateRate = 25; // No more than 25 Hz with sticky scrolling
+const int View::MaxViewAutoUpdateRate =
+	25; // No more than 25 Hz with sticky scrolling
 
 const int View::ScaleUnits[3] = {1, 2, 5};
 
-
-CustomAbstractScrollArea::CustomAbstractScrollArea(QWidget *parent) :
-	QAbstractScrollArea(parent)
+CustomAbstractScrollArea::CustomAbstractScrollArea(QWidget *parent)
+    : QAbstractScrollArea(parent)
 {
 }
 
-void CustomAbstractScrollArea::setViewportMargins(int left, int top, int right, int bottom)
+void CustomAbstractScrollArea::setViewportMargins(
+	int left, int top, int right, int bottom)
 {
 	QAbstractScrollArea::setViewportMargins(left, top, right, bottom);
 }
@@ -135,58 +136,60 @@ bool CustomAbstractScrollArea::viewportEvent(QEvent *event)
 	}
 }
 
-View::View(Session &session, QWidget *parent) :
-	ViewBase(session, parent),
-	viewport_(new Viewport(*this)),
-	ruler_(new Ruler(*this)),
-	header_(new Header(*this)),
-	scrollarea_(this),
-	scale_(1e-3),
-	offset_(0),
-	updating_scroll_(false),
-	sticky_scrolling_(false), // Default setting is set in MainWindow::setup_ui()
-	always_zoom_to_fit_(false),
-	tick_period_(0),
-	tick_prefix_(pv::util::SIPrefix::yocto),
-	tick_precision_(0),
-	time_unit_(util::TimeUnit::Time),
-	show_cursors_(false),
-	cursors_(new CursorPair(*this)),
-	next_flag_text_('A'),
-	trigger_markers_(),
-	hover_point_(-1, -1),
-	scroll_needs_defaults_(false),
-	saved_v_offset_(0),
-	size_finalized_(false)
+View::View(Session &session, QWidget *parent)
+    : ViewBase(session, parent),
+      viewport_(new Viewport(*this)),
+      ruler_(new Ruler(*this)),
+      header_(new Header(*this)),
+      scrollarea_(this),
+      scale_(1e-3),
+      offset_(0),
+      updating_scroll_(false),
+      sticky_scrolling_(
+	      false), // Default setting is set in MainWindow::setup_ui()
+      always_zoom_to_fit_(false),
+      tick_period_(0),
+      tick_prefix_(pv::util::SIPrefix::yocto),
+      tick_precision_(0),
+      time_unit_(util::TimeUnit::Time),
+      show_cursors_(false),
+      cursors_(new CursorPair(*this)),
+      next_flag_text_('A'),
+      trigger_markers_(),
+      hover_point_(-1, -1),
+      scroll_needs_defaults_(false),
+      saved_v_offset_(0),
+      size_finalized_(false)
 {
 	connect(scrollarea_.horizontalScrollBar(), SIGNAL(valueChanged(int)),
 		this, SLOT(h_scroll_value_changed(int)));
 	connect(scrollarea_.verticalScrollBar(), SIGNAL(valueChanged(int)),
 		this, SLOT(v_scroll_value_changed()));
 
-	connect(header_, SIGNAL(selection_changed()),
-		ruler_, SLOT(clear_selection()));
-	connect(ruler_, SIGNAL(selection_changed()),
-		header_, SLOT(clear_selection()));
+	connect(header_, SIGNAL(selection_changed()), ruler_,
+		SLOT(clear_selection()));
+	connect(ruler_, SIGNAL(selection_changed()), header_,
+		SLOT(clear_selection()));
 
-	connect(header_, SIGNAL(selection_changed()),
-		this, SIGNAL(selection_changed()));
-	connect(ruler_, SIGNAL(selection_changed()),
-		this, SIGNAL(selection_changed()));
+	connect(header_, SIGNAL(selection_changed()), this,
+		SIGNAL(selection_changed()));
+	connect(ruler_, SIGNAL(selection_changed()), this,
+		SIGNAL(selection_changed()));
 
-	connect(this, SIGNAL(hover_point_changed()),
-		this, SLOT(on_hover_point_changed()));
+	connect(this, SIGNAL(hover_point_changed()), this,
+		SLOT(on_hover_point_changed()));
 
-	connect(&lazy_event_handler_, SIGNAL(timeout()),
-		this, SLOT(process_sticky_events()));
+	connect(&lazy_event_handler_, SIGNAL(timeout()), this,
+		SLOT(process_sticky_events()));
 	lazy_event_handler_.setSingleShot(true);
 
-	connect(&delayed_view_updater_, SIGNAL(timeout()),
-		this, SLOT(perform_delayed_view_update()));
+	connect(&delayed_view_updater_, SIGNAL(timeout()), this,
+		SLOT(perform_delayed_view_update()));
 	delayed_view_updater_.setSingleShot(true);
 	delayed_view_updater_.setInterval(1000 / MaxViewAutoUpdateRate);
 
-	/* To let the scroll area fill up the parent QWidget (this), we need a layout */
+	/* To let the scroll area fill up the parent QWidget (this), we need a
+	 * layout */
 	QHBoxLayout *layout = new QHBoxLayout(this);
 	setLayout(layout);
 	layout->setContentsMargins(0, 0, 0, 0);
@@ -210,17 +213,17 @@ View::View(Session &session, QWidget *parent) :
 	calculate_tick_spacing();
 }
 
-Session& View::session()
+Session &View::session()
 {
 	return session_;
 }
 
-const Session& View::session() const
+const Session &View::session() const
 {
 	return session_;
 }
 
-std::unordered_set< std::shared_ptr<Signal> > View::signals() const
+std::unordered_set<std::shared_ptr<Signal>> View::signals() const
 {
 	return signals_;
 }
@@ -259,22 +262,22 @@ void View::remove_decode_signal(shared_ptr<data::SignalBase> signalbase)
 }
 #endif
 
-View* View::view()
+View *View::view()
 {
 	return this;
 }
 
-const View* View::view() const
+const View *View::view() const
 {
 	return this;
 }
 
-Viewport* View::viewport()
+Viewport *View::viewport()
 {
 	return viewport_;
 }
 
-const Viewport* View::viewport() const
+const Viewport *View::viewport() const
 {
 	return viewport_;
 }
@@ -282,8 +285,8 @@ const Viewport* View::viewport() const
 void View::save_settings(QSettings &settings) const
 {
 	settings.setValue("scale", scale_);
-	settings.setValue("v_offset",
-		scrollarea_.verticalScrollBar()->sliderPosition());
+	settings.setValue(
+		"v_offset", scrollarea_.verticalScrollBar()->sliderPosition());
 
 	std::stringstream ss;
 	boost::archive::text_oarchive oa(ss);
@@ -330,7 +333,7 @@ void View::restore_settings(QSettings &settings)
 	}
 }
 
-vector< shared_ptr<TimeItem> > View::time_items() const
+vector<shared_ptr<TimeItem>> View::time_items() const
 {
 	const vector<shared_ptr<Flag>> f(flags());
 	vector<shared_ptr<TimeItem>> items(f.begin(), f.end());
@@ -357,12 +360,12 @@ void View::set_scale(double scale)
 	}
 }
 
-const Timestamp& View::offset() const
+const Timestamp &View::offset() const
 {
 	return offset_;
 }
 
-void View::set_offset(const pv::util::Timestamp& offset)
+void View::set_offset(const pv::util::Timestamp &offset)
 {
 	if (offset_ != offset) {
 		offset_ = offset;
@@ -413,12 +416,12 @@ void View::set_tick_precision(unsigned tick_precision)
 	}
 }
 
-const pv::util::Timestamp& View::tick_period() const
+const pv::util::Timestamp &View::tick_period() const
 {
 	return tick_period_;
 }
 
-void View::set_tick_period(const pv::util::Timestamp& tick_period)
+void View::set_tick_period(const pv::util::Timestamp &tick_period)
 {
 	if (tick_period_ != tick_period) {
 		tick_period_ = tick_period;
@@ -446,7 +449,7 @@ void View::zoom(double steps)
 
 void View::zoom(double steps, int offset)
 {
-	set_zoom(scale_ * pow(3.0/2.0, -steps), offset);
+	set_zoom(scale_ * pow(3.0 / 2.0, -steps), offset);
 }
 
 void View::zoom_fit(bool gui_state)
@@ -479,7 +482,7 @@ void View::zoom_one_to_one()
 	using pv::data::SignalData;
 
 	// Make a set of all the visible data objects
-	set< shared_ptr<SignalData> > visible_data = get_visible_data();
+	set<shared_ptr<SignalData>> visible_data = get_visible_data();
 	if (visible_data.empty())
 		return;
 
@@ -491,12 +494,12 @@ void View::zoom_one_to_one()
 	set_zoom(1.0 / session_.get_samplerate(), w / 2);
 }
 
-void View::set_scale_offset(double scale, const Timestamp& offset)
+void View::set_scale_offset(double scale, const Timestamp &offset)
 {
 	// Disable sticky scrolling / always zoom to fit when acquisition runs
 	// and user drags the viewport
 	if ((scale_ == scale) && (offset_ != offset) &&
-			(session_.get_capture_state() == Session::Running)) {
+		(session_.get_capture_state() == Session::Running)) {
 
 		if (sticky_scrolling_) {
 			sticky_scrolling_ = false;
@@ -519,10 +522,10 @@ void View::set_scale_offset(double scale, const Timestamp& offset)
 	viewport_->update();
 }
 
-set< shared_ptr<SignalData> > View::get_visible_data() const
+set<shared_ptr<SignalData>> View::get_visible_data() const
 {
 	// Make a set of all the visible data objects
-	set< shared_ptr<SignalData> > visible_data;
+	set<shared_ptr<SignalData>> visible_data;
 	for (const shared_ptr<Signal> sig : signals_)
 		if (sig->enabled())
 			visible_data.insert(sig->data());
@@ -533,21 +536,24 @@ set< shared_ptr<SignalData> > View::get_visible_data() const
 pair<Timestamp, Timestamp> View::get_time_extents() const
 {
 	boost::optional<Timestamp> left_time, right_time;
-	const set< shared_ptr<SignalData> > visible_data = get_visible_data();
+	const set<shared_ptr<SignalData>> visible_data = get_visible_data();
 	for (const shared_ptr<SignalData> d : visible_data) {
-		const vector< shared_ptr<Segment> > segments =
-			d->segments();
+		const vector<shared_ptr<Segment>> segments = d->segments();
 		for (const shared_ptr<Segment> &s : segments) {
 			double samplerate = s->samplerate();
 			samplerate = (samplerate <= 0.0) ? 1.0 : samplerate;
 
 			const Timestamp start_time = s->start_time();
-			left_time = left_time ?
-				min(*left_time, start_time) :
-				                start_time;
-			right_time = right_time ?
-				max(*right_time, start_time + d->max_sample_count() / samplerate) :
-				                 start_time + d->max_sample_count() / samplerate;
+			left_time = left_time ? min(*left_time, start_time)
+					      : start_time;
+			right_time =
+				right_time
+					? max(*right_time,
+						  start_time +
+							  d->max_sample_count() /
+								  samplerate)
+					: start_time + d->max_sample_count() /
+							       samplerate;
 		}
 	}
 
@@ -572,16 +578,19 @@ void View::enable_coloured_bg(bool state)
 		// Can't cast to Trace because it's abstract, so we need to
 		// check for any derived classes individually
 
-		shared_ptr<AnalogSignal> a = dynamic_pointer_cast<AnalogSignal>(i);
+		shared_ptr<AnalogSignal> a =
+			dynamic_pointer_cast<AnalogSignal>(i);
 		if (a)
 			a->set_coloured_bg(state);
 
-		shared_ptr<LogicSignal> l = dynamic_pointer_cast<LogicSignal>(i);
+		shared_ptr<LogicSignal> l =
+			dynamic_pointer_cast<LogicSignal>(i);
 		if (l)
 			l->set_coloured_bg(state);
 
 #ifdef ENABLE_DECODE
-		shared_ptr<DecodeTrace> d = dynamic_pointer_cast<DecodeTrace>(i);
+		shared_ptr<DecodeTrace> d =
+			dynamic_pointer_cast<DecodeTrace>(i);
 		if (d)
 			d->set_coloured_bg(state);
 #endif
@@ -616,13 +625,13 @@ std::shared_ptr<CursorPair> View::cursors() const
 	return cursors_;
 }
 
-void View::add_flag(const Timestamp& time)
+void View::add_flag(const Timestamp &time)
 {
-	flags_.push_back(shared_ptr<Flag>(new Flag(*this, time,
-		QString("%1").arg(next_flag_text_))));
+	flags_.push_back(shared_ptr<Flag>(
+		new Flag(*this, time, QString("%1").arg(next_flag_text_))));
 
-	next_flag_text_ = (next_flag_text_ >= 'Z') ? 'A' :
-		(next_flag_text_ + 1);
+	next_flag_text_ =
+		(next_flag_text_ >= 'Z') ? 'A' : (next_flag_text_ + 1);
 
 	time_item_appearance_changed(true, true);
 }
@@ -633,9 +642,9 @@ void View::remove_flag(std::shared_ptr<Flag> flag)
 	time_item_appearance_changed(true, true);
 }
 
-vector< std::shared_ptr<Flag> > View::flags() const
+vector<std::shared_ptr<Flag>> View::flags() const
 {
-	vector< std::shared_ptr<Flag> > flags(flags_.begin(), flags_.end());
+	vector<std::shared_ptr<Flag>> flags(flags_.begin(), flags_.end());
 	stable_sort(flags.begin(), flags.end(),
 		[](const shared_ptr<Flag> &a, const shared_ptr<Flag> &b) {
 			return a->time() < b->time();
@@ -644,7 +653,7 @@ vector< std::shared_ptr<Flag> > View::flags() const
 	return flags;
 }
 
-const QPoint& View::hover_point() const
+const QPoint &View::hover_point() const
 {
 	return hover_point_;
 }
@@ -654,13 +663,15 @@ void View::restack_all_trace_tree_items()
 	// Make a list of owners that is sorted from deepest first
 	const vector<shared_ptr<TraceTreeItem>> items(
 		list_by_type<TraceTreeItem>());
-	set< TraceTreeItemOwner* > owners;
+	set<TraceTreeItemOwner *> owners;
 	for (const auto &r : items)
 		owners.insert(r->owner());
-	vector< TraceTreeItemOwner* > sorted_owners(owners.begin(), owners.end());
+	vector<TraceTreeItemOwner *> sorted_owners(
+		owners.begin(), owners.end());
 	sort(sorted_owners.begin(), sorted_owners.end(),
-		[](const TraceTreeItemOwner* a, const TraceTreeItemOwner *b) {
-			return a->depth() > b->depth(); });
+		[](const TraceTreeItemOwner *a, const TraceTreeItemOwner *b) {
+			return a->depth() > b->depth();
+		});
 
 	// Restack the items recursively
 	for (auto &o : sorted_owners)
@@ -670,7 +681,8 @@ void View::restack_all_trace_tree_items()
 	bool next_bgcolour_state = 0;
 
 	for (auto &o : sorted_owners)
-		next_bgcolour_state = o->reassign_bgcolour_states(next_bgcolour_state);
+		next_bgcolour_state =
+			o->reassign_bgcolour_states(next_bgcolour_state);
 
 	// Animate the items to their destination
 	for (const auto &i : items)
@@ -679,14 +691,15 @@ void View::restack_all_trace_tree_items()
 
 void View::trigger_event(util::Timestamp location)
 {
-	trigger_markers_.push_back(shared_ptr<TriggerMarker>(
-		new TriggerMarker(*this, location)));
+	trigger_markers_.push_back(
+		shared_ptr<TriggerMarker>(new TriggerMarker(*this, location)));
 }
 
 void View::get_scroll_layout(double &length, Timestamp &offset) const
 {
 	const pair<Timestamp, Timestamp> extents = get_time_extents();
-	length = ((extents.second - extents.first) / scale_).convert_to<double>();
+	length = ((extents.second - extents.first) / scale_)
+			 .convert_to<double>();
 	offset = offset_ / scale_;
 }
 
@@ -697,7 +710,8 @@ void View::set_zoom(double scale, int offset)
 	always_zoom_to_fit_changed(false);
 
 	const Timestamp cursor_offset = offset_ + scale_ * offset;
-	const Timestamp new_scale = max(min(Timestamp(scale), MaxScale), MinScale);
+	const Timestamp new_scale =
+		max(min(Timestamp(scale), MaxScale), MinScale);
 	const Timestamp new_offset = cursor_offset - new_scale * offset;
 	set_scale_offset(new_scale.convert_to<double>(), new_offset);
 }
@@ -709,17 +723,17 @@ void View::calculate_tick_spacing()
 
 	// Figure out the highest numeric value visible on a label
 	const QSize areaSize = viewport_->size();
-	const Timestamp max_time = max(fabs(offset_),
-		fabs(offset_ + scale_ * areaSize.width()));
+	const Timestamp max_time =
+		max(fabs(offset_), fabs(offset_ + scale_ * areaSize.width()));
 
 	double min_width = SpacingIncrement;
 	double label_width, tick_period_width;
 
 	QFontMetrics m(QApplication::font());
 
-	// Copies of the member variables with the same name, used in the calculation
-	// and written back afterwards, so that we don't emit signals all the time
-	// during the calculation.
+	// Copies of the member variables with the same name, used in the
+	// calculation and written back afterwards, so that we don't emit
+	// signals all the time during the calculation.
 	pv::util::Timestamp tick_period = tick_period_;
 	pv::util::SIPrefix tick_prefix = tick_prefix_;
 	unsigned tick_precision = tick_precision_;
@@ -731,35 +745,43 @@ void View::calculate_tick_spacing()
 		const pv::util::Timestamp order_decimal =
 			pow(pv::util::Timestamp(10), order);
 
-		// Allow for a margin of error so that a scale unit of 1 can be used.
-		// Otherwise, for a SU of 1 the tick period will almost always be below
-		// the min_period by a small amount - and thus skipped in favor of 2.
-		// Note: margin assumes that SU[0] and SU[1] contain the smallest values
+		// Allow for a margin of error so that a scale unit of 1 can be
+		// used. Otherwise, for a SU of 1 the tick period will almost
+		// always be below the min_period by a small amount - and thus
+		// skipped in favor of 2. Note: margin assumes that SU[0] and
+		// SU[1] contain the smallest values
 		double tp_margin = (ScaleUnits[0] + ScaleUnits[1]) / 2.0;
 		double tp_with_margin;
 		unsigned int unit = 0;
 
 		do {
 			tp_with_margin = order_decimal.convert_to<double>() *
-				(ScaleUnits[unit++] + tp_margin);
-		} while (tp_with_margin < min_period && unit < countof(ScaleUnits));
+					 (ScaleUnits[unit++] + tp_margin);
+		} while (tp_with_margin < min_period &&
+			 unit < countof(ScaleUnits));
 
 		tick_period = order_decimal * ScaleUnits[unit - 1];
 		tick_prefix = static_cast<pv::util::SIPrefix>(
-			(order - pv::util::exponent(pv::util::SIPrefix::yocto)) / 3);
+			(order -
+				pv::util::exponent(pv::util::SIPrefix::yocto)) /
+			3);
 
 		// Precision is the number of fractional digits required, not
-		// taking the prefix into account (and it must never be negative)
-		tick_precision = std::max(ceil(log10(1 / tick_period)).convert_to<int>(), 0);
+		// taking the prefix into account (and it must never be
+		// negative)
+		tick_precision = std::max(
+			ceil(log10(1 / tick_period)).convert_to<int>(), 0);
 
 		tick_period_width = (tick_period / scale_).convert_to<double>();
 
-		const QString label_text = Ruler::format_time_with_distance(
-			tick_period, max_time, tick_prefix, time_unit_, tick_precision);
+		const QString label_text =
+			Ruler::format_time_with_distance(tick_period, max_time,
+				tick_prefix, time_unit_, tick_precision);
 
 		label_width = m.boundingRect(0, 0, INT_MAX, INT_MAX,
-			Qt::AlignLeft | Qt::AlignTop, label_text).width() +
-				MinValueSpacing;
+				       Qt::AlignLeft | Qt::AlignTop, label_text)
+				      .width() +
+			      MinValueSpacing;
 
 		min_width += SpacingIncrement;
 	} while (tick_period_width < label_width);
@@ -796,7 +818,8 @@ void View::update_scroll()
 	} else {
 		hscrollbar->setRange(0, MaxScrollValue);
 		hscrollbar->setSliderPosition(
-			(offset_ * MaxScrollValue / (scale_ * length)).convert_to<double>());
+			(offset_ * MaxScrollValue / (scale_ * length))
+				.convert_to<double>());
 	}
 
 	updating_scroll_ = false;
@@ -809,8 +832,8 @@ void View::update_scroll()
 
 	// Don't change the scrollbar range if there are no traces
 	if (extents.first != extents.second)
-		vscrollbar->setRange(extents.first - areaSize.height(),
-			extents.second);
+		vscrollbar->setRange(
+			extents.first - areaSize.height(), extents.second);
 
 	if (scroll_needs_defaults_)
 		set_scroll_default();
@@ -834,9 +857,10 @@ void View::set_scroll_default()
 	if (areaSize.height() >= trace_height)
 		// Center all traces vertically
 		set_v_offset(extents.first -
-			((areaSize.height() - trace_height) / 2));
+			     ((areaSize.height() - trace_height) / 2));
 	else
-		// Put the first trace at the top, letting the bottom ones overflow
+		// Put the first trace at the top, letting the bottom ones
+		// overflow
 		set_v_offset(extents.first);
 
 	// If we're not sure whether setting the defaults worked as
@@ -850,28 +874,29 @@ void View::update_layout()
 	scrollarea_.setViewportMargins(
 		header_->sizeHint().width() - Header::BaselineOffset,
 		ruler_->sizeHint().height(), 0, 0);
-	ruler_->setGeometry(viewport_->x(), 0,
-		viewport_->width(), ruler_->extended_size_hint().height());
+	ruler_->setGeometry(viewport_->x(), 0, viewport_->width(),
+		ruler_->extended_size_hint().height());
 	header_->setGeometry(0, viewport_->y(),
 		header_->extended_size_hint().width(), viewport_->height());
 	update_scroll();
 }
 
-TraceTreeItemOwner* View::find_prevalent_trace_group(
+TraceTreeItemOwner *View::find_prevalent_trace_group(
 	const shared_ptr<sigrok::ChannelGroup> &group,
-	const unordered_map<shared_ptr<data::SignalBase>, shared_ptr<Signal> >
+	const unordered_map<shared_ptr<data::SignalBase>, shared_ptr<Signal>>
 		&signal_map)
 {
 	assert(group);
 
-	unordered_set<TraceTreeItemOwner*> owners;
-	vector<TraceTreeItemOwner*> owner_list;
+	unordered_set<TraceTreeItemOwner *> owners;
+	vector<TraceTreeItemOwner *> owner_list;
 
 	// Make a set and a list of all the owners
 	for (const auto &channel : group->channels()) {
 		for (auto entry : signal_map) {
 			if (entry.first->channel() == channel) {
-				TraceTreeItemOwner *const o = (entry.second)->owner();
+				TraceTreeItemOwner *const o =
+					(entry.second)->owner();
 				owner_list.push_back(o);
 				owners.insert(o);
 			}
@@ -882,8 +907,8 @@ TraceTreeItemOwner* View::find_prevalent_trace_group(
 	size_t max_prevalence = 0;
 	TraceTreeItemOwner *prevalent_owner = nullptr;
 	for (TraceTreeItemOwner *owner : owners) {
-		const size_t prevalence = std::count_if(
-			owner_list.begin(), owner_list.end(),
+		const size_t prevalence = std::count_if(owner_list.begin(),
+			owner_list.end(),
 			[&](TraceTreeItemOwner *o) { return o == owner; });
 		if (prevalence > max_prevalence) {
 			max_prevalence = prevalence;
@@ -894,13 +919,13 @@ TraceTreeItemOwner* View::find_prevalent_trace_group(
 	return prevalent_owner;
 }
 
-vector< shared_ptr<Trace> > View::extract_new_traces_for_channels(
-	const vector< shared_ptr<sigrok::Channel> > &channels,
-	const unordered_map<shared_ptr<data::SignalBase>, shared_ptr<Signal> >
+vector<shared_ptr<Trace>> View::extract_new_traces_for_channels(
+	const vector<shared_ptr<sigrok::Channel>> &channels,
+	const unordered_map<shared_ptr<data::SignalBase>, shared_ptr<Signal>>
 		&signal_map,
-	set< shared_ptr<Trace> > &add_list)
+	set<shared_ptr<Trace>> &add_list)
 {
-	vector< shared_ptr<Trace> > filtered_traces;
+	vector<shared_ptr<Trace>> filtered_traces;
 
 	for (const auto &channel : channels) {
 		for (auto entry : signal_map) {
@@ -921,14 +946,16 @@ vector< shared_ptr<Trace> > View::extract_new_traces_for_channels(
 
 void View::determine_time_unit()
 {
-	// Check whether we know the sample rate and hence can use time as the unit
+	// Check whether we know the sample rate and hence can use time as the
+	// unit
 	if (time_unit_ == util::TimeUnit::Samples) {
 		// Check all signals but...
 		for (const shared_ptr<Signal> signal : signals_) {
 			const shared_ptr<SignalData> data = signal->data();
 
 			// ...only check first segment of each
-			const vector< shared_ptr<Segment> > segments = data->segments();
+			const vector<shared_ptr<Segment>> segments =
+				data->segments();
 			if (!segments.empty())
 				if (segments[0]->samplerate()) {
 					set_time_unit(util::TimeUnit::Time);
@@ -943,7 +970,7 @@ bool View::eventFilter(QObject *object, QEvent *event)
 	const QEvent::Type type = event->type();
 	if (type == QEvent::MouseMove) {
 
-		const QMouseEvent *const mouse_event = (QMouseEvent*)event;
+		const QMouseEvent *const mouse_event = (QMouseEvent *)event;
 		if (object == viewport_)
 			hover_point_ = mouse_event->pos();
 		else if (object == ruler_)
@@ -963,7 +990,7 @@ bool View::eventFilter(QObject *object, QEvent *event)
 	return QObject::eventFilter(object, event);
 }
 
-void View::resizeEvent(QResizeEvent*)
+void View::resizeEvent(QResizeEvent *)
 {
 	update_layout();
 
@@ -1007,9 +1034,8 @@ void View::time_item_appearance_changed(bool label, bool content)
 
 void View::extents_changed(bool horz, bool vert)
 {
-	sticky_events_ |=
-		(horz ? TraceTreeItemHExtentsChanged : 0) |
-		(vert ? TraceTreeItemVExtentsChanged : 0);
+	sticky_events_ |= (horz ? TraceTreeItemHExtentsChanged : 0) |
+			  (vert ? TraceTreeItemVExtentsChanged : 0);
 	lazy_event_handler_.start();
 }
 
@@ -1020,7 +1046,8 @@ void View::h_scroll_value_changed(int value)
 
 	// Disable sticky scrolling when user moves the horizontal scroll bar
 	// during a running acquisition
-	if (sticky_scrolling_ && (session_.get_capture_state() == Session::Running)) {
+	if (sticky_scrolling_ &&
+		(session_.get_capture_state() == Session::Running)) {
 		sticky_scrolling_ = false;
 		sticky_scrolling_changed(false);
 	}
@@ -1049,14 +1076,14 @@ void View::signals_changed()
 {
 	using sigrok::Channel;
 
-	vector< shared_ptr<Channel> > channels;
+	vector<shared_ptr<Channel>> channels;
 	shared_ptr<sigrok::Device> sr_dev;
 
-	// Do we need to set the vertical scrollbar to its default position later?
-	// We do if there are no traces, i.e. the scroll bar has no range set
-	bool reset_scrollbar =
-		(scrollarea_.verticalScrollBar()->minimum() ==
-			scrollarea_.verticalScrollBar()->maximum());
+	// Do we need to set the vertical scrollbar to its default position
+	// later? We do if there are no traces, i.e. the scroll bar has no range
+	// set
+	bool reset_scrollbar = (scrollarea_.verticalScrollBar()->minimum() ==
+				scrollarea_.verticalScrollBar()->maximum());
 
 	if (!session_.device()) {
 		reset_scroll();
@@ -1067,7 +1094,7 @@ void View::signals_changed()
 		channels = sr_dev->channels();
 	}
 
-	vector< shared_ptr<TraceTreeItem> > new_top_level_items;
+	vector<shared_ptr<TraceTreeItem>> new_top_level_items;
 
 	// Make a list of traces that are being added, and a list of traces
 	// that are being removed
@@ -1075,24 +1102,22 @@ void View::signals_changed()
 	const set<shared_ptr<Trace>> prev_traces(
 		prev_trace_list.begin(), prev_trace_list.end());
 
-	set< shared_ptr<Trace> > traces(signals_.begin(), signals_.end());
+	set<shared_ptr<Trace>> traces(signals_.begin(), signals_.end());
 
 #ifdef ENABLE_DECODE
 	traces.insert(decode_traces_.begin(), decode_traces_.end());
 #endif
 
-	set< shared_ptr<Trace> > add_traces;
-	set_difference(traces.begin(), traces.end(),
-		prev_traces.begin(), prev_traces.end(),
-		inserter(add_traces, add_traces.begin()));
+	set<shared_ptr<Trace>> add_traces;
+	set_difference(traces.begin(), traces.end(), prev_traces.begin(),
+		prev_traces.end(), inserter(add_traces, add_traces.begin()));
 
-	set< shared_ptr<Trace> > remove_traces;
-	set_difference(prev_traces.begin(), prev_traces.end(),
-		traces.begin(), traces.end(),
-		inserter(remove_traces, remove_traces.begin()));
+	set<shared_ptr<Trace>> remove_traces;
+	set_difference(prev_traces.begin(), prev_traces.end(), traces.begin(),
+		traces.end(), inserter(remove_traces, remove_traces.begin()));
 
 	// Make a look-up table of sigrok Channels to pulseview Signals
-	unordered_map<shared_ptr<data::SignalBase>, shared_ptr<Signal> >
+	unordered_map<shared_ptr<data::SignalBase>, shared_ptr<Signal>>
 		signal_map;
 	for (const shared_ptr<Signal> &sig : signals_)
 		signal_map[sig->base()] = sig;
@@ -1100,14 +1125,15 @@ void View::signals_changed()
 	// Populate channel groups
 	if (sr_dev)
 		for (auto entry : sr_dev->channel_groups()) {
-			const shared_ptr<sigrok::ChannelGroup> &group = entry.second;
+			const shared_ptr<sigrok::ChannelGroup> &group =
+				entry.second;
 
 			if (group->channels().size() <= 1)
 				continue;
 
 			// Find best trace group to add to
-			TraceTreeItemOwner *owner = find_prevalent_trace_group(
-				group, signal_map);
+			TraceTreeItemOwner *owner =
+				find_prevalent_trace_group(group, signal_map);
 
 			// If there is no trace group, create one
 			shared_ptr<TraceGroup> new_trace_group;
@@ -1116,20 +1142,24 @@ void View::signals_changed()
 				owner = new_trace_group.get();
 			}
 
-			// Extract traces for the trace group, removing them from
-			// the add list
-			const vector< shared_ptr<Trace> > new_traces_in_group =
-				extract_new_traces_for_channels(group->channels(),
-					signal_map, add_traces);
+			// Extract traces for the trace group, removing them
+			// from the add list
+			const vector<shared_ptr<Trace>> new_traces_in_group =
+				extract_new_traces_for_channels(
+					group->channels(), signal_map,
+					add_traces);
 
 			// Add the traces to the group
-			const pair<int, int> prev_v_extents = owner->v_extents();
-			int offset = prev_v_extents.second - prev_v_extents.first;
+			const pair<int, int> prev_v_extents =
+				owner->v_extents();
+			int offset =
+				prev_v_extents.second - prev_v_extents.first;
 			for (shared_ptr<Trace> trace : new_traces_in_group) {
 				assert(trace);
 				owner->add_child_item(trace);
 
-				const pair<int, int> extents = trace->v_extents();
+				const pair<int, int> extents =
+					trace->v_extents();
 				if (trace->enabled())
 					offset += -extents.first;
 				trace->force_to_v_offset(offset);
@@ -1138,24 +1168,28 @@ void View::signals_changed()
 			}
 
 			if (new_trace_group) {
-				// Assign proper vertical offsets to each channel in the group
+				// Assign proper vertical offsets to each
+				// channel in the group
 				new_trace_group->restack_items();
 
-				// If this is a new group, enqueue it in the new top level
-				// items list
+				// If this is a new group, enqueue it in the new
+				// top level items list
 				if (!new_traces_in_group.empty())
-					new_top_level_items.push_back(new_trace_group);
+					new_top_level_items.push_back(
+						new_trace_group);
 			}
 		}
 
 	// Enqueue the remaining logic channels in a group
-	vector< shared_ptr<Channel> > logic_channels;
+	vector<shared_ptr<Channel>> logic_channels;
 	copy_if(channels.begin(), channels.end(), back_inserter(logic_channels),
-		[](const shared_ptr<Channel>& c) {
-			return c->type() == sigrok::ChannelType::LOGIC; });
+		[](const shared_ptr<Channel> &c) {
+			return c->type() == sigrok::ChannelType::LOGIC;
+		});
 
-	const vector< shared_ptr<Trace> > non_grouped_logic_signals =
-		extract_new_traces_for_channels(logic_channels,	signal_map, add_traces);
+	const vector<shared_ptr<Trace>> non_grouped_logic_signals =
+		extract_new_traces_for_channels(
+			logic_channels, signal_map, add_traces);
 
 	if (non_grouped_logic_signals.size() > 0) {
 		const shared_ptr<TraceGroup> non_grouped_trace_group(
@@ -1168,8 +1202,9 @@ void View::signals_changed()
 	}
 
 	// Enqueue the remaining channels as free ungrouped traces
-	const vector< shared_ptr<Trace> > new_top_level_signals =
-		extract_new_traces_for_channels(channels, signal_map, add_traces);
+	const vector<shared_ptr<Trace>> new_top_level_signals =
+		extract_new_traces_for_channels(
+			channels, signal_map, add_traces);
 	new_top_level_items.insert(new_top_level_items.end(),
 		new_top_level_signals.begin(), new_top_level_signals.end());
 
@@ -1196,7 +1231,8 @@ void View::signals_changed()
 	for (auto item : new_top_level_items) {
 		add_child_item(item);
 
-		// Position the item after the last item or at the top if there is none
+		// Position the item after the last item or at the top if there
+		// is none
 		const pair<int, int> extents = item->v_extents();
 
 		if (item->enabled())
@@ -1226,8 +1262,9 @@ void View::capture_state_updated(int state)
 	}
 
 	if (state == Session::Stopped) {
-		// After acquisition has stopped we need to re-calculate the ticks once
-		// as it's otherwise done when the user pans or zooms, which is too late
+		// After acquisition has stopped we need to re-calculate the
+		// ticks once as it's otherwise done when the user pans or
+		// zooms, which is too late
 		calculate_tick_spacing();
 
 		// Reset "always zoom to fit", the acquisition has stopped

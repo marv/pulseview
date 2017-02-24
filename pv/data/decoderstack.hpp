@@ -82,13 +82,13 @@ public:
 
 	virtual ~DecoderStack();
 
-	const std::list< std::shared_ptr<decode::Decoder> >& stack() const;
+	const std::list<std::shared_ptr<decode::Decoder>> &stack() const;
 	void push(std::shared_ptr<decode::Decoder> decoder);
 	void remove(int index);
 
 	double samplerate() const;
 
-	const pv::util::Timestamp& start_time() const;
+	const pv::util::Timestamp &start_time() const;
 
 	int64_t samples_decoded() const;
 
@@ -118,8 +118,7 @@ private:
 
 	void decode_proc();
 
-	static void annotation_callback(srd_proto_data *pdata,
-		void *decoder);
+	static void annotation_callback(srd_proto_data *pdata, void *decoder);
 
 private Q_SLOTS:
 	void on_new_frame();
@@ -145,7 +144,7 @@ private:
 	 */
 	static std::mutex global_srd_mutex_;
 
-	std::list< std::shared_ptr<decode::Decoder> > stack_;
+	std::list<std::shared_ptr<decode::Decoder>> stack_;
 
 	std::shared_ptr<pv::data::LogicSegment> segment_;
 
@@ -155,11 +154,11 @@ private:
 	bool frame_complete_;
 
 	mutable std::mutex output_mutex_;
-	int64_t	samples_decoded_;
+	int64_t samples_decoded_;
 
 	std::map<const decode::Row, decode::RowData> rows_;
 
-	std::map<std::pair<const srd_decoder*, int>, decode::Row> class_rows_;
+	std::map<std::pair<const srd_decoder *, int>, decode::Row> class_rows_;
 
 	QString error_message_;
 

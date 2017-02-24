@@ -30,8 +30,7 @@ using std::vector;
 namespace pv {
 namespace data {
 
-Analog::Analog() :
-	SignalData()
+Analog::Analog() : SignalData()
 {
 }
 
@@ -40,15 +39,14 @@ void Analog::push_segment(shared_ptr<AnalogSegment> &segment)
 	segments_.push_front(segment);
 }
 
-const deque< shared_ptr<AnalogSegment> >& Analog::analog_segments() const
+const deque<shared_ptr<AnalogSegment>> &Analog::analog_segments() const
 {
 	return segments_;
 }
 
-vector< shared_ptr<Segment> > Analog::segments() const
+vector<shared_ptr<Segment>> Analog::segments() const
 {
-	return vector< shared_ptr<Segment> >(
-		segments_.begin(), segments_.end());
+	return vector<shared_ptr<Segment>>(segments_.begin(), segments_.end());
 }
 
 void Analog::clear()
@@ -68,8 +66,8 @@ uint64_t Analog::max_sample_count() const
 	return l;
 }
 
-void Analog::notify_samples_added(QObject* segment, uint64_t start_sample,
-	uint64_t end_sample)
+void Analog::notify_samples_added(
+	QObject *segment, uint64_t start_sample, uint64_t end_sample)
 {
 	samples_added(segment, start_sample, end_sample);
 }

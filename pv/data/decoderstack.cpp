@@ -25,10 +25,10 @@
 
 #include "decoderstack.hpp"
 
+#include <pv/data/decode/annotation.hpp>
+#include <pv/data/decode/decoder.hpp>
 #include <pv/data/logic.hpp>
 #include <pv/data/logicsegment.hpp>
-#include <pv/data/decode/decoder.hpp>
-#include <pv/data/decode/annotation.hpp>
 #include <pv/session.hpp>
 #include <pv/view/logicsignal.hpp>
 
@@ -58,24 +58,20 @@ const unsigned int DecoderStack::DecodeNotifyPeriod = 1024;
 
 mutex DecoderStack::global_srd_mutex_;
 
-DecoderStack::DecoderStack(pv::Session &session,
-	const srd_decoder *const dec) :
-	session_(session),
-	start_time_(0),
-	samplerate_(0),
-	sample_count_(0),
-	frame_complete_(false),
-	samples_decoded_(0)
+DecoderStack::DecoderStack(pv::Session &session, const srd_decoder *const dec)
+    : session_(session),
+      start_time_(0),
+      samplerate_(0),
+      sample_count_(0),
+      frame_complete_(false),
+      samples_decoded_(0)
 {
-	connect(&session_, SIGNAL(frame_began()),
-		this, SLOT(on_new_frame()));
-	connect(&session_, SIGNAL(data_received()),
-		this, SLOT(on_data_received()));
-	connect(&session_, SIGNAL(frame_ended()),
-		this, SLOT(on_frame_ended()));
+	connect(&session_, SIGNAL(frame_began()), this, SLOT(on_new_frame()));
+	connect(&session_, SIGNAL(data_received()), this,
+		SLOT(on_data_received()));
+	connect(&session_, SIGNAL(frame_ended()), this, SLOT(on_frame_ended()));
 
-	stack_.push_back(shared_ptr<decode::Decoder>(
-		new decode::Decoder(dec)));
+	stack_.push_back(shared_ptr<decode::Decoder>(new decode::Decoder(dec)));
 }
 
 DecoderStack::~DecoderStack()
@@ -87,8 +83,7 @@ DecoderStack::~DecoderStack()
 	}
 }
 
-const std::list< std::shared_ptr<decode::Decoder> >&
-DecoderStack::stack() const
+const std::list<std::shared_ptr<decode::Decoder>> &DecoderStack::stack() const
 {
 	return stack_;
 }
@@ -118,7 +113,7 @@ double DecoderStack::samplerate() const
 	return samplerate_;
 }
 
-const pv::util::Timestamp& DecoderStack::start_time() const
+const pv::util::Timestamp &DecoderStack::start_time() const
 {
 	return start_time_;
 }
@@ -160,16 +155,15 @@ std::vector<Row> DecoderStack::get_visible_rows() const
 }
 
 void DecoderStack::get_annotation_subset(
-	std::vector<pv::data::decode::Annotation> &dest,
-	const Row &row, uint64_t start_sample,
-	uint64_t end_sample) const
+	std::vector<pv::data::decode::Annotation> &dest, const Row &row,
+	uint64_t start_sample, uint64_t end_sample) const
 {
 	lock_guard<mutex> lock(output_mutex_);
 
 	const auto iter = rows_.find(row);
 	if (iter != rows_.end())
-		(*iter).second.get_annotation_subset(dest,
-			start_sample, end_sample);
+		(*iter).second.get_annotation_subset(
+			dest, start_sample, end_sample);
 }
 
 QString DecoderStack::error_message()
@@ -202,7 +196,7 @@ void DecoderStack::begin_decode()
 	for (const shared_ptr<decode::Decoder> &dec : stack_)
 		if (!dec->have_required_channels()) {
 			error_message_ = tr("One or more required channels "
-				"have not been specified");
+					    "have not been specified");
 			return;
 		}
 
@@ -228,10 +222,10 @@ void DecoderStack::begin_decode()
 			rows_[row] = decode::RowData();
 
 			// Map out all the classes
-			for (const GSList *ll = ann_row->ann_classes;
-				ll; ll = ll->next)
-				class_rows_[make_pair(decc,
-					GPOINTER_TO_INT(ll->data))] = row;
+			for (const GSList *ll = ann_row->ann_classes; ll;
+				ll = ll->next)
+				class_rows_[make_pair(
+					decc, GPOINTER_TO_INT(ll->data))] = row;
 		}
 	}
 
@@ -243,7 +237,8 @@ void DecoderStack::begin_decode()
 
 	for (const shared_ptr<decode::Decoder> &dec : stack_)
 		if (dec && !dec->channels().empty() &&
-			((signalbase = (*dec->channels().begin()).second.get())) &&
+			((signalbase = (*dec->channels().begin())
+					       .second.get())) &&
 			((data = signalbase->logic_data().get())))
 			break;
 
@@ -251,7 +246,7 @@ void DecoderStack::begin_decode()
 		return;
 
 	// Check we have a segment of data
-	const deque< shared_ptr<pv::data::LogicSegment> > &segments =
+	const deque<shared_ptr<pv::data::LogicSegment>> &segments =
 		data->logic_segments();
 	if (segments.empty())
 		return;
@@ -271,9 +266,9 @@ uint64_t DecoderStack::max_sample_count() const
 {
 	uint64_t max_sample_count = 0;
 
-	for (const auto& row : rows_)
-		max_sample_count = max(max_sample_count,
-			row.second.get_max_sample());
+	for (const auto &row : rows_)
+		max_sample_count =
+			max(max_sample_count, row.second.get_max_sample());
 
 	return max_sample_count;
 }
@@ -292,30 +287,33 @@ optional<int64_t> DecoderStack::wait_for_data() const
 	}
 
 	// Return value is valid if we're not aborting the decode,
-	return boost::make_optional(!interrupt_ &&
-		// and there's more work to do...
-		(samples_decoded_ < sample_count_ || !frame_complete_) &&
-		// and if the end of the data hasn't been reached yet
-		(!((samples_decoded_ >= sample_count_) && (session_.get_capture_state() == Session::Stopped))),
+	return boost::make_optional(
+		!interrupt_ &&
+			// and there's more work to do...
+			(samples_decoded_ < sample_count_ ||
+				!frame_complete_) &&
+			// and if the end of the data hasn't been reached yet
+			(!((samples_decoded_ >= sample_count_) &&
+				(session_.get_capture_state() ==
+					Session::Stopped))),
 		sample_count_);
 }
 
-void DecoderStack::decode_data(
-	const int64_t sample_count, const unsigned int unit_size,
-	srd_session *const session)
+void DecoderStack::decode_data(const int64_t sample_count,
+	const unsigned int unit_size, srd_session *const session)
 {
 	const unsigned int chunk_sample_count =
 		DecodeChunkLength / segment_->unit_size();
 
 	for (int64_t i = 0; !interrupt_ && i < sample_count;
-			i += chunk_sample_count) {
+		i += chunk_sample_count) {
 
-		const int64_t chunk_end = min(
-			i + chunk_sample_count, sample_count);
-		const uint8_t* chunk = segment_->get_samples(i, chunk_end);
+		const int64_t chunk_end =
+			min(i + chunk_sample_count, sample_count);
+		const uint8_t *chunk = segment_->get_samples(i, chunk_end);
 
 		if (srd_session_send(session, i, chunk_end, chunk,
-				(chunk_end - i) * unit_size, unit_size) != SRD_OK) {
+			    (chunk_end - i) * unit_size, unit_size) != SRD_OK) {
 			error_message_ = tr("Decoder reported an error");
 			break;
 		}
@@ -354,13 +352,14 @@ void DecoderStack::decode_proc()
 		srd_decoder_inst *const di = dec->create_decoder_inst(session);
 
 		if (!di) {
-			error_message_ = tr("Failed to create decoder instance");
+			error_message_ =
+				tr("Failed to create decoder instance");
 			srd_session_destroy(session);
 			return;
 		}
 
 		if (prev_di)
-			srd_inst_stack (session, prev_di, di);
+			srd_inst_stack(session, prev_di, di);
 
 		prev_di = di;
 	}
@@ -393,7 +392,7 @@ void DecoderStack::annotation_callback(srd_proto_data *pdata, void *decoder)
 	assert(pdata);
 	assert(decoder);
 
-	DecoderStack *const d = (DecoderStack*)decoder;
+	DecoderStack *const d = (DecoderStack *)decoder;
 	assert(d);
 
 	lock_guard<mutex> lock(d->output_mutex_);
@@ -414,13 +413,13 @@ void DecoderStack::annotation_callback(srd_proto_data *pdata, void *decoder)
 		row_iter = d->rows_.find((*r).second);
 	else {
 		// Failing that, use the decoder as a key
-		row_iter = d->rows_.find(Row(decc));	
+		row_iter = d->rows_.find(Row(decc));
 	}
 
 	assert(row_iter != d->rows_.end());
 	if (row_iter == d->rows_.end()) {
-		qDebug() << "Unexpected annotation: decoder = " << decc <<
-			", format = " << a.format();
+		qDebug() << "Unexpected annotation: decoder = " << decc
+			 << ", format = " << a.format();
 		assert(0);
 		return;
 	}

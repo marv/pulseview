@@ -29,16 +29,16 @@
 namespace pv {
 namespace widgets {
 
-DecoderGroupBox::DecoderGroupBox(QString title, QWidget *parent, bool isDeletable) :
-	QWidget(parent),
-	layout_(new QGridLayout),
-	show_hide_button_(QIcon(":/icons/decoder-shown.svg"), QString(), this)
+DecoderGroupBox::DecoderGroupBox(
+	QString title, QWidget *parent, bool isDeletable)
+    : QWidget(parent),
+      layout_(new QGridLayout),
+      show_hide_button_(QIcon(":/icons/decoder-shown.svg"), QString(), this)
 {
 	layout_->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout_);
 
-	layout_->addWidget(new QLabel(QString("<h3>%1</h3>").arg(title)),
-		0, 0);
+	layout_->addWidget(new QLabel(QString("<h3>%1</h3>").arg(title)), 0, 0);
 	layout_->setColumnStretch(0, 1);
 
 	QHBoxLayout *const toolbar = new QHBoxLayout;
@@ -46,8 +46,8 @@ DecoderGroupBox::DecoderGroupBox(QString title, QWidget *parent, bool isDeletabl
 
 	show_hide_button_.setFlat(true);
 	show_hide_button_.setIconSize(QSize(16, 16));
-	connect(&show_hide_button_, SIGNAL(clicked()),
-		this, SIGNAL(show_hide_decoder()));
+	connect(&show_hide_button_, SIGNAL(clicked()), this,
+		SIGNAL(show_hide_decoder()));
 	toolbar->addWidget(&show_hide_button_);
 
 	if (isDeletable) {
@@ -55,8 +55,8 @@ DecoderGroupBox::DecoderGroupBox(QString title, QWidget *parent, bool isDeletabl
 			QIcon(":/icons/decoder-delete.svg"), QString(), this);
 		delete_button->setFlat(true);
 		delete_button->setIconSize(QSize(16, 16));
-		connect(delete_button, SIGNAL(clicked()),
-			this, SIGNAL(delete_decoder()));
+		connect(delete_button, SIGNAL(clicked()), this,
+			SIGNAL(delete_decoder()));
 		toolbar->addWidget(delete_button);
 	}
 }
@@ -69,9 +69,9 @@ void DecoderGroupBox::add_layout(QLayout *layout)
 
 void DecoderGroupBox::set_decoder_visible(bool visible)
 {
-	show_hide_button_.setIcon(QIcon(visible ?
-		":/icons/decoder-shown.svg" :
-		":/icons/decoder-hidden.svg"));
+	show_hide_button_.setIcon(
+		QIcon(visible ? ":/icons/decoder-shown.svg"
+			      : ":/icons/decoder-hidden.svg"));
 }
 
 } // widgets

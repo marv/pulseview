@@ -47,7 +47,7 @@ public:
 
 	std::shared_ptr<sigrok::Device> device() const;
 
-	template<typename T>
+	template <typename T>
 	T read_config(const sigrok::ConfigKey *key, const T default_value = 0);
 
 	/**

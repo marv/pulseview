@@ -48,8 +48,7 @@ class Signal : public Trace, public ViewItemOwner
 	Q_OBJECT
 
 protected:
-	Signal(pv::Session &session,
-		std::shared_ptr<data::SignalBase> channel);
+	Signal(pv::Session &session, std::shared_ptr<data::SignalBase> channel);
 
 public:
 	/**
@@ -73,13 +72,13 @@ public:
 	/**
 	 * Returns a list of row items owned by this object.
 	 */
-	const item_list& child_items() const;
+	const item_list &child_items() const;
 
 	void paint_back(QPainter &p, const ViewItemPaintParams &pp);
 
 	virtual void populate_popup_form(QWidget *parent, QFormLayout *form);
 
-	QMenu* create_context_menu(QWidget *parent);
+	QMenu *create_context_menu(QWidget *parent);
 
 	void delete_pressed();
 
@@ -97,7 +96,7 @@ public:
 	/**
 	 * Handles the scale handle being being released.
 	 */
-	virtual void scale_handle_released() {};
+	virtual void scale_handle_released(){};
 
 protected Q_SLOTS:
 	virtual void on_name_changed(const QString &text);

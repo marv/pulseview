@@ -52,8 +52,8 @@ private:
 	static const int InfoTextMarginRight, InfoTextMarginBottom;
 
 public:
-	AnalogSignal(pv::Session &session,
-		std::shared_ptr<data::SignalBase> base);
+	AnalogSignal(
+		pv::Session &session, std::shared_ptr<data::SignalBase> base);
 
 	virtual ~AnalogSignal() = default;
 
@@ -110,13 +110,13 @@ private:
 	void paint_grid(QPainter &p, int y, int left, int right);
 
 	void paint_trace(QPainter &p,
-		const std::shared_ptr<pv::data::AnalogSegment> &segment,
-		int y, int left, const int64_t start, const int64_t end,
+		const std::shared_ptr<pv::data::AnalogSegment> &segment, int y,
+		int left, const int64_t start, const int64_t end,
 		const double pixels_offset, const double samples_per_pixel);
 
 	void paint_envelope(QPainter &p,
-		const std::shared_ptr<pv::data::AnalogSegment> &segment,
-		int y, int left, const int64_t start, const int64_t end,
+		const std::shared_ptr<pv::data::AnalogSegment> &segment, int y,
+		int left, const int64_t start, const int64_t end,
 		const double pixels_offset, const double samples_per_pixel);
 
 	/**
@@ -149,8 +149,8 @@ private:
 	int scale_index_drag_offset_;
 
 	int div_height_;
-	int pos_vdivs_, neg_vdivs_;  // divs per positive/negative side
-	float resolution_; // e.g. 10 for 10 V/div
+	int pos_vdivs_, neg_vdivs_; // divs per positive/negative side
+	float resolution_;	  // e.g. 10 for 10 V/div
 
 	bool autoranging_;
 };

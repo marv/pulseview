@@ -33,60 +33,60 @@ namespace views {
 
 namespace trace {
 
-StandardBar::StandardBar(Session &session, QWidget *parent,
-	View *view, bool add_default_widgets) :
-	QToolBar("Standard Trace View Toolbar", parent),
-	session_(session),
-	view_(view),
-	action_view_zoom_in_(new QAction(this)),
-	action_view_zoom_out_(new QAction(this)),
-	action_view_zoom_fit_(new QAction(this)),
-	action_view_zoom_one_to_one_(new QAction(this)),
-	action_view_show_cursors_(new QAction(this))
+StandardBar::StandardBar(
+	Session &session, QWidget *parent, View *view, bool add_default_widgets)
+    : QToolBar("Standard Trace View Toolbar", parent),
+      session_(session),
+      view_(view),
+      action_view_zoom_in_(new QAction(this)),
+      action_view_zoom_out_(new QAction(this)),
+      action_view_zoom_fit_(new QAction(this)),
+      action_view_zoom_one_to_one_(new QAction(this)),
+      action_view_show_cursors_(new QAction(this))
 {
 	setObjectName(QString::fromUtf8("StandardBar"));
 
 	// Actions
 	action_view_zoom_in_->setText(tr("Zoom &In"));
-	action_view_zoom_in_->setIcon(QIcon::fromTheme("zoom-in",
-		QIcon(":/icons/zoom-in.png")));
+	action_view_zoom_in_->setIcon(
+		QIcon::fromTheme("zoom-in", QIcon(":/icons/zoom-in.png")));
 	// simply using Qt::Key_Plus shows no + in the menu
 	action_view_zoom_in_->setShortcut(QKeySequence::ZoomIn);
-	connect(action_view_zoom_in_, SIGNAL(triggered(bool)),
-		this, SLOT(on_actionViewZoomIn_triggered()));
+	connect(action_view_zoom_in_, SIGNAL(triggered(bool)), this,
+		SLOT(on_actionViewZoomIn_triggered()));
 
 	action_view_zoom_out_->setText(tr("Zoom &Out"));
-	action_view_zoom_out_->setIcon(QIcon::fromTheme("zoom-out",
-		QIcon(":/icons/zoom-out.png")));
+	action_view_zoom_out_->setIcon(
+		QIcon::fromTheme("zoom-out", QIcon(":/icons/zoom-out.png")));
 	action_view_zoom_out_->setShortcut(QKeySequence::ZoomOut);
-	connect(action_view_zoom_out_, SIGNAL(triggered(bool)),
-		this, SLOT(on_actionViewZoomOut_triggered()));
+	connect(action_view_zoom_out_, SIGNAL(triggered(bool)), this,
+		SLOT(on_actionViewZoomOut_triggered()));
 
 	action_view_zoom_fit_->setCheckable(true);
 	action_view_zoom_fit_->setText(tr("Zoom to &Fit"));
-	action_view_zoom_fit_->setIcon(QIcon::fromTheme("zoom-fit",
-		QIcon(":/icons/zoom-fit.png")));
+	action_view_zoom_fit_->setIcon(
+		QIcon::fromTheme("zoom-fit", QIcon(":/icons/zoom-fit.png")));
 	action_view_zoom_fit_->setShortcut(QKeySequence(Qt::Key_F));
-	connect(action_view_zoom_fit_, SIGNAL(triggered(bool)),
-		this, SLOT(on_actionViewZoomFit_triggered(bool)));
+	connect(action_view_zoom_fit_, SIGNAL(triggered(bool)), this,
+		SLOT(on_actionViewZoomFit_triggered(bool)));
 
 	action_view_zoom_one_to_one_->setText(tr("Zoom to O&ne-to-One"));
-	action_view_zoom_one_to_one_->setIcon(QIcon::fromTheme("zoom-original",
-		QIcon(":/icons/zoom-original.png")));
+	action_view_zoom_one_to_one_->setIcon(QIcon::fromTheme(
+		"zoom-original", QIcon(":/icons/zoom-original.png")));
 	action_view_zoom_one_to_one_->setShortcut(QKeySequence(Qt::Key_O));
-	connect(action_view_zoom_one_to_one_, SIGNAL(triggered(bool)),
-		this, SLOT(on_actionViewZoomOneToOne_triggered()));
+	connect(action_view_zoom_one_to_one_, SIGNAL(triggered(bool)), this,
+		SLOT(on_actionViewZoomOneToOne_triggered()));
 
 	action_view_show_cursors_->setCheckable(true);
-	action_view_show_cursors_->setIcon(QIcon::fromTheme("show-cursors",
-		QIcon(":/icons/show-cursors.svg")));
+	action_view_show_cursors_->setIcon(QIcon::fromTheme(
+		"show-cursors", QIcon(":/icons/show-cursors.svg")));
 	action_view_show_cursors_->setShortcut(QKeySequence(Qt::Key_C));
-	connect(action_view_show_cursors_, SIGNAL(triggered(bool)),
-		this, SLOT(on_actionViewShowCursors_triggered()));
+	connect(action_view_show_cursors_, SIGNAL(triggered(bool)), this,
+		SLOT(on_actionViewShowCursors_triggered()));
 	action_view_show_cursors_->setText(tr("Show &Cursors"));
 
-	connect(view_, SIGNAL(always_zoom_to_fit_changed(bool)),
-		this, SLOT(on_always_zoom_to_fit_changed(bool)));
+	connect(view_, SIGNAL(always_zoom_to_fit_changed(bool)), this,
+		SLOT(on_always_zoom_to_fit_changed(bool)));
 
 	if (add_default_widgets)
 		add_toolbar_widgets();
@@ -108,27 +108,27 @@ void StandardBar::add_toolbar_widgets()
 	addAction(action_view_show_cursors_);
 }
 
-QAction* StandardBar::action_view_zoom_in() const
+QAction *StandardBar::action_view_zoom_in() const
 {
 	return action_view_zoom_in_;
 }
 
-QAction* StandardBar::action_view_zoom_out() const
+QAction *StandardBar::action_view_zoom_out() const
 {
 	return action_view_zoom_out_;
 }
 
-QAction* StandardBar::action_view_zoom_fit() const
+QAction *StandardBar::action_view_zoom_fit() const
 {
 	return action_view_zoom_fit_;
 }
 
-QAction* StandardBar::action_view_zoom_one_to_one() const
+QAction *StandardBar::action_view_zoom_one_to_one() const
 {
 	return action_view_zoom_one_to_one_;
 }
 
-QAction* StandardBar::action_view_show_cursors() const
+QAction *StandardBar::action_view_show_cursors() const
 {
 	return action_view_show_cursors_;
 }

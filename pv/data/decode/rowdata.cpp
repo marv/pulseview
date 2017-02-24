@@ -36,11 +36,10 @@ uint64_t RowData::get_max_sample() const
 	return annotations_.back().end_sample();
 }
 
-void RowData::get_annotation_subset(
-	vector<pv::data::decode::Annotation> &dest,
+void RowData::get_annotation_subset(vector<pv::data::decode::Annotation> &dest,
 	uint64_t start_sample, uint64_t end_sample) const
 {
-	for (const auto& annotation : annotations_)
+	for (const auto &annotation : annotations_)
 		if (annotation.end_sample() > start_sample &&
 			annotation.start_sample() <= end_sample)
 			dest.push_back(annotation);

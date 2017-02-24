@@ -35,7 +35,7 @@ class QCheckBox;
 class QGridLayout;
 
 namespace sigrok {
-	class ChannelGroup;
+class ChannelGroup;
 }
 
 namespace pv {
@@ -67,10 +67,10 @@ private:
 	void set_all_channels(bool set);
 
 	void populate_group(std::shared_ptr<sigrok::ChannelGroup> group,
-		const std::vector< std::shared_ptr<pv::data::SignalBase> > sigs);
+		const std::vector<std::shared_ptr<pv::data::SignalBase>> sigs);
 
-	QGridLayout* create_channel_group_grid(
-		const std::vector< std::shared_ptr<pv::data::SignalBase> > sigs);
+	QGridLayout *create_channel_group_grid(
+		const std::vector<std::shared_ptr<pv::data::SignalBase>> sigs);
 
 private:
 	void showEvent(QShowEvent *event);
@@ -88,9 +88,8 @@ private:
 
 	bool updating_channels_;
 
-	std::vector< std::shared_ptr<pv::binding::Device> >
-		 group_bindings_;
-	std::map< QCheckBox*, std::shared_ptr<pv::data::SignalBase> >
+	std::vector<std::shared_ptr<pv::binding::Device>> group_bindings_;
+	std::map<QCheckBox *, std::shared_ptr<pv::data::SignalBase>>
 		check_box_signal_map_;
 
 	QHBoxLayout buttons_bar_;

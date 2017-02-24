@@ -50,7 +50,6 @@ class Ruler : public MarginWidget
 	friend struct RulerTest::tick_position_test_2;
 
 private:
-
 	/// Height of the ruler in multipes of the text height
 	static const float RulerHeight;
 
@@ -75,17 +74,16 @@ public:
 	/**
 	 * Formats a timestamp depending on its distance to another timestamp.
 	 *
-	 * Heuristic function, useful when multiple timestamps should be put side by
-	 * side. The function procedes in the following order:
-	 *   - If 't' is zero, "0" is returned.
-	 *   - If 'unit' is 'TimeUnit::Samples', 'pv::util::format_time_si_adjusted()'
-	 *     is used to format 't'.
-	 *   - If a zoomed out view is detected (determined by 'precision' and
+	 * Heuristic function, useful when multiple timestamps should be put
+	 * side by side. The function procedes in the following order: - If 't'
+	 * is zero, "0" is returned. - If 'unit' is 'TimeUnit::Samples',
+	 * 'pv::util::format_time_si_adjusted()' is used to format 't'. - If a
+	 * zoomed out view is detected (determined by 'precision' and
 	 *     'distance'), 'pv::util::format_time_minutes() is used.
 	 *   - For timestamps "near the origin" (determined by 'distance'),
 	 *    'pv::util::format_time_si_adjusted()' is used.
-	 *   - If none of the previous was true, 'pv::util::format_time_minutes()'
-	 *     is used again.
+	 *   - If none of the previous was true,
+	 * 'pv::util::format_time_minutes()' is used again.
 	 *
 	 * @param distance The distance between the timestamp to format and
 	 *        an adjacent one.
@@ -98,18 +96,17 @@ public:
 	 * @return The formated value.
 	 */
 	static QString format_time_with_distance(
-		const pv::util::Timestamp& distance,
-		const pv::util::Timestamp& t,
+		const pv::util::Timestamp &distance,
+		const pv::util::Timestamp &t,
 		pv::util::SIPrefix prefix = pv::util::SIPrefix::unspecified,
 		pv::util::TimeUnit unit = pv::util::TimeUnit::Time,
-		unsigned precision = 0,
-		bool sign = true);
+		unsigned precision = 0, bool sign = true);
 
 private:
 	/**
 	 * Gets the time items.
 	 */
-	std::vector< std::shared_ptr<ViewItem> > items() override;
+	std::vector<std::shared_ptr<ViewItem>> items() override;
 
 	/**
 	 * Gets the first view item which has a label that contains @c pt .
@@ -140,8 +137,8 @@ private:
 	};
 
 	/**
-	 * Holds the tick positions so that they don't have to be recalculated on
-	 * every redraw. Set by 'paintEvent()' when needed.
+	 * Holds the tick positions so that they don't have to be recalculated
+	 * on every redraw. Set by 'paintEvent()' when needed.
 	 */
 	boost::optional<TickPositions> tick_position_cache_;
 
@@ -152,20 +149,21 @@ private:
 	 * @param offset The time at the left border of the ruler.
 	 * @param scale The scale in seconds per pixel.
 	 * @param width the Width of the ruler.
-	 * @param format_function A function used to format the major tick times.
-	 * @return An object of type 'TickPositions' that contains the major tick
-	 *         positions together with the labels at that ticks, and the minor
+	 * @param format_function A function used to format the major tick
+	 * times.
+	 * @return An object of type 'TickPositions' that contains the major
+	 * tick positions together with the labels at that ticks, and the minor
 	 *         tick positions.
 	 */
 	static TickPositions calculate_tick_positions(
-		const pv::util::Timestamp& major_period,
-		const pv::util::Timestamp& offset,
-		const double scale,
+		const pv::util::Timestamp &major_period,
+		const pv::util::Timestamp &offset, const double scale,
 		const int width,
-		std::function<QString(const pv::util::Timestamp&)> format_function);
+		std::function<QString(const pv::util::Timestamp &)>
+			format_function);
 
 protected:
-	void resizeEvent(QResizeEvent*) override;
+	void resizeEvent(QResizeEvent *) override;
 
 private Q_SLOTS:
 	void hover_point_changed();

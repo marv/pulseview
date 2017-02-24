@@ -18,10 +18,10 @@
  */
 
 #define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
 #include "test/test.hpp"
+#include <boost/test/unit_test.hpp>
 
-std::ostream& operator<<(std::ostream& stream, const QString& str)
+std::ostream &operator<<(std::ostream &stream, const QString &str)
 {
 	return stream << str.toUtf8().data();
 }

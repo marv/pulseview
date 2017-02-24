@@ -29,16 +29,13 @@ using std::vector;
 namespace pv {
 namespace prop {
 
-Enum::Enum(QString name,
-	vector<pair<Glib::VariantBase, QString> > values,
-	Getter getter, Setter setter) :
-	Property(name, getter, setter),
-	values_(values),
-	selector_(nullptr)
+Enum::Enum(QString name, vector<pair<Glib::VariantBase, QString>> values,
+	Getter getter, Setter setter)
+    : Property(name, getter, setter), values_(values), selector_(nullptr)
 {
 }
 
-QWidget* Enum::get_widget(QWidget *parent, bool auto_commit)
+QWidget *Enum::get_widget(QWidget *parent, bool auto_commit)
 {
 	if (selector_)
 		return selector_;
@@ -59,8 +56,8 @@ QWidget* Enum::get_widget(QWidget *parent, bool auto_commit)
 	}
 
 	if (auto_commit)
-		connect(selector_, SIGNAL(currentIndexChanged(int)),
-			this, SLOT(on_current_item_changed(int)));
+		connect(selector_, SIGNAL(currentIndexChanged(int)), this,
+			SLOT(on_current_item_changed(int)));
 
 	return selector_;
 }

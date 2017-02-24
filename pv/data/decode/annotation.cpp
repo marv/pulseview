@@ -30,18 +30,17 @@ namespace pv {
 namespace data {
 namespace decode {
 
-Annotation::Annotation(const srd_proto_data *const pdata) :
-	start_sample_(pdata->start_sample),
-	end_sample_(pdata->end_sample)
+Annotation::Annotation(const srd_proto_data *const pdata)
+    : start_sample_(pdata->start_sample), end_sample_(pdata->end_sample)
 {
 	assert(pdata);
 	const srd_proto_data_annotation *const pda =
-		(const srd_proto_data_annotation*)pdata->data;
+		(const srd_proto_data_annotation *)pdata->data;
 	assert(pda);
 
 	format_ = pda->ann_class;
 
-	const char *const *annotations = (char**)pda->ann_text;
+	const char *const *annotations = (char **)pda->ann_text;
 	while (*annotations) {
 		annotations_.push_back(QString::fromUtf8(*annotations));
 		annotations++;
@@ -63,7 +62,7 @@ int Annotation::format() const
 	return format_;
 }
 
-const std::vector<QString>& Annotation::annotations() const
+const std::vector<QString> &Annotation::annotations() const
 {
 	return annotations_;
 }
